@@ -92,7 +92,6 @@ func main() {
 	}
 
 	gwmux := runtime.NewServeMux()
-	// Register Greeter
 	RegisterHandlers(gwmux, conn)
 	gwServer := &http.Server{
 		Addr:    ":8080",
