@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
@@ -36,9 +37,10 @@ func authUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 	return handler(ctx, req)
 }
 
-func RegisterServers(server *grpc.Server, client *db.PrismaClient) {
+func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.SugaredLogger) {
 	pb.RegisterAuthServer(server, &pb.AuthenticatorServer{
 		PrismaClient: client,
+		Sugar:        sugar,
 	})
 }
 
@@ -50,6 +52,13 @@ func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
 }
 
 func main() {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sugar := logger.Sugar()
+	defer logger.Sync()
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
@@ -67,7 +76,7 @@ func main() {
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(authUnaryInterceptor),
 	)
-	RegisterServers(grpcServer, client)
+	RegisterServers(grpcServer, client, sugar)
 
 	log.Println("Serving gRPC on 0.0.0.0:50051")
 	go func() {

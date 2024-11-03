@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"log"
 
+	"go.uber.org/zap"
 	"google.golang.org/grpc/metadata"
 )
 
 type AuthenticatorServer struct {
 	UnimplementedAuthServer
 	PrismaClient *db.PrismaClient
+	Sugar        *zap.SugaredLogger
 }
 
 func CurrentUser(ctx context.Context) (string, error) {
@@ -26,6 +28,7 @@ func CurrentUser(ctx context.Context) (string, error) {
 func (s *AuthenticatorServer) SampleProtected(ctx context.Context, in *ProtectedRequest) (*ProtectedReply, error) {
 	currentUser, err := CurrentUser(ctx)
 	if err != nil {
+		s.Sugar.Error(err)
 		return nil, err
 	}
 	return &ProtectedReply{
@@ -41,22 +44,23 @@ func (s *AuthenticatorServer) Login(ctx context.Context, in *LoginRequest) (*Log
 	).Exec(ctx)
 
 	if err != nil {
-		log.Printf("User not found: %v", err)
+		s.Sugar.Error("User not found: %v", err)
+
 		return nil, fmt.Errorf("incorrect email or password")
 	}
 
 	if user.Password != in.Password {
-		log.Println("Invalid password")
+		s.Sugar.Error("Invalid password")
 		return nil, fmt.Errorf("incorrect email or password")
 	}
 
 	token, err := GenerateJWT(in.Email)
 	if err != nil {
-		log.Printf("Error generating token: %v", err)
+		s.Sugar.Error("Error generating token: %v", err)
 		return nil, fmt.Errorf("could not generate token: %v", err)
 	}
 
-	log.Printf("Generated token: %s", token)
+	s.Sugar.Info("Generated token: %s", token)
 
 	return &LoginReply{
 		Token: token,
@@ -71,7 +75,7 @@ func (s *AuthenticatorServer) Register(ctx context.Context, in *RegisterRequest)
 	).Exec(ctx)
 
 	if err != nil {
-		log.Printf("failed to create user: %v", err)
+		s.Sugar.Error("failed to create user: %v", err)
 		return nil, fmt.Errorf("failed to register user")
 	}
 
