@@ -1,0 +1,217 @@
+syntax = "proto3";
+
+package bikerental;
+
+option go_package = "github.com/yourusername/bike-rental-backend/bikerentalpb;bikerentalpb";
+
+// Import for timestamp fields
+import "google/api/timestamp.proto";
+
+// Imports for gRPC-Gateway
+import "google/api/annotations.proto";
+
+enum BikeStatus {
+  AVAILABLE = 0;
+  RENTED = 1;
+  MAINTENANCE = 2;
+}
+
+enum RentalStatus {
+  ONGOING = 0;
+  COMPLETED = 1;
+  CANCELLED = 2;
+}
+
+message Bike {
+  int32 id = 1;
+  string model = 2;
+  BikeStatus status = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message Rental {
+  int32 id = 1;
+  int32 user_id = 2;
+  int32 bike_id = 3;
+  google.protobuf.Timestamp start_time = 4;
+  google.protobuf.Timestamp end_time = 5;
+  RentalStatus status = 6;
+}
+
+// ----------------------------
+// Request and Response Messages
+// ----------------------------
+
+// User Operations
+message CreateUserRequest {
+  string email = 1;
+  string name = 2;
+}
+
+message GetUserRequest {
+  int32 id = 1;
+}
+
+message UpdateUserRequest {
+  int32 id = 1;
+  string email = 2;
+  string name = 3;
+}
+
+message DeleteUserRequest {
+  int32 id = 1;
+}
+
+message ListUsersRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+}
+
+// Bike Operations
+message CreateBikeRequest {
+  string model = 1;
+  BikeStatus status = 2;
+}
+
+message GetBikeRequest {
+  int32 id = 1;
+}
+
+message UpdateBikeRequest {
+  int32 id = 1;
+  string model = 2;
+  BikeStatus status = 3;
+}
+
+message DeleteBikeRequest {
+  int32 id = 1;
+}
+
+message ListBikesRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListBikesResponse {
+  repeated Bike bikes = 1;
+}
+
+// Rental Operations
+message CreateRentalRequest {
+  int32 user_id = 1;
+  int32 bike_id = 2;
+}
+
+message GetRentalRequest {
+  int32 id = 1;
+}
+
+message UpdateRentalRequest {
+  int32 id = 1;
+  int32 user_id = 2;
+  int32 bike_id = 3;
+  google.protobuf.Timestamp end_time = 4;
+  RentalStatus status = 5;
+}
+
+message DeleteRentalRequest {
+  int32 id = 1;
+}
+
+message ListRentalsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListRentalsResponse {
+  repeated Rental rentals = 1;
+}
+
+service BikeService {
+  // Create a new bike
+  rpc CreateBike(CreateBikeRequest) returns (Bike) {
+    option (google.api.http) = {
+      post: "/v1/bikes"
+      body: "*"
+    };
+  }
+
+  // Get a bike by ID
+  rpc GetBike(GetBikeRequest) returns (Bike) {
+    option (google.api.http) = {
+      get: "/v1/bikes/{id}"
+    };
+  }
+
+  // Update a bike
+  rpc UpdateBike(UpdateBikeRequest) returns (Bike) {
+    option (google.api.http) = {
+      put: "/v1/bikes/{id}"
+      body: "*"
+    };
+  }
+
+  // Delete a bike
+  rpc DeleteBike(DeleteBikeRequest) returns () {
+    option (google.api.http) = {
+      delete: "/v1/bikes/{id}"
+    };
+  }
+
+  // List bikes with pagination
+  rpc ListBikes(ListBikesRequest) returns (ListBikesResponse) {
+    option (google.api.http) = {
+      get: "/v1/bikes"
+      additional_bindings {
+        get: "/v1/bikes?page={page}&page_size={page_size}"
+      }
+    };
+  }
+}
+
+service RentalService {
+  // Create a new rental
+  rpc CreateRental(CreateRentalRequest) returns (Rental) {
+    option (google.api.http) = {
+      post: "/v1/rentals"
+      body: "*"
+    };
+  }
+
+  // Get a rental by ID
+  rpc GetRental(GetRentalRequest) returns (Rental) {
+    option (google.api.http) = {
+      get: "/v1/rentals/{id}"
+    };
+  }
+
+  // Update a rental
+  rpc UpdateRental(UpdateRentalRequest) returns (Rental) {
+    option (google.api.http) = {
+      put: "/v1/rentals/{id}"
+      body: "*"
+    };
+  }
+
+  // Delete a rental
+  rpc DeleteRental(DeleteRentalRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/rentals/{id}"
+    };
+  }
+
+  // List rentals with pagination
+  rpc ListRentals(ListRentalsRequest) returns (ListRentalsResponse) {
+    option (google.api.http) = {
+      get: "/v1/rentals"
+      additional_bindings {
+        get: "/v1/rentals?page={page}&page_size={page_size}"
+      }
+    };
+  }
+}
