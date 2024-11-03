@@ -19,6 +19,18 @@ func main() {
 	defer conn.Close()
 
 	client := NewAuthClient(conn)
+	registerReply, err := client.Register(context.Background(), &RegisterRequest{
+		Email:    "kmosc@example.com",
+		Password: "password",
+		Name:     "Kamil",
+		Surname:  "Mosciszko",
+		Age:      27,
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Received JWT token:", registerReply)
+
 	loginReply, err := client.Login(context.Background(), &LoginRequest{
 		Email:    "kmosc@example.com",
 		Password: "password",

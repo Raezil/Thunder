@@ -47,15 +47,6 @@ func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
 	if err != nil {
 		log.Fatalln("Failed to register gateway:", err)
 	}
-	err = pb.RegisterPostsHandler(context.Background(), gwmux, conn)
-	if err != nil {
-		log.Fatalln("Failed to register gateway:", err)
-	}
-
-	err = pb.RegisterCommentsHandler(context.Background(), gwmux, conn)
-	if err != nil {
-		log.Fatalln("Failed to register gateway:", err)
-	}
 }
 
 func main() {
