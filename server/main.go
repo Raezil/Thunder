@@ -40,7 +40,7 @@ func authUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.SugaredLogger) {
 	pb.RegisterAuthServer(server, &pb.AuthenticatorServer{
 		PrismaClient: client,
-		Sugar:        sugar,
+		Logger:       sugar,
 	})
 }
 
