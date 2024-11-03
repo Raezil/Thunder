@@ -1,4 +1,4 @@
-# BikeRental-GRPC
+# Template gRPC Gateway + Prisma + Kubernetes + Golang
 
 Sample biking rental service using grpc.
 
