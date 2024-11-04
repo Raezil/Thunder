@@ -3,8 +3,10 @@
 ```
 go run main.go yourfilename.proto
 ```
-then move dev.db to /server
-
+```
+create /backend/yourfilenamee_server.go
+go to /server/main.go and edit funcs 'RegisterServers', 'RegisterHandlers'
+```
 ## Kubernetes
 
 ### Run Docker
