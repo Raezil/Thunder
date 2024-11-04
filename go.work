@@ -4,4 +4,5 @@ use (
 	./
 	./backend
 	./db
+	./middlewares
 )
