@@ -1,7 +1,7 @@
 # Template gRPC Gateway + Prisma + Kubernetes + Golang
 ## Generator
 ```
-go run main.go yourfilename.proto
+go run generator.go yourfilename.proto
 ```
 ### Examples
 - [x] https://github.com/Raezil/ProtoText
