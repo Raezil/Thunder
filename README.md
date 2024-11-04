@@ -1,4 +1,9 @@
 # Template gRPC Gateway + Prisma + Kubernetes + Golang
+## Generator
+```
+go run main.go yourfilename.proto
+```
+then move dev.db to /server
 
 ## Kubernetes
 
