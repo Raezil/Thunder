@@ -3,12 +3,12 @@
 ```
 go run main.go yourfilename.proto
 ```
-```
-create /backend/yourfilenamee_server.go
-go to /server/main.go and edit funcs 'RegisterServers', 'RegisterHandlers'
-```
-## Kubernetes
+### Examples
+- [x] https://github.com/Raezil/ProtoText
+- [x] https://github.com/Raezil/JobBoard
+- [x] https://github.com/Raezil/BikeRental-GRPC
 
+## Kubernetes
 ### Run Docker
 ```
 docker build -t app:latest .
