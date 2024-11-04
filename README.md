@@ -3,11 +3,6 @@
 ```
 go run generator.go yourfilename.proto
 ```
-### Examples
-- [x] https://github.com/Raezil/ProtoText
-- [x] https://github.com/Raezil/JobBoard
-- [x] https://github.com/Raezil/BikeRental-GRPC
-
 ## Kubernetes
 ### Run Docker
 ```
@@ -55,3 +50,8 @@ Log in:
               }'
 
 ```
+
+### Examples
+- [x] https://github.com/Raezil/ProtoText
+- [x] https://github.com/Raezil/JobBoard
+- [x] https://github.com/Raezil/BikeRental-GRPC
