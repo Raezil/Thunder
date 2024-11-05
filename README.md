@@ -59,5 +59,3 @@ Log in:
 
 ### Examples
 - [x] https://github.com/Raezil/ProtoText
-- [x] https://github.com/Raezil/JobBoard
-- [x] https://github.com/Raezil/BikeRental-GRPC
