@@ -1,5 +1,11 @@
 # Template gRPC Gateway + Prisma + Kubernetes + Golang
 ## Generator
+### Add protoc plugin
+```
+go build -o protoc-gen-rpc-impl ./cmd/protoc-gen-rpc-impl.go
+sudo mv protoc-gen-rpc-impl /usr/local/bin
+sudo chmod +x /usr/local/bin/protoc-gen-rpc-impl
+```
 ```
 go run generator.go yourfilename.proto
 ```
