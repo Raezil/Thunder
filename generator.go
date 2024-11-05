@@ -30,6 +30,7 @@ func main() {
 		"--go-grpc_opt=paths=source_relative",
 		"--grpc-gateway_out=./backend",
 		"--grpc-gateway_opt=paths=source_relative",
+		"--rpc-impl_out=.",
 		proto,
 	); err != nil {
 		log.Fatalf("Error executing protoc command: %v", err)
