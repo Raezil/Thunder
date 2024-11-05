@@ -1,4 +1,5 @@
-# Template gRPC Gateway + Prisma + Kubernetes + Golang
+## Thunder - backend Framework gRPC Gateway + Prisma + Kubernetes + Golang
+
 ## Generator
 ### Add protoc plugin
 ```
@@ -16,7 +17,7 @@ docker build -t app:latest .
 docker login
 docker push $docker_username/app:latest
 ```
-
+- [x] edit k8s/deployment.yaml
 - Apply kubectl
 ```
 minikube start
@@ -33,7 +34,7 @@ kubectl port-forward service/app-service 8080:8080 -n default
 kubectl get pods -n default
 kubectl describe pod $NAME -n default
 ```
-## Sample curl requests
+## Testing API
 Register:
 ```
      curl --http2 -X POST http://localhost:8080/v1/auth/register \
@@ -59,3 +60,8 @@ Log in:
 
 ### Examples
 - [x] https://github.com/Raezil/ProtoText
+
+# References
+- [x] https://goprisma.org/docs
+- [x] https://protobuf.dev/programming-guides/proto3/
+- [x] https://grpc-ecosystem.github.io/grpc-gateway/docs/tutorials/adding_annotations/

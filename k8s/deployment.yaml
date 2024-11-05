@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rental-app-deployment
+  name: app-deployment
   labels:
-    app: rental-app
+    app: app
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: rental-app
+      app: app
   template:
     metadata:
       labels:
-        app: rental-app
+        app: app
     spec:
       containers:
-        - name: rental-app
-          image: raezil/rental:latest
+        - name: app
+          image: raezil/app:latest
           ports:
             - containerPort: 50051
             - containerPort: 8080

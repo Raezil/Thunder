@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: rental-app-service
+  name: app-service
   labels:
-    app: rental-app
+    app: app
 spec:
   selector:
-    app: rental-app
+    app: app
   ports:
     - name: grpc
       port: 50051
