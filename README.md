@@ -8,7 +8,7 @@ sudo mv protoc-gen-rpc-impl /usr/local/bin
 sudo chmod +x /usr/local/bin/protoc-gen-rpc-impl
 ```
 ```
-go run generator.go yourfilename.proto
+go run generator.go -proto=filename.proto -prisma=true
 ```
 ## Kubernetes
 ### Run Docker
