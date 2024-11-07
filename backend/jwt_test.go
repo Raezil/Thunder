@@ -1,6 +1,7 @@
-package backend
+package backend_test
 
 import (
+	. "backend"
 	"context"
 	"testing"
 
