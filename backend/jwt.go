@@ -1,10 +1,12 @@
 package backend
 
 import (
+	"context"
 	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"google.golang.org/grpc/metadata"
 )
 
 var jwtSecret = []byte("your-256-bit-secret")
@@ -44,4 +46,13 @@ func VerifyJWT(tokenStr string) (*Claims, error) {
 		return nil, fmt.Errorf("invalid token: %v", err)
 	}
 	return claims, nil
+}
+
+func CurrentUser(ctx context.Context) (string, error) {
+	md, ok := metadata.FromOutgoingContext(ctx)
+	if !ok {
+		return "", fmt.Errorf("missing metadata")
+	}
+	current_user := md["current_user"]
+	return current_user[0], nil
 }
