@@ -7,22 +7,12 @@ import (
 	"log"
 
 	"go.uber.org/zap"
-	"google.golang.org/grpc/metadata"
 )
 
 type AuthenticatorServer struct {
 	UnimplementedAuthServer
 	PrismaClient *db.PrismaClient
 	Logger       *zap.SugaredLogger
-}
-
-func CurrentUser(ctx context.Context) (string, error) {
-	md, ok := metadata.FromOutgoingContext(ctx)
-	if !ok {
-		return "", fmt.Errorf("missing metadata")
-	}
-	current_user := md["current_user"]
-	return current_user[0], nil
 }
 
 func (s *AuthenticatorServer) SampleProtected(ctx context.Context, in *ProtectedRequest) (*ProtectedReply, error) {
