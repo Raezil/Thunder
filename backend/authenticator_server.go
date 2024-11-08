@@ -62,6 +62,7 @@ func (s *AuthenticatorServer) Register(ctx context.Context, in *RegisterRequest)
 		db.User.Name.Set(in.Name),
 		db.User.Password.Set(in.Password),
 		db.User.Email.Set(in.Email),
+		db.User.Age.Set(int(in.Age)),
 	).Exec(ctx)
 
 	if err != nil {
