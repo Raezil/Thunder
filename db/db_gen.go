@@ -88,6 +88,7 @@ model User {
   name      String
   password  String
   email     String   @unique
+  Age       Int
   desc      String?
 }
 `
@@ -207,6 +208,7 @@ const (
 	UserScalarFieldEnumName      UserScalarFieldEnum = "name"
 	UserScalarFieldEnumPassword  UserScalarFieldEnum = "password"
 	UserScalarFieldEnumEmail     UserScalarFieldEnum = "email"
+	UserScalarFieldEnumAge       UserScalarFieldEnum = "Age"
 	UserScalarFieldEnumDesc      UserScalarFieldEnum = "desc"
 )
 
@@ -268,6 +270,8 @@ const userFieldName userPrismaFields = "name"
 const userFieldPassword userPrismaFields = "password"
 
 const userFieldEmail userPrismaFields = "email"
+
+const userFieldAge userPrismaFields = "Age"
 
 const userFieldDesc userPrismaFields = "desc"
 
@@ -352,6 +356,7 @@ type InnerUser struct {
 	Name      string   `json:"name"`
 	Password  string   `json:"password"`
 	Email     string   `json:"email"`
+	Age       int      `json:"Age"`
 	Desc      *string  `json:"desc,omitempty"`
 }
 
@@ -363,6 +368,7 @@ type RawUserModel struct {
 	Name      RawString   `json:"name"`
 	Password  RawString   `json:"password"`
 	Email     RawString   `json:"email"`
+	Age       RawInt      `json:"Age"`
 	Desc      *RawString  `json:"desc,omitempty"`
 }
 
@@ -415,6 +421,11 @@ type userQuery struct {
 	// @required
 	// @unique
 	Email userQueryEmailString
+
+	// Age
+	//
+	// @required
+	Age userQueryAgeInt
 
 	// Desc
 	//
@@ -2400,6 +2411,405 @@ func (r userQueryEmailString) Field() userPrismaFields {
 }
 
 // base struct
+type userQueryAgeInt struct{}
+
+// Set the required value of Age
+func (r userQueryAgeInt) Set(value int) userWithPrismaAgeSetParam {
+
+	return userWithPrismaAgeSetParam{
+		data: builder.Field{
+			Name:  "Age",
+			Value: value,
+		},
+	}
+
+}
+
+// Set the optional value of Age dynamically
+func (r userQueryAgeInt) SetIfPresent(value *Int) userWithPrismaAgeSetParam {
+	if value == nil {
+		return userWithPrismaAgeSetParam{}
+	}
+
+	return r.Set(*value)
+}
+
+// Increment the required value of Age
+func (r userQueryAgeInt) Increment(value int) userWithPrismaAgeSetParam {
+	return userWithPrismaAgeSetParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				builder.Field{
+					Name:  "increment",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) IncrementIfPresent(value *int) userWithPrismaAgeSetParam {
+	if value == nil {
+		return userWithPrismaAgeSetParam{}
+	}
+	return r.Increment(*value)
+}
+
+// Decrement the required value of Age
+func (r userQueryAgeInt) Decrement(value int) userWithPrismaAgeSetParam {
+	return userWithPrismaAgeSetParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				builder.Field{
+					Name:  "decrement",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) DecrementIfPresent(value *int) userWithPrismaAgeSetParam {
+	if value == nil {
+		return userWithPrismaAgeSetParam{}
+	}
+	return r.Decrement(*value)
+}
+
+// Multiply the required value of Age
+func (r userQueryAgeInt) Multiply(value int) userWithPrismaAgeSetParam {
+	return userWithPrismaAgeSetParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				builder.Field{
+					Name:  "multiply",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) MultiplyIfPresent(value *int) userWithPrismaAgeSetParam {
+	if value == nil {
+		return userWithPrismaAgeSetParam{}
+	}
+	return r.Multiply(*value)
+}
+
+// Divide the required value of Age
+func (r userQueryAgeInt) Divide(value int) userWithPrismaAgeSetParam {
+	return userWithPrismaAgeSetParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				builder.Field{
+					Name:  "divide",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) DivideIfPresent(value *int) userWithPrismaAgeSetParam {
+	if value == nil {
+		return userWithPrismaAgeSetParam{}
+	}
+	return r.Divide(*value)
+}
+
+func (r userQueryAgeInt) Equals(value int) userWithPrismaAgeEqualsParam {
+
+	return userWithPrismaAgeEqualsParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "equals",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) EqualsIfPresent(value *int) userWithPrismaAgeEqualsParam {
+	if value == nil {
+		return userWithPrismaAgeEqualsParam{}
+	}
+	return r.Equals(*value)
+}
+
+func (r userQueryAgeInt) Order(direction SortOrder) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name:  "Age",
+			Value: direction,
+		},
+	}
+}
+
+func (r userQueryAgeInt) Cursor(cursor int) userCursorParam {
+	return userCursorParam{
+		data: builder.Field{
+			Name:  "Age",
+			Value: cursor,
+		},
+	}
+}
+
+func (r userQueryAgeInt) In(value []int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "in",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) InIfPresent(value []int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.In(value)
+}
+
+func (r userQueryAgeInt) NotIn(value []int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "notIn",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) NotInIfPresent(value []int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.NotIn(value)
+}
+
+func (r userQueryAgeInt) Lt(value int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "lt",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) LtIfPresent(value *int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.Lt(*value)
+}
+
+func (r userQueryAgeInt) Lte(value int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "lte",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) LteIfPresent(value *int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.Lte(*value)
+}
+
+func (r userQueryAgeInt) Gt(value int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "gt",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) GtIfPresent(value *int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.Gt(*value)
+}
+
+func (r userQueryAgeInt) Gte(value int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "gte",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) GteIfPresent(value *int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.Gte(*value)
+}
+
+func (r userQueryAgeInt) Not(value int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "not",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryAgeInt) NotIfPresent(value *int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.Not(*value)
+}
+
+// deprecated: Use Lt instead.
+
+func (r userQueryAgeInt) LT(value int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "lt",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+// deprecated: Use LtIfPresent instead.
+func (r userQueryAgeInt) LTIfPresent(value *int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.LT(*value)
+}
+
+// deprecated: Use Lte instead.
+
+func (r userQueryAgeInt) LTE(value int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "lte",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+// deprecated: Use LteIfPresent instead.
+func (r userQueryAgeInt) LTEIfPresent(value *int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.LTE(*value)
+}
+
+// deprecated: Use Gt instead.
+
+func (r userQueryAgeInt) GT(value int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "gt",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+// deprecated: Use GtIfPresent instead.
+func (r userQueryAgeInt) GTIfPresent(value *int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.GT(*value)
+}
+
+// deprecated: Use Gte instead.
+
+func (r userQueryAgeInt) GTE(value int) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "Age",
+			Fields: []builder.Field{
+				{
+					Name:  "gte",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+// deprecated: Use GteIfPresent instead.
+func (r userQueryAgeInt) GTEIfPresent(value *int) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.GTE(*value)
+}
+
+func (r userQueryAgeInt) Field() userPrismaFields {
+	return userFieldAge
+}
+
+// base struct
 type userQueryDescString struct{}
 
 // Set the optional value of Desc
@@ -2787,6 +3197,7 @@ var userOutput = []builder.Output{
 	{Name: "name"},
 	{Name: "password"},
 	{Name: "email"},
+	{Name: "Age"},
 	{Name: "desc"},
 }
 
@@ -3422,6 +3833,84 @@ func (p userWithPrismaEmailEqualsUniqueParam) emailField() {}
 func (userWithPrismaEmailEqualsUniqueParam) unique() {}
 func (userWithPrismaEmailEqualsUniqueParam) equals() {}
 
+type UserWithPrismaAgeEqualsSetParam interface {
+	field() builder.Field
+	getQuery() builder.Query
+	equals()
+	userModel()
+	ageField()
+}
+
+type UserWithPrismaAgeSetParam interface {
+	field() builder.Field
+	getQuery() builder.Query
+	userModel()
+	ageField()
+}
+
+type userWithPrismaAgeSetParam struct {
+	data  builder.Field
+	query builder.Query
+}
+
+func (p userWithPrismaAgeSetParam) field() builder.Field {
+	return p.data
+}
+
+func (p userWithPrismaAgeSetParam) getQuery() builder.Query {
+	return p.query
+}
+
+func (p userWithPrismaAgeSetParam) userModel() {}
+
+func (p userWithPrismaAgeSetParam) ageField() {}
+
+type UserWithPrismaAgeWhereParam interface {
+	field() builder.Field
+	getQuery() builder.Query
+	userModel()
+	ageField()
+}
+
+type userWithPrismaAgeEqualsParam struct {
+	data  builder.Field
+	query builder.Query
+}
+
+func (p userWithPrismaAgeEqualsParam) field() builder.Field {
+	return p.data
+}
+
+func (p userWithPrismaAgeEqualsParam) getQuery() builder.Query {
+	return p.query
+}
+
+func (p userWithPrismaAgeEqualsParam) userModel() {}
+
+func (p userWithPrismaAgeEqualsParam) ageField() {}
+
+func (userWithPrismaAgeSetParam) settable()  {}
+func (userWithPrismaAgeEqualsParam) equals() {}
+
+type userWithPrismaAgeEqualsUniqueParam struct {
+	data  builder.Field
+	query builder.Query
+}
+
+func (p userWithPrismaAgeEqualsUniqueParam) field() builder.Field {
+	return p.data
+}
+
+func (p userWithPrismaAgeEqualsUniqueParam) getQuery() builder.Query {
+	return p.query
+}
+
+func (p userWithPrismaAgeEqualsUniqueParam) userModel() {}
+func (p userWithPrismaAgeEqualsUniqueParam) ageField()  {}
+
+func (userWithPrismaAgeEqualsUniqueParam) unique() {}
+func (userWithPrismaAgeEqualsUniqueParam) equals() {}
+
 type UserWithPrismaDescEqualsSetParam interface {
 	field() builder.Field
 	getQuery() builder.Query
@@ -3507,6 +3996,7 @@ func (r userActions) CreateOne(
 	_name UserWithPrismaNameSetParam,
 	_password UserWithPrismaPasswordSetParam,
 	_email UserWithPrismaEmailSetParam,
+	_age UserWithPrismaAgeSetParam,
 
 	optional ...UserSetParam,
 ) userCreateOne {
@@ -3524,6 +4014,7 @@ func (r userActions) CreateOne(
 	fields = append(fields, _name.field())
 	fields = append(fields, _password.field())
 	fields = append(fields, _email.field())
+	fields = append(fields, _age.field())
 
 	for _, q := range optional {
 		fields = append(fields, q.field())
@@ -4319,6 +4810,7 @@ func (r userUpsertOne) Create(
 	_name UserWithPrismaNameSetParam,
 	_password UserWithPrismaPasswordSetParam,
 	_email UserWithPrismaEmailSetParam,
+	_age UserWithPrismaAgeSetParam,
 
 	optional ...UserSetParam,
 ) userUpsertOne {
@@ -4329,6 +4821,7 @@ func (r userUpsertOne) Create(
 	fields = append(fields, _name.field())
 	fields = append(fields, _password.field())
 	fields = append(fields, _email.field())
+	fields = append(fields, _age.field())
 
 	for _, q := range optional {
 		fields = append(fields, q.field())
