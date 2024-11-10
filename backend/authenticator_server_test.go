@@ -17,9 +17,7 @@ func CleaningUpDatabase(client *db.PrismaClient, email string) {
 }
 
 func TestAuthenticator_Register_Login(t *testing.T) {
-	client := db.NewClient()
-	client.Connect()
-	defer client.Disconnect()
+	client, _, _ := db.NewMock()
 	authServer := AuthenticatorServer{
 		PrismaClient: client,
 		Logger:       zap.L().Sugar(),
