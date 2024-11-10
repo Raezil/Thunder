@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestAuthenticator_Register(t *testing.T) {
+func TestAuthenticator_Register_Login(t *testing.T) {
 	client := db.NewClient()
 	client.Connect()
 	defer client.Disconnect()
