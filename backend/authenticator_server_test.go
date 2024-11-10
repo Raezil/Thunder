@@ -5,11 +5,12 @@ import (
 	"db"
 	"testing"
 
+	"github.com/go-playground/assert/v2"
 	"github.com/tamathecxder/randomail"
 	"go.uber.org/zap"
 )
 
-func CleaningDatabase(client *db.PrismaClient, email string) {
+func CleaningUpDatabase(client *db.PrismaClient, email string) {
 	client.User.FindUnique(
 		db.User.Email.Equals(email),
 	).Delete().Exec(context.Background())
@@ -34,13 +35,22 @@ func TestAuthenticator_Register_Login(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to register user: %v", err)
 	}
-	_, err = authServer.Login(context.Background(), &LoginRequest{
+	reply, err := authServer.Login(context.Background(), &LoginRequest{
 		Email:    email[0],
 		Password: "password",
 	})
 	if err != nil {
 		t.Fatalf("failed to log in user: %v", err)
 	}
-	CleaningDatabase(client, email[0])
+	if reply.Token != "" {
+		assert.NotEqual(t, reply.Token, "")
+		claims, err := VerifyJWT(reply.Token)
+		if err != nil {
+			t.Fatalf("Token is invalid")
+		}
+		assert.Equal(t, claims.Email, email[0])
+
+	}
+	CleaningUpDatabase(client, email[0])
 
 }
