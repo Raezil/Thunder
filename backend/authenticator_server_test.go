@@ -9,6 +9,12 @@ import (
 	"go.uber.org/zap"
 )
 
+func CleaningDatabase(client *db.PrismaClient, email string) {
+	client.User.FindUnique(
+		db.User.Email.Equals(email),
+	).Delete().Exec(context.Background())
+}
+
 func TestAuthenticator_Register_Login(t *testing.T) {
 	client := db.NewClient()
 	client.Connect()
@@ -35,8 +41,6 @@ func TestAuthenticator_Register_Login(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to log in user: %v", err)
 	}
-	client.User.FindUnique(
-		db.User.Email.Equals(email[0]),
-	).Delete().Exec(context.Background())
+	CleaningDatabase(client, email[0])
 
 }
