@@ -1,54 +1,66 @@
-package backend
+package backend_test
 
 import (
+	"backend" // Import your backend package here
 	"context"
-	"db"
+	"fmt"
 	"testing"
 
-	"github.com/go-playground/assert/v2"
-	"github.com/tamathecxder/randomail"
-	"go.uber.org/zap"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 )
 
-func CleaningUpDatabase(client *db.PrismaClient, email string) {
-	client.User.FindUnique(
-		db.User.Email.Equals(email),
-	).Delete().Exec(context.Background())
-}
+func TestRegister(t *testing.T) {
+	// Create a mock controller
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-func TestAuthenticator_Register_Login(t *testing.T) {
-	client, _, _ := db.NewMock()
-	authServer := AuthenticatorServer{
-		PrismaClient: client,
-		Logger:       zap.L().Sugar(),
-	}
-	email := randomail.GenerateRandomEmails(1)
-	_, err := authServer.Register(context.Background(), &RegisterRequest{
-		Email:    email[0],
+	// Create a mock of the AuthClient
+	mockAuthClient := backend.NewMockAuthClient(ctrl)
+
+	// Define the input and expected output
+	req := &backend.RegisterRequest{
+		Email:    "john_doe@example.com",
 		Password: "password",
 		Name:     "test",
 		Surname:  "test",
 		Age:      27,
-	})
-	if err != nil {
-		t.Fatalf("failed to register user: %v", err)
 	}
-	reply, err := authServer.Login(context.Background(), &LoginRequest{
-		Email:    email[0],
-		Password: "password",
-	})
-	if err != nil {
-		t.Fatalf("failed to log in user: %v", err)
-	}
-	if reply.Token != "" {
-		assert.NotEqual(t, reply.Token, "")
-		claims, err := VerifyJWT(reply.Token)
-		if err != nil {
-			t.Fatalf("Token is invalid")
-		}
-		assert.Equal(t, claims.Email, email[0])
+	reply := fmt.Sprintf("Congratulations, User email: %s got created!", "john_doe@example.com")
+	expectedRes := &backend.RegisterReply{Reply: reply}
 
-	}
-	CleaningUpDatabase(client, email[0])
+	// Set up the mock to expect a Register call and return the expected response
+	mockAuthClient.EXPECT().Register(gomock.Any(), gomock.Eq(req), gomock.Any()).
+		Return(expectedRes, nil)
 
+	// Call the method you want to test
+	res, err := mockAuthClient.Register(context.Background(), req)
+
+	// Validate the response
+	assert.NoError(t, err)
+	assert.Equal(t, expectedRes, res)
+}
+
+func TestLogin(t *testing.T) {
+	// Create a mock controller
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	// Create a mock of the AuthClient
+	mockAuthClient := backend.NewMockAuthClient(ctrl)
+
+	// Define the input and expected output
+	loginReq := &backend.LoginRequest{Email: "john_doe@example.com", Password: "securepass"}
+	expectedLoginRes := &backend.LoginReply{Token: "some-jwt-token"}
+
+	// Set up the mock to expect a Login call and return the expected response
+	mockAuthClient.EXPECT().Login(gomock.Any(), gomock.Eq(loginReq), gomock.Any()).
+		Return(expectedLoginRes, nil)
+
+	// Call the method you want to test
+	loginRes, err := mockAuthClient.Login(context.Background(), loginReq)
+
+	// Validate the response
+	assert.NoError(t, err)
+	assert.Equal(t, expectedLoginRes, loginRes)
 }

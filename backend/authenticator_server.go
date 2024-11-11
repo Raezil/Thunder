@@ -71,6 +71,6 @@ func (s *AuthenticatorServer) Register(ctx context.Context, in *RegisterRequest)
 	}
 
 	return &RegisterReply{
-		Reply: fmt.Sprintf("Congratulations, User id: %s got created!", obj.ID),
+		Reply: fmt.Sprintf("Congratulations, User email: %s got created!", obj.Email),
 	}, nil
 }

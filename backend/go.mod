@@ -5,6 +5,7 @@ go 1.22.2
 require (
 	github.com/go-playground/assert/v2 v2.2.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/golang/mock v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.23.0
 	github.com/stretchr/testify v1.9.0
 	github.com/tamathecxder/randomail v1.2.0
