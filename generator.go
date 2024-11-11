@@ -20,6 +20,7 @@ func runCommand(name string, args ...string) error {
 	return cmd.Run()
 }
 
+// It generates proto files and build from prisma schema
 func main() {
 	proto := flag.String("proto", "", "Path to the .proto file")
 	prisma := flag.Bool("prisma", true, "Whether to run the Prisma db push command")
