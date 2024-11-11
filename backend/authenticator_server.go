@@ -15,6 +15,7 @@ type AuthenticatorServer struct {
 	Logger       *zap.SugaredLogger
 }
 
+// It is protected by middleware, requires token as Header
 func (s *AuthenticatorServer) SampleProtected(ctx context.Context, in *ProtectedRequest) (*ProtectedReply, error) {
 	currentUser, err := CurrentUser(ctx)
 	if err != nil {
@@ -26,6 +27,7 @@ func (s *AuthenticatorServer) SampleProtected(ctx context.Context, in *Protected
 	}, nil
 }
 
+// It returns Token which allows user to access protected requests
 func (s *AuthenticatorServer) Login(ctx context.Context, in *LoginRequest) (*LoginReply, error) {
 	log.Println("Login attempt for email:", in.Email)
 
@@ -57,6 +59,7 @@ func (s *AuthenticatorServer) Login(ctx context.Context, in *LoginRequest) (*Log
 	}, nil
 }
 
+// It registers new user, adding user to prisma database
 func (s *AuthenticatorServer) Register(ctx context.Context, in *RegisterRequest) (*RegisterReply, error) {
 	obj, err := s.PrismaClient.User.CreateOne(
 		db.User.Name.Set(in.Name),
