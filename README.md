@@ -1,5 +1,13 @@
 ## Thunder - backend Framework gRPC Gateway + Prisma + Kubernetes + Golang
 
+### Mocking tests
+#### If you want mock grpc server:
+```
+cd backend
+mockgen -source=yourservice_grpc.pb.go -destination=yourservice_mock.go
+```
+#### Replace youservice with name of your grpc service
+
 ### Add protoc plugin
 ```
 go build -o protoc-gen-rpc-impl ./cmd/protoc-gen-rpc-impl.go
