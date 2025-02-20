@@ -18,6 +18,7 @@ sudo chmod +x /usr/local/bin/protoc-gen-rpc-impl
 ```
 go run generator.go -proto=filename.proto -prisma=true
 ```
+> **Note:** Replace `filename` with the actual name of your gRPC service.
 
 ## Kubernetes Deployment
 
