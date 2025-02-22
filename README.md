@@ -145,6 +145,157 @@ kubectl describe pod $NAME -n default
               }'
 
 ```
+# Client and Server Examples
+## Server Example
+
+> Below is an example of a server implementation that registers gRPC services and a gRPC-Gateway for HTTP REST access:
+```
+// ./server/main.go
+package main
+
+import (
+	pb "backend"
+	"context"
+	"db"
+	"log"
+	"net"
+	"net/http"
+
+	"middlewares"
+
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+)
+// register your servers, if you used generator, add new lines here just like RegisterAuthServer
+func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.SugaredLogger) {
+	pb.RegisterAuthServer(server, &pb.AuthenticatorServer{
+		PrismaClient: client,
+		Logger:       sugar,
+	})
+}
+
+// register your servers, if you used generator, add new lines here just like RegisterAuthHandler
+func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
+	err := pb.RegisterAuthHandler(context.Background(), gwmux, conn)
+	if err != nil {
+		log.Fatalln("Failed to register gateway:", err)
+	}
+}
+
+func main() {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sugar := logger.Sugar()
+	defer logger.Sync()
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatalln("Failed to listen:", err)
+	}
+	client := db.NewClient()
+	if err := client.Prisma.Connect(); err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if err := client.Prisma.Disconnect(); err != nil {
+			panic(err)
+		}
+	}()
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(middlewares.AuthUnaryInterceptor),
+	)
+	RegisterServers(grpcServer, client, sugar)
+
+	log.Println("Serving gRPC on 0.0.0.0:50051")
+	go func() {
+		log.Fatalln(grpcServer.Serve(lis))
+	}()
+
+	conn, err := grpc.NewClient(
+		"0.0.0.0:50051",
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		log.Fatalln("Failed to dial server:", err)
+	}
+
+	gwmux := runtime.NewServeMux()
+	RegisterHandlers(gwmux, conn)
+	gwServer := &http.Server{
+		Addr:    ":8080",
+		Handler: gwmux,
+	}
+
+	log.Println("Serving gRPC-Gateway on http://0.0.0.0:8080")
+	log.Fatalln(gwServer.ListenAndServe())
+}
+```
+
+## Client Example
+
+> Below is an example client that connects to the gRPC server, registers a new user, logs in, and accesses a protected endpoint:
+
+```
+// ./client/main.go
+package main
+
+import (
+	. "backend"
+	"context"
+	"fmt"
+	"log"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
+)
+
+func main() {
+	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+
+	client := NewAuthClient(conn)
+	registerReply, err := client.Register(context.Background(), &RegisterRequest{
+		Email:    "kmosc@example.com",
+		Password: "password",
+		Name:     "Kamil",
+		Surname:  "Mosciszko",
+		Age:      27,
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Received response for registration:", registerReply)
+
+	loginReply, err := client.Login(context.Background(), &LoginRequest{
+		Email:    "kmosc@example.com",
+		Password: "password",
+	})
+	if err != nil {
+		log.Fatalf("Login failed: %v", err)
+	}
+
+	token := loginReply.Token
+	fmt.Println("Received JWT token:", token)
+	md := metadata.Pairs("authorization", token)
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
+	protectedReply, err := client.SampleProtected(ctx, &ProtectedRequest{
+		Text: "Hello from client",
+	})
+	if err != nil {
+		log.Fatalf("SampleProtected failed: %v", err)
+	}
+	fmt.Println("SampleProtected response:", protectedReply.Result)
+}
+```
 
 ### Examples
 - [x] https://github.com/Raezil/ProtoText
