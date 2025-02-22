@@ -10,6 +10,8 @@ syntax = "proto3";
 
 package example;
 
+option go_package = "backend/";
+
 import "google/api/annotations.proto";
 
 // A simple service definition.
