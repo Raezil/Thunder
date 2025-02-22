@@ -176,7 +176,7 @@ func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.Su
 	})
 }
 
-// register your servers, if you used generator, add new lines here just like RegisterAuthHandler
+// register your handlers, if you used generator, add new lines here just like RegisterAuthHandler
 func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
 	err := pb.RegisterAuthHandler(context.Background(), gwmux, conn)
 	if err != nil {
