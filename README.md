@@ -79,7 +79,6 @@ model User {
 
 With Thunder’s generator, much of the manual work of integrating Prisma is handled automatically. The generated Prisma files ensure that your database layer is aligned with your proto definitions. This streamlines development by reducing redundancy and keeping your API and database schema in sync.
 
-
 ##### Mocking Tests
 To mock a gRPC server:
 ```
@@ -146,6 +145,16 @@ kubectl describe pod $NAME -n default
 
 ```
 # Client and Server Examples
+
+## TLS Certificate Generation
+
+Before running your application, generate the TLS certificates to secure gRPC communication. Run the following commands in your project root:
+
+```sh
+mkdir certs
+openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes -subj "/CN=localhost"
+```
+
 ## Server Example
 
 > Below is an example of a server implementation that registers gRPC services and a gRPC-Gateway for HTTP REST access:
@@ -164,11 +173,19 @@ import (
 	"middlewares"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
-// register your servers, if you used generator, add new lines here just like RegisterAuthServer
+
+func initConfig() {
+	viper.SetDefault("grpc.port", ":50051")
+	viper.SetDefault("http.port", ":8080")
+	// Load environment variables
+	viper.AutomaticEnv()
+}
+
 func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.SugaredLogger) {
 	pb.RegisterAuthServer(server, &pb.AuthenticatorServer{
 		PrismaClient: client,
@@ -176,7 +193,6 @@ func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.Su
 	})
 }
 
-// register your handlers, if you used generator, add new lines here just like RegisterAuthHandler
 func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
 	err := pb.RegisterAuthHandler(context.Background(), gwmux, conn)
 	if err != nil {
@@ -185,6 +201,7 @@ func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
 }
 
 func main() {
+	initConfig()
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatal(err)
@@ -192,7 +209,8 @@ func main() {
 
 	sugar := logger.Sugar()
 	defer logger.Sync()
-	lis, err := net.Listen("tcp", ":50051")
+	grpcPort := viper.GetString("grpc.port")
+	lis, err := net.Listen("tcp", grpcPort)
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
 	}
@@ -206,12 +224,21 @@ func main() {
 			panic(err)
 		}
 	}()
+	// Initialize rate limiter (e.g., 5 requests per second, burst of 10)
+	rateLimiter := middlewares.NewRateLimiter(5, 10)
+
+	// Use custom interceptor chain
 	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(middlewares.AuthUnaryInterceptor),
+		grpc.UnaryInterceptor(
+			middlewares.ChainUnaryInterceptors(
+				rateLimiter.RateLimiterInterceptor, // Rate limiting
+				middlewares.AuthUnaryInterceptor,   // Authentication
+			),
+		),
 	)
 	RegisterServers(grpcServer, client, sugar)
 
-	log.Println("Serving gRPC on 0.0.0.0:50051")
+	log.Println("Serving gRPC on 0.0.0.0" + grpcPort)
 	go func() {
 		log.Fatalln(grpcServer.Serve(lis))
 	}()
@@ -226,8 +253,9 @@ func main() {
 
 	gwmux := runtime.NewServeMux()
 	RegisterHandlers(gwmux, conn)
+	httpPort := viper.GetString("http.port")
 	gwServer := &http.Server{
-		Addr:    ":8080",
+		Addr:    httpPort,
 		Handler: gwmux,
 	}
 
@@ -249,6 +277,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -263,8 +292,10 @@ func main() {
 	defer conn.Close()
 
 	client := NewAuthClient(conn)
-	registerReply, err := client.Register(context.Background(), &RegisterRequest{
-		Email:    "kmosc@example.com",
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	registerReply, err := client.Register(ctx, &RegisterRequest{
+		Email:    "kmosc1231@example.com", // Use a new email address here
 		Password: "password",
 		Name:     "Kamil",
 		Surname:  "Mosciszko",
@@ -273,10 +304,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Received response for registration:", registerReply)
+	fmt.Println("Received JWT token:", registerReply)
 
-	loginReply, err := client.Login(context.Background(), &LoginRequest{
-		Email:    "kmosc@example.com",
+	loginReply, err := client.Login(ctx, &LoginRequest{
+		Email:    "kmosc1231@example.com",
 		Password: "password",
 	})
 	if err != nil {
@@ -286,8 +317,8 @@ func main() {
 	token := loginReply.Token
 	fmt.Println("Received JWT token:", token)
 	md := metadata.Pairs("authorization", token)
-	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	protectedReply, err := client.SampleProtected(ctx, &ProtectedRequest{
+	context := metadata.NewOutgoingContext(ctx, md)
+	protectedReply, err := client.SampleProtected(context, &ProtectedRequest{
 		Text: "Hello from client",
 	})
 	if err != nil {
