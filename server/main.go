@@ -96,11 +96,6 @@ func main() {
 		panic(err)
 	}
 	defer func() {
-		if err := recover(); err != nil {
-			sugar.Errorf("Error: %v", err)
-		}
-	}()
-	defer func() {
 		if err := client.Prisma.Disconnect(); err != nil {
 			panic(err)
 		}
@@ -121,18 +116,19 @@ func main() {
 	)
 	RegisterServers(grpcServer, client, sugar)
 
-	log.Println("Serving gRPC with TLS on 0.0.0.0" + grpcPort)
+	sugar.Infof("Serving gRPC with TLS on 0.0.0.0%s", grpcPort)
 	go func() {
 		log.Fatalln(grpcServer.Serve(lis))
 	}()
 
 	// Setup secure connection for gRPC-Gateway.
-	clientCreds, err := credentials.NewClientTLSFromFile(certFile, "")
+	// Use "localhost" since the certificate is issued to "localhost".
+	clientCreds, err := credentials.NewClientTLSFromFile(certFile, "localhost")
 	if err != nil {
 		sugar.Fatalf("Failed to load client TLS credentials: %v", err)
 	}
 	conn, err := grpc.Dial(
-		"0.0.0.0"+grpcPort,
+		"localhost"+grpcPort,
 		grpc.WithTransportCredentials(clientCreds),
 	)
 	if err != nil {
@@ -148,6 +144,6 @@ func main() {
 		Handler: gwmux,
 	}
 
-	log.Println("Serving gRPC-Gateway on http://0.0.0.0" + httpPort)
-	log.Fatalln(gwServer.ListenAndServe())
+	sugar.Infof("Serving gRPC-Gateway on https://0.0.0.0%s", httpPort)
+	log.Fatalln(gwServer.ListenAndServeTLS("../certs/server.crt", "../certs/server.key"))
 }
