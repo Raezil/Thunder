@@ -11,10 +11,18 @@ import (
 	"middlewares"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
+
+func initConfig() {
+	viper.SetDefault("grpc.port", ":50051")
+	viper.SetDefault("http.port", ":8080")
+	// Load environment variables
+	viper.AutomaticEnv()
+}
 
 func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.SugaredLogger) {
 	pb.RegisterAuthServer(server, &pb.AuthenticatorServer{
@@ -31,6 +39,7 @@ func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
 }
 
 func main() {
+	initConfig()
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatal(err)
@@ -38,7 +47,8 @@ func main() {
 
 	sugar := logger.Sugar()
 	defer logger.Sync()
-	lis, err := net.Listen("tcp", ":50051")
+	grpcPort := viper.GetString("grpc.port")
+	lis, err := net.Listen("tcp", grpcPort)
 	if err != nil {
 		log.Fatalln("Failed to listen:", err)
 	}
@@ -66,7 +76,7 @@ func main() {
 	)
 	RegisterServers(grpcServer, client, sugar)
 
-	log.Println("Serving gRPC on 0.0.0.0:50051")
+	log.Println("Serving gRPC on 0.0.0.0" + grpcPort)
 	go func() {
 		log.Fatalln(grpcServer.Serve(lis))
 	}()
@@ -81,8 +91,9 @@ func main() {
 
 	gwmux := runtime.NewServeMux()
 	RegisterHandlers(gwmux, conn)
+	httpPort := viper.GetString("http.port")
 	gwServer := &http.Server{
-		Addr:    ":8080",
+		Addr:    httpPort,
 		Handler: gwmux,
 	}
 
