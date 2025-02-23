@@ -70,11 +70,11 @@ const (
 )
 
 // --- template client.gotpl ---
-const datasources = `[{"name":"db","provider":"sqlite","activeProvider":"sqlite","url":{"fromEnvVar":"","value":"file:dev.db"},"config":null}]`
+const datasources = `[{"name":"db","provider":"postgresql","activeProvider":"postgresql","url":{"fromEnvVar":"DATABASE_URL","value":""},"config":null}]`
 
 const schema = `datasource db {
-  provider = "sqlite" // or "postgresql", "mysql", etc.
-  url      = "file:dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator db {
@@ -92,8 +92,8 @@ model User {
   desc      String?
 }
 `
-const schemaDatasourceURL = "file:dev.db"
-const schemaEnvVarName = ""
+const schemaDatasourceURL = ""
+const schemaEnvVarName = "DATABASE_URL"
 
 // hasBinaryTargets is true when binaryTargets are provided on generation time
 var hasBinaryTargets = true
@@ -196,7 +196,10 @@ type PrismaClient struct {
 type TransactionIsolationLevel string
 
 const (
-	TransactionIsolationLevelSerializable TransactionIsolationLevel = "Serializable"
+	TransactionIsolationLevelReadUncommitted TransactionIsolationLevel = "ReadUncommitted"
+	TransactionIsolationLevelReadCommitted   TransactionIsolationLevel = "ReadCommitted"
+	TransactionIsolationLevelRepeatableRead  TransactionIsolationLevel = "RepeatableRead"
+	TransactionIsolationLevelSerializable    TransactionIsolationLevel = "Serializable"
 )
 
 type UserScalarFieldEnum string
@@ -217,6 +220,13 @@ type SortOrder string
 const (
 	SortOrderAsc  SortOrder = "asc"
 	SortOrderDesc SortOrder = "desc"
+)
+
+type QueryMode string
+
+const (
+	QueryModeDefault     QueryMode = "default"
+	QueryModeInsensitive QueryMode = "insensitive"
 )
 
 type NullsOrder string
@@ -735,6 +745,27 @@ func (r userQueryIDString) EndsWithIfPresent(value *string) userParamUnique {
 		return userParamUnique{}
 	}
 	return r.EndsWith(*value)
+}
+
+func (r userQueryIDString) Mode(value QueryMode) userParamUnique {
+	return userParamUnique{
+		data: builder.Field{
+			Name: "id",
+			Fields: []builder.Field{
+				{
+					Name:  "mode",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryIDString) ModeIfPresent(value *QueryMode) userParamUnique {
+	if value == nil {
+		return userParamUnique{}
+	}
+	return r.Mode(*value)
 }
 
 func (r userQueryIDString) Not(value string) userParamUnique {
@@ -1685,6 +1716,27 @@ func (r userQueryNameString) EndsWithIfPresent(value *string) userDefaultParam {
 	return r.EndsWith(*value)
 }
 
+func (r userQueryNameString) Mode(value QueryMode) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "name",
+			Fields: []builder.Field{
+				{
+					Name:  "mode",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryNameString) ModeIfPresent(value *QueryMode) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.Mode(*value)
+}
+
 func (r userQueryNameString) Not(value string) userDefaultParam {
 	return userDefaultParam{
 		data: builder.Field{
@@ -2011,6 +2063,27 @@ func (r userQueryPasswordString) EndsWithIfPresent(value *string) userDefaultPar
 	return r.EndsWith(*value)
 }
 
+func (r userQueryPasswordString) Mode(value QueryMode) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "password",
+			Fields: []builder.Field{
+				{
+					Name:  "mode",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryPasswordString) ModeIfPresent(value *QueryMode) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.Mode(*value)
+}
+
 func (r userQueryPasswordString) Not(value string) userDefaultParam {
 	return userDefaultParam{
 		data: builder.Field{
@@ -2335,6 +2408,27 @@ func (r userQueryEmailString) EndsWithIfPresent(value *string) userParamUnique {
 		return userParamUnique{}
 	}
 	return r.EndsWith(*value)
+}
+
+func (r userQueryEmailString) Mode(value QueryMode) userParamUnique {
+	return userParamUnique{
+		data: builder.Field{
+			Name: "email",
+			Fields: []builder.Field{
+				{
+					Name:  "mode",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryEmailString) ModeIfPresent(value *QueryMode) userParamUnique {
+	if value == nil {
+		return userParamUnique{}
+	}
+	return r.Mode(*value)
 }
 
 func (r userQueryEmailString) Not(value string) userParamUnique {
@@ -3105,6 +3199,27 @@ func (r userQueryDescString) EndsWithIfPresent(value *string) userDefaultParam {
 		return userDefaultParam{}
 	}
 	return r.EndsWith(*value)
+}
+
+func (r userQueryDescString) Mode(value QueryMode) userDefaultParam {
+	return userDefaultParam{
+		data: builder.Field{
+			Name: "desc",
+			Fields: []builder.Field{
+				{
+					Name:  "mode",
+					Value: value,
+				},
+			},
+		},
+	}
+}
+
+func (r userQueryDescString) ModeIfPresent(value *QueryMode) userDefaultParam {
+	if value == nil {
+		return userDefaultParam{}
+	}
+	return r.Mode(*value)
 }
 
 func (r userQueryDescString) Not(value string) userDefaultParam {
