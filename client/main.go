@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -19,8 +20,10 @@ func main() {
 	defer conn.Close()
 
 	client := NewAuthClient(conn)
-	registerReply, err := client.Register(context.Background(), &RegisterRequest{
-		Email:    "kmosc@example.com", // Use a new email address here
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	registerReply, err := client.Register(ctx, &RegisterRequest{
+		Email:    "kmosc1231@example.com", // Use a new email address here
 		Password: "password",
 		Name:     "Kamil",
 		Surname:  "Mosciszko",
@@ -31,8 +34,8 @@ func main() {
 	}
 	fmt.Println("Received JWT token:", registerReply)
 
-	loginReply, err := client.Login(context.Background(), &LoginRequest{
-		Email:    "kmosc@example.com",
+	loginReply, err := client.Login(ctx, &LoginRequest{
+		Email:    "kmosc1231@example.com",
 		Password: "password",
 	})
 	if err != nil {
@@ -42,8 +45,8 @@ func main() {
 	token := loginReply.Token
 	fmt.Println("Received JWT token:", token)
 	md := metadata.Pairs("authorization", token)
-	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	protectedReply, err := client.SampleProtected(ctx, &ProtectedRequest{
+	context := metadata.NewOutgoingContext(ctx, md)
+	protectedReply, err := client.SampleProtected(context, &ProtectedRequest{
 		Text: "Hello from client",
 	})
 	if err != nil {
