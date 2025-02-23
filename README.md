@@ -123,26 +123,27 @@ kubectl describe pod $NAME -n default
 
 > **Register**
 ```
-     curl --http2 -X POST http://localhost:8080/v1/auth/register \
-          -H "Content-Type: application/json" \
-          -d '{
-                "email": "newuser@example.com",
-                "password": "password123",
-                "name": "John",
-                "surname": "Doe",
-                "age": 30
-              }'
+curl --http2 -X POST https://localhost:8080/v1/auth/register \
+     --cacert certs/server.crt \
+     -H "Content-Type: application/json" \
+     -d '{
+           "email": "newuser@example.com",
+           "password": "password123",
+           "name": "John",
+           "surname": "Doe",
+           "age": 30
+         }'
 ```
 
 > **login**
 ```
-     curl --http2 -X POST http://localhost:8080/v1/auth/login \
-          -H "Content-Type: application/json" \
-          -d '{
-                "email": "user@example.com",
-                "password": "password123"
-              }'
-
+curl --http2 -X POST https://localhost:8080/v1/auth/login \
+     --cacert certs/server.crt \
+     -H "Content-Type: application/json" \
+     -d '{
+           "email": "newuser@example.com",
+           "password": "password123"
+         }'
 ```
 # Client and Server Examples
 
