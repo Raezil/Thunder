@@ -7,6 +7,8 @@ import (
 
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // AuthenticatorServer is your gRPC server.
@@ -38,20 +40,20 @@ func (s *AuthenticatorServer) Login(ctx context.Context, in *LoginRequest) (*Log
 
 	// Handle user not found (or any error retrieving the user).
 	if err != nil || user == nil {
-		s.Logger.Errorf("User not found for email %s", in.Email)
-		return nil, fmt.Errorf("incorrect email or password")
+		s.Logger.Errorw("Failed to get user", "error", err)
+		return nil, status.Errorf(codes.Unauthenticated, "incorrect email or password")
 	}
 
 	// Compare the stored hashed password with the password provided.
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password)); err != nil {
 		s.Logger.Errorf("Invalid password for email %s", in.Email)
-		return nil, fmt.Errorf("incorrect email or password")
+		return nil, status.Errorf(codes.Unauthenticated, "Invalid credentials: %v", err)
 	}
 
 	token, err := GenerateJWT(in.Email)
 	if err != nil {
 		s.Logger.Errorf("Error generating token for email %s: %v", in.Email, err)
-		return nil, fmt.Errorf("could not generate token: %v", err)
+		return nil, status.Errorf(codes.Internal, "could not generate token: %v", err)
 	}
 
 	s.Logger.Infof("Generated token for email %s", in.Email)
@@ -68,14 +70,15 @@ func (s *AuthenticatorServer) Register(ctx context.Context, in *RegisterRequest)
 	).Exec(ctx)
 	if err == nil && existingUser != nil {
 		s.Logger.Errorf("User with email %s already exists", in.Email)
-		return nil, fmt.Errorf("failed to register user: email already in use")
+		return nil, status.Errorf(codes.AlreadyExists, "failed to register user: email already in use")
 	}
 
+	const bcryptCost = 12 // Recommended: 12-14 for production
 	// Hash the password using bcrypt with the default cost.
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcryptCost)
 	if err != nil {
 		s.Logger.Errorf("failed to hash password: %v", err)
-		return nil, fmt.Errorf("failed to register user: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to register user: %v", err)
 	}
 
 	obj, err := s.PrismaClient.User.CreateOne(
@@ -87,7 +90,7 @@ func (s *AuthenticatorServer) Register(ctx context.Context, in *RegisterRequest)
 	).Exec(ctx)
 	if err != nil {
 		s.Logger.Errorf("failed to create user: %v", err)
-		return nil, fmt.Errorf("failed to register user: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to register user: %v", err)
 	}
 
 	s.Logger.Infof("User registered successfully with email: %s", obj.Email)
