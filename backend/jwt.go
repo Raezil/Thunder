@@ -3,13 +3,21 @@ package backend
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc/metadata"
 )
 
-var jwtSecret = []byte("your-256-bit-secret")
+var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
+
+func init() {
+	if len(jwtSecret) == 0 {
+		log.Fatal("JWT_SECRET is not set")
+	}
+}
 
 type Claims struct {
 	Email string `json:"email"`

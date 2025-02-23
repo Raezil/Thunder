@@ -52,8 +52,17 @@ func main() {
 			panic(err)
 		}
 	}()
+	// Initialize rate limiter (e.g., 5 requests per second, burst of 10)
+	rateLimiter := middlewares.NewRateLimiter(5, 10)
+
+	// Use custom interceptor chain
 	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(middlewares.AuthUnaryInterceptor),
+		grpc.UnaryInterceptor(
+			middlewares.ChainUnaryInterceptors(
+				rateLimiter.RateLimiterInterceptor, // Rate limiting
+				middlewares.AuthUnaryInterceptor,   // Authentication
+			),
+		),
 	)
 	RegisterServers(grpcServer, client, sugar)
 
