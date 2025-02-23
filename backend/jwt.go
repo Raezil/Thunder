@@ -24,6 +24,7 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
+// NewClaims creates a new Claims object with the given email
 func NewClaims(email string) *Claims {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	return &Claims{
@@ -34,6 +35,7 @@ func NewClaims(email string) *Claims {
 	}
 }
 
+// GenerateJWT generates a new JWT token for the given email
 func GenerateJWT(email string) (string, error) {
 	claims := NewClaims(email)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -44,6 +46,7 @@ func GenerateJWT(email string) (string, error) {
 	return tokenString, nil
 }
 
+// VerifyJWT verifies the given JWT token and returns the claims
 func VerifyJWT(tokenStr string) (*Claims, error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
@@ -56,6 +59,7 @@ func VerifyJWT(tokenStr string) (*Claims, error) {
 	return claims, nil
 }
 
+// CurrentUser extracts the current user email from the context metadata
 func CurrentUser(ctx context.Context) (string, error) {
 	md, ok := metadata.FromOutgoingContext(ctx)
 	if !ok {
