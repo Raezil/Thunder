@@ -6,7 +6,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
-	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -28,9 +27,7 @@ func main() {
 	defer conn.Close()
 
 	client := NewAuthClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
+	ctx := context.Background()
 	registerReply, err := client.Register(ctx, &RegisterRequest{
 		Email:    "kmosc1238@example.com",
 		Password: "password",

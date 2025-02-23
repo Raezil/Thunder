@@ -4,6 +4,7 @@ import (
 	pb "backend"
 	"context"
 	"fmt"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -23,7 +24,12 @@ func AuthUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 	}
 
 	claims, err := pb.VerifyJWT(token[0])
-	ctx = metadata.AppendToOutgoingContext(ctx, "current_user", claims.Email)
+
+	// Set timeout for database operations to prevent hanging requests
+	dbCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	ctx = metadata.AppendToOutgoingContext(dbCtx, "current_user", claims.Email)
 	if err != nil {
 		return nil, fmt.Errorf("unauthorized: %v", err)
 	}
