@@ -25,7 +25,7 @@ ENV PATH=$PATH:/go/bin
 
 # The database URL will come from environment (docker-compose.yml)
 # but you can set a default if you wish
-ENV DATABASE_URL="postgresql://postgres:postgres@postgres:5432/thunder?connection_limit=5"
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/thunder?connection_limit=5"
 
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh

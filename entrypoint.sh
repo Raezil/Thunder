@@ -1,26 +1,32 @@
-#!/usr/bin/env sh
-set -e
+#!/bin/bash
+set -euo pipefail
 
-# Optional: Install small 'wait-for' logic or write your own loop
-echo "Waiting for Postgres to be ready..."
+# Set the host using the PGHOST environment variable, or default to host.docker.internal
+HOST=${PGHOST:-localhost}
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+echo "Connecting to PostgreSQL at $HOST:$POSTGRES_PORT..."
 
-# Keep checking until Postgres is ready on host=postgres, port=5432
-# (We install pg_isready below with 'apk add postgresql-client')
-until pg_isready -h postgres -p 5432 -U postgres > /dev/null 2> /dev/null; do
+# Wait for PostgreSQL to become available
+while ! nc -z "$HOST" "$POSTGRES_PORT"; do
+  echo "Waiting for PostgreSQL to start at $HOST:$POSTGRES_PORT..."
   sleep 1
 done
 
-echo "Postgres is up and running. Proceeding..."
+echo "PostgreSQL is up!"
 
-# -- OPTIONAL: Create the DB if it doesn't exist.
-#    For this step to succeed, the user 'postgres' must have the rights to create DBs.
-#    You also need the 'postgresql-client' installed to run psql.
-echo "Ensuring database 'thunder' exists..."
-echo "CREATE DATABASE thunder;" | psql -h postgres -U postgres 2>/dev/null || true
+# Optional: Create the database 'postgres' if it does not exist
+if ! psql -h "$HOST" -U "$POSTGRES_USER" -lqt | cut -d \| -f 1 | grep -qw postgres; then
+  echo "Creating database 'postgres'..."
+  psql -h "$HOST" -U "$POSTGRES_USER" -c "CREATE DATABASE thunder;"
+else
+  echo "Database 'postgres' already exists."
+fi
 
-# -- Now run Prisma migrations (or db push) to create tables
+# Run Prisma migrations (or db push) to create tables
 echo "Running Prisma db push..."
 prisma-client-go db push
 
+# Start the Go application
 echo "Starting Go application..."
 exec go run ./server/main.go
