@@ -20,3 +20,14 @@ spec:
           ports:
             - containerPort: 50051
             - containerPort: 8080
+        - name: postgres
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "thunder"
