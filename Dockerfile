@@ -28,7 +28,7 @@ RUN go install github.com/steebchen/prisma-client-go@latest
 # Add Go binaries to PATH
 ENV PATH=$PATH:/go/bin
 
-RUN psql -h localhost -U postgres -p 5432 -c "CREATE DATABASE Thunder;"
+RUN PGPASSWORD=postgres psql -h localhost -U postgres -p 5432 -c "CREATE DATABASE Thunder;"
 # Set environment variables if needed (e.g., DATABASE_URL)
 # ARG DATABASE_URL
 # ENV DATABASE_URL=${DATABASE_URL}
