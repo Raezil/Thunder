@@ -16,9 +16,6 @@ RUN go mod download
 # Copy the entire project
 COPY . .
 
-RUN mkdir certs && \
-    openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes -subj "/CN=localhost"
-
 # Remove the unnecessary _gen.go file to avoid conflicts
 RUN rm -f db/query-engine-debian-openssl-3.0.x_gen.go
 
