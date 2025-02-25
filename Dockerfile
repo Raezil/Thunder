@@ -26,12 +26,16 @@ ENV PATH=$PATH:/go/bin
 # Set the database URL from the environment or default
 ENV DATABASE_URL="postgresql://postgres:postgres@postgres-service:5432/thunder?connection_limit=5"
 ENV JWT_SECRET="secret"
+
 # Expose necessary ports
 EXPOSE 50051 8080
 
 # Copy the entrypoint script
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
+
+# Copy the certificates directory
+COPY certs ../certs
 
 # Set the entrypoint and default command
 ENTRYPOINT ["/app/entrypoint.sh"]
