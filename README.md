@@ -1,5 +1,5 @@
 ## Thunder - Backend Framework (gRPC Gateway + Prisma + Kubernetes + Golang)
-Thunder is a backend framework built with Golang that leverages gRPC Gateway, Prisma, and Kubernetes to simplify the development, testing, and deployment of scalable microservices.
+Thunder is a minimalistic backend framework built with Golang that leverages gRPC Gateway, Prisma, and Kubernetes to simplify the development, testing, and deployment of scalable microservices.
 
 ### 1. Developing with Protocol Buffers (proto)
 ## a. Create Your .proto File
