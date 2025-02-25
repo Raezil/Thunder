@@ -97,7 +97,7 @@ docker build -t app:latest .
 docker login
 docker push $docker_username/app:latest
 ```
-> **Note:** Edit `k8s/deployment.yaml` before deploying.
+> **Note:** Edit `k8s/app-deployment.yaml` before deploying.
 
 ### Deploying with Kubernetes
 - Apply kubectl
