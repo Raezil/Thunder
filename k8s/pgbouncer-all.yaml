@@ -6,8 +6,8 @@ metadata:
 data:
   pgbouncer.ini: |
     [databases]
-    mydb = host=postgres-service port=5432 dbname=thunder
-
+    thunder = host=postgres-service port=5432 dbname=thunder
+    
     [pgbouncer]
     listen_addr = 0.0.0.0
     listen_port = 6432
