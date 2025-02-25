@@ -91,6 +91,16 @@ mockgen -source=yourservice_grpc.pb.go -destination=yourservice_mock.go
 
 ## Kubernetes Deployment
 
+
+### TLS Certificate Generation
+
+Before running your application, generate the TLS certificates to secure gRPC communication. Run the following commands in your project root:
+
+```sh
+mkdir certs
+openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes -subj "/CN=localhost"
+```
+
 ### Building and Pushing Docker Image
 ```
 docker build -t app:latest .
@@ -153,15 +163,6 @@ curl --http2 -X POST https://localhost:8080/v1/auth/login \
          }'
 ```
 # Client and Server Examples
-
-## TLS Certificate Generation
-
-Before running your application, generate the TLS certificates to secure gRPC communication. Run the following commands in your project root:
-
-```sh
-mkdir certs
-openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes -subj "/CN=localhost"
-```
 
 ## Server Example
 
