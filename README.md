@@ -124,6 +124,7 @@ kubectl apply -f pgbouncer-all.yaml
 
 ### Rollout
 ```
+kubectl rollout restart deployment pgbouncer
 kubectl rollout restart deployment app-deployment
 ```
 ### Port Forwarding
