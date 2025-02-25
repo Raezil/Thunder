@@ -23,15 +23,16 @@ RUN go install github.com/steebchen/prisma-client-go@latest
 # Add Go binaries to PATH
 ENV PATH=$PATH:/go/bin
 
-# The database URL will come from environment (docker-compose.yml)
-# but you can set a default if you wish
-ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/thunder?connection_limit=5"
+# Set the database URL from the environment or default
+ENV DATABASE_URL="postgresql://postgres:postgres@postgres-service:5432/thunder?connection_limit=5"
+ENV JWT_SECRET="secret"
+# Expose necessary ports
+EXPOSE 50051 8080
 
+# Copy the entrypoint script
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# Expose ports (whatever your app uses)
-EXPOSE 8080 50051
-
-# By default, run our custom entrypoint which creates the DB, migrates, and then runs the app
+# Set the entrypoint and default command
 ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["go", "run", "./server/main.go"]

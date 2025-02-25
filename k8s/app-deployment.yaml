@@ -14,20 +14,22 @@ spec:
       labels:
         app: app
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.28
+          command: ['sh', '-c', 'until nc -z postgres-service 5432; do echo "waiting for postgres"; sleep 2; done']
       containers:
         - name: app
           image: raezil/app:latest
           ports:
             - containerPort: 50051
             - containerPort: 8080
-        - name: postgres
-          image: postgres:latest
-          ports:
-            - containerPort: 5432
           env:
-            - name: POSTGRES_PASSWORD
-              value: "postgres"
+            - name: PGHOST
+              value: "postgres-service"   # The service name for your Postgres deployment
             - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
               value: "postgres"
             - name: POSTGRES_DB
               value: "thunder"
