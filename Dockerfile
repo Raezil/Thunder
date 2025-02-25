@@ -1,25 +1,20 @@
-# Use the official Go image for both building and running
+# Use the official Go image
 FROM golang:1.22-alpine
 
-# Install necessary packages
+# Install git (needed for 'go get' in some cases)
 RUN apk add --no-cache git
-ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/Thunder?connection_limit=5"
-# Set the working directory inside the container
+
+# Create an app directory
 WORKDIR /app
 
-# Copy go.mod and go.sum files
+# Copy module files first
 COPY go.mod go.sum ./
-
-# Download dependencies
 RUN go mod download
 
-# Copy the entire project
+# Copy the rest of your code
 COPY . .
 
-RUN mkdir certs && \
-    openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes -subj "/CN=localhost"
-
-# Remove the unnecessary _gen.go file to avoid conflicts
+# (Optional) Remove the unnecessary file if it exists
 RUN rm -f db/query-engine-debian-openssl-3.0.x_gen.go
 
 # Install prisma-client-go
@@ -28,16 +23,20 @@ RUN go install github.com/steebchen/prisma-client-go@latest
 # Add Go binaries to PATH
 ENV PATH=$PATH:/go/bin
 
-RUN PGPASSWORD=postgres psql -h localhost -U postgres -p 5432 -c "CREATE DATABASE Thunder;"
-# Set environment variables if needed (e.g., DATABASE_URL)
-# ARG DATABASE_URL
-# ENV DATABASE_URL=${DATABASE_URL}
-
-# Run Prisma db push
-RUN prisma-client-go db push
+# Set the database URL from the environment or default
+ENV DATABASE_URL="postgresql://postgres:postgres@postgres-service:5432/thunder?connection_limit=5"
+ENV JWT_SECRET="secret"
 
 # Expose necessary ports
 EXPOSE 50051 8080
 
-# Run the application using go run
+# Copy the entrypoint script
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Copy the certificates directory
+COPY certs ../certs
+
+# Set the entrypoint and default command
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["go", "run", "./server/main.go"]

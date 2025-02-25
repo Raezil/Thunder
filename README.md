@@ -104,10 +104,17 @@ docker push $docker_username/app:latest
 ```
 minikube start
 cd k8s
-kubectl apply -f deployment.yaml
-kubectl apply -f service.yaml
+kubectl apply -f postgres-deployment.yaml
+kubectl apply -f postgres-service.yaml
+kubectl apply -f postgres-pvc.yaml
+kubectl apply -f app-deployment.yaml
+kubectl apply -f app-service.yaml
 ```
 
+### Rollout
+```
+kubectl rollout restart deployment app-deployment
+```
 ### Port Forwarding
 ```
 kubectl port-forward service/app-service 8080:8080 -n default
