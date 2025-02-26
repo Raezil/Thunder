@@ -60,8 +60,8 @@ Define Your Data Model: If you’re using Prisma traditionally, you’d start wi
 
 ```
 datasource db {
-  provider = "sqlite" // or "postgresql", "mysql", etc.
-  url      = "file:dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator db {
@@ -69,10 +69,14 @@ generator db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  name  String
-  email String @unique
-  age   Int
+  id        String    @default(cuid()) @id
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  name      String
+  password  String
+  email     String    @unique
+  Age       Int
+  desc      String?
 }
 ```
 ##### b. Prisma Integration with Thunder
