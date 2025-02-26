@@ -34,6 +34,8 @@ func generateFile(gen *protogen.Plugin, file *protogen.File) {
 	// Write imports
 	g.P("import (")
 	g.P(`    "context"`)
+	g.P(`    "db"`)
+	g.P(`    "go.uber.org/zap"`)
 	g.P(")")
 	g.P()
 
@@ -49,6 +51,8 @@ func generateServiceImplementation(g *protogen.GeneratedFile, service *protogen.
 	// Generate struct
 	g.P("type ", structName, " struct {")
 	g.P("    Unimplemented", service.GoName, "Server")
+	g.P("	 PrismaClient *db.PrismaClient")
+	g.P("	 Logger       *zap.SugaredLogger")
 	g.P("}")
 	g.P()
 
