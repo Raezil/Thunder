@@ -392,9 +392,6 @@ func main() {
 }
 ```
 
-### Examples
-- [x] https://github.com/Raezil/ProtoText
-
 # References
 - [x] https://goprisma.org/docs
 - [x] https://protobuf.dev/programming-guides/proto3/
