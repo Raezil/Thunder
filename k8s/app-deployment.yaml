@@ -34,15 +34,3 @@ spec:
               value: "postgres"
             - name: POSTGRES_DB
               value: "thunder"
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8081
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8081
-            initialDelaySeconds: 3
-            periodSeconds: 5

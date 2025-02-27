@@ -19,6 +19,8 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
 // initConfig sets default values and loads environment variables.
@@ -116,13 +118,17 @@ func main() {
 	)
 	RegisterServers(grpcServer, client, sugar)
 
+	// Register gRPC Health service.
+	healthServer := health.NewServer()
+	healthServer.SetServingStatus("", grpc_health_v1.HealthCheckResponse_SERVING)
+	grpc_health_v1.RegisterHealthServer(grpcServer, healthServer)
+
 	sugar.Infof("Serving gRPC with TLS on 0.0.0.0%s", grpcPort)
 	go func() {
 		log.Fatalln(grpcServer.Serve(lis))
 	}()
 
 	// Setup secure connection for gRPC-Gateway.
-	// Use "localhost" since the certificate is issued to "localhost".
 	clientCreds, err := credentials.NewClientTLSFromFile(certFile, "localhost")
 	if err != nil {
 		sugar.Fatalf("Failed to load client TLS credentials: %v", err)
@@ -138,10 +144,25 @@ func main() {
 	// Register gRPC-Gateway handlers.
 	gwmux := runtime.NewServeMux()
 	RegisterHandlers(gwmux, conn)
+
+	// Create a new HTTP mux and add health and readiness endpoints.
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		// You can add more logic here if needed.
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+	mux.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
+		// You might include checks (e.g., database connectivity) before reporting readiness.
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Ready"))
+	})
+	mux.Handle("/", gwmux)
+
 	httpPort := viper.GetString("http.port")
 	gwServer := &http.Server{
 		Addr:    httpPort,
-		Handler: gwmux,
+		Handler: mux,
 	}
 
 	sugar.Infof("Serving gRPC-Gateway on https://0.0.0.0%s", httpPort)
