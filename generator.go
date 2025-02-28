@@ -36,6 +36,8 @@ func main() {
 			"--grpc-gateway_out=./backend",
 			"--grpc-gateway_opt=paths=source_relative",
 			"--rpc-impl_out=.",
+			"--openapiv2_out=./backend",
+			"--openapiv2_opt=logtostderr=true",
 			*proto,
 		); err != nil {
 			log.Fatalf("Error executing protoc command: %v", err)
