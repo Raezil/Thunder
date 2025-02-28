@@ -99,6 +99,7 @@ go run generator.go -proto=filename.proto -prisma=true
 ```sh
 go run ./server/main.go
 ```
+> **Note:** Generate TLS certificates prior running the server.
 
 ## **🚀 Running the Tests**
 #### a. Mocking Tests
@@ -107,9 +108,7 @@ To mock a gRPC server:
 cd backend
 mockgen -source=yourservice_grpc.pb.go -destination=yourservice_mock.go
 ```
-> **Note:** Replace `yourservice` with the actual name of your gRPC service.
-
-**Examples** Look into /backend/authenticator_server_test.go to see how to develop tests or look into https://github.com/golang/mock
+> **Note:** Replace `yourservice` with the actual name of your gRPC service. Look into /backend/authenticator_server_test.go to see how to develop tests or look into https://github.com/golang/mock
 
 ---
 
