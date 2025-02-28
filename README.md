@@ -438,7 +438,7 @@ Want to improve Thunder? 🚀
 
 ## **🔗 References**
 - 📜 [Go Documentation](https://golang.org/doc/)  
-- 📘 [gRPC-Gateway](https://grpc-ecosystem.github.io/grpc-gateway/docs/)  
+- 📘 [gRPC-Gateway](https://grpc-ecosystem.github.io/grpc-gateway/)  
 - 🛠️ [Prisma ORM](https://www.prisma.io/docs/)  
 - ☁️ [Kubernetes Docs](https://kubernetes.io/docs/)  
 
