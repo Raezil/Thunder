@@ -12,8 +12,9 @@
 ✔️ **Kubernetes Ready** – Easily deploy and scale with Kubernetes.  
 ✔️ **TLS Security** – Secure gRPC communications with TLS.  
 ✔️ **Structured Logging** – Built-in `zap` logging.  
+✔️ **Authentication** – Secure endpoints with built-in authentication mechanisms.  
 ✔️ **Rate Limiting & Authentication** – Pre-configured middleware.  
-✔️ **Modular & Extensible** – Easily extend Thunder for custom use cases.  
+✔️ **Modular & Extensible** – Easily extend Thunder for custom use cases.
 
 ---
 
