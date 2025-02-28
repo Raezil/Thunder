@@ -110,6 +110,11 @@ mockgen -source=yourservice_grpc.pb.go -destination=yourservice_mock.go
 ```
 > **Note:** Replace `yourservice` with the actual name of your gRPC service. Look into /backend/authenticator_server_test.go to see how to develop tests or look into https://github.com/golang/mock
 
+#### b. Running the Tests
+```
+go test ./backend/... ./db/...
+```
+
 ---
 
 ## **🔧 Kubernetes Deployment**
