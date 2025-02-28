@@ -1,11 +1,34 @@
-## Thunder - Backend Framework (gRPC Gateway + Prisma + Kubernetes + Golang)
-Thunder is a minimalistic backend framework built with Golang that leverages gRPC Gateway, Prisma, and Kubernetes to simplify the development, testing, and deployment of scalable microservices.
+# **Thunder - A Minimalist Backend Framework in Go**
+*A gRPC-Gateway-powered framework with Prisma, Kubernetes, and Go for scalable microservices.*
 
-### 1. Developing with Protocol Buffers (proto)
-## a. Create Your .proto File
+[![Go Version](https://img.shields.io/badge/Go-1.21-blue)](https://golang.org)
+[![License](https://img.shields.io/github/license/Raezil/Thunder)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/Raezil/Thunder)](https://github.com/Raezil/Thunder/stargazers)
+[![Issues](https://img.shields.io/github/issues/Raezil/Thunder)](https://github.com/Raezil/Thunder/issues)
 
-Start by defining your service and messages in a .proto file (for example, example.proto):
+## **🚀 Features**
+✔️ **gRPC + REST (gRPC-Gateway)** – Automatically expose RESTful APIs from gRPC services.  
+✔️ **Prisma Integration** – Use Prisma for efficient database access in Go.  
+✔️ **Kubernetes Ready** – Easily deploy and scale with Kubernetes.  
+✔️ **TLS Security** – Secure gRPC communications with TLS.  
+✔️ **Structured Logging** – Built-in `zap` logging.  
+✔️ **Rate Limiting & Authentication** – Pre-configured middleware.  
+✔️ **Modular & Extensible** – Easily extend Thunder for custom use cases.  
+
+---
+
+## **📌 Getting Started**
+### **1️⃣ Install Dependencies**
+Ensure you have Go, `protoc`, and Prisma installed.  
+
+```sh
+go mod tidy
 ```
+
+### **2️⃣ Define Your gRPC Service**
+Create a `.proto` file, e.g., `user.proto`:
+
+```proto
 syntax = "proto3";
 
 package example;
@@ -34,7 +57,28 @@ message UserResponse {
   int32 age = 3;
 }
 ```
-#### b. Build and Install a Custom protoc Plugin
+---
+
+## **🛠️ Prisma Integration**
+Thunder automatically integrates Prisma for database management. Define your schema:
+
+## a. Create Your .proto File
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @default(cuid()) @id
+  name  String
+  email String @unique
+}
+```
+
+## **🚀 Running the Server**
+
+#### a. Build and Install a Custom protoc Plugin
 
 To generate your gRPC server implementations, you can build a custom protoc plugin. In Thunder, the plugin is built as follows:
 
@@ -44,46 +88,20 @@ go build -o protoc-gen-rpc-impl ./cmd/protoc-gen-rpc-impl.go
 sudo mv protoc-gen-rpc-impl /usr/local/bin
 sudo chmod +x /usr/local/bin/protoc-gen-rpc-impl
 ```
-### Code Generation
+#### b. Code Generation
 ```
 go run generator.go -proto=filename.proto -prisma=true
 ```
 > **Note:** Replace `filename` with the actual name of your gRPC service.
 
-# 2. Developing with Prisma
+#### c. Start the **gRPC + REST API** server:
 
-When the -prisma=true flag is enabled, the generator will integrate Prisma into your project. 
-Although Thunder’s approach is Golang based, the principle is similar to Prisma’s usage in other ecosystems.
-
-##### a. Example Prisma Workflow (General Approach)
-Define Your Data Model: If you’re using Prisma traditionally, you’d start with a schema like this in schema.prisma:
-
+```sh
+go run ./server/main.go
 ```
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
 
-generator db {
-  provider = "go run github.com/steebchen/prisma-client-go"
-}
-
-model User {
-  id        String    @default(cuid()) @id
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  name      String
-  password  String
-  email     String    @unique
-  Age       Int
-  desc      String?
-}
-```
-##### b. Prisma Integration with Thunder
-
-With Thunder’s generator, much of the manual work of integrating Prisma is handled automatically. The generated Prisma files ensure that your database layer is aligned with your proto definitions. This streamlines development by reducing redundancy and keeping your API and database schema in sync.
-
-##### Mocking Tests
+## **🚀 Running the Tests**
+#### a. Mocking Tests
 To mock a gRPC server:
 ```
 cd backend
@@ -93,13 +111,10 @@ mockgen -source=yourservice_grpc.pb.go -destination=yourservice_mock.go
 
 **Examples** Look into /backend/authenticator_server_test.go to see how to develop tests or look into https://github.com/golang/mock
 
-## Kubernetes Deployment
+---
 
-
-### TLS Certificate Generation
-
-Before running your application, generate the TLS certificates to secure gRPC communication. Run the following commands in your project root:
-
+## **🔧 Kubernetes Deployment**
+### **1️⃣ Generate TLS Certificates**
 ```sh
 mkdir certs
 openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes \
@@ -107,7 +122,7 @@ openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.cr
   -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
 ```
 
-### Building and Pushing Docker Image
+### **2️⃣ Build & Push Docker Image**
 ```
 docker build -t app:latest .
 docker login
@@ -115,9 +130,8 @@ docker push $docker_username/app:latest
 ```
 > **Note:** Edit `k8s/app-deployment.yaml` before deploying.
 
-### Deploying with Kubernetes
-- Apply kubectl
-```
+### **3️⃣ Deploy to Kubernetes**
+```sh
 minikube start
 cd k8s
 kubectl apply -f postgres-deployment.yaml
@@ -126,28 +140,22 @@ kubectl apply -f postgres-pvc.yaml
 kubectl apply -f app-deployment.yaml
 kubectl apply -f app-service.yaml
 kubectl apply -f pgbouncer-all.yaml
-```
-
-### Rollout
-```
 kubectl rollout restart deployment pgbouncer
 kubectl rollout restart deployment app-deployment
-```
-### Port Forwarding
-```
-kubectl port-forward service/app-service 8080:8080 -n default
+kubectl port-forward service/app-service 8080:8080
 ```
 
-### Checking Pod Status
+#### Checking Pod Status
 ```
 kubectl get pods -n default
 kubectl describe pod $NAME -n default
 ```
 
-## Testing API
+---
 
-> **Register**
-```
+## **📡 API Testing**
+### **Register a User**
+```sh
 curl -k --http2 -X POST https://localhost:8080/v1/auth/register \
      -H "Content-Type: application/json" \
      -d '{
@@ -159,8 +167,8 @@ curl -k --http2 -X POST https://localhost:8080/v1/auth/register \
          }'
 ```
 
-> **login**
-```
+### **Login**
+```sh
 curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
      -H "Content-Type: application/json" \
      -d '{
@@ -168,13 +176,14 @@ curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
            "password": "password123"
          }'
 ```
-# Client and Server Examples
 
-## Server Example
+---
 
-> Below is an example of a server implementation that registers gRPC services and a gRPC-Gateway for HTTP REST access:
-```
-// ./server/main.go
+## **💡 Example Implementations**
+### **🔹 Server**
+Example of a gRPC server running with authentication and rate limiting:
+
+```go
 package main
 
 import (
@@ -196,6 +205,8 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
 // initConfig sets default values and loads environment variables.
@@ -293,13 +304,17 @@ func main() {
 	)
 	RegisterServers(grpcServer, client, sugar)
 
+	// Register gRPC Health service.
+	healthServer := health.NewServer()
+	healthServer.SetServingStatus("", grpc_health_v1.HealthCheckResponse_SERVING)
+	grpc_health_v1.RegisterHealthServer(grpcServer, healthServer)
+
 	sugar.Infof("Serving gRPC with TLS on 0.0.0.0%s", grpcPort)
 	go func() {
 		log.Fatalln(grpcServer.Serve(lis))
 	}()
 
 	// Setup secure connection for gRPC-Gateway.
-	// Use "localhost" since the certificate is issued to "localhost".
 	clientCreds, err := credentials.NewClientTLSFromFile(certFile, "localhost")
 	if err != nil {
 		sugar.Fatalf("Failed to load client TLS credentials: %v", err)
@@ -315,10 +330,25 @@ func main() {
 	// Register gRPC-Gateway handlers.
 	gwmux := runtime.NewServeMux()
 	RegisterHandlers(gwmux, conn)
+
+	// Create a new HTTP mux and add health and readiness endpoints.
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		// You can add more logic here if needed.
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+	mux.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
+		// You might include checks (e.g., database connectivity) before reporting readiness.
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Ready"))
+	})
+	mux.Handle("/", gwmux)
+
 	httpPort := viper.GetString("http.port")
 	gwServer := &http.Server{
 		Addr:    httpPort,
-		Handler: gwmux,
+		Handler: mux,
 	}
 
 	sugar.Infof("Serving gRPC-Gateway on https://0.0.0.0%s", httpPort)
@@ -326,12 +356,10 @@ func main() {
 }
 ```
 
-## Client Example
+### **🔹 Client**
+A simple gRPC client:
 
-> Below is an example client that connects to the gRPC server, registers a new user, logs in, and accesses a protected endpoint:
-
-```
-// ./client/main.go
+```go
 package main
 
 import (
@@ -396,7 +424,26 @@ func main() {
 }
 ```
 
-# References
-- [x] https://goprisma.org/docs
-- [x] https://protobuf.dev/programming-guides/proto3/
-- [x] https://grpc-ecosystem.github.io/grpc-gateway/docs/tutorials/adding_annotations/
+---
+
+## **📜 Contributing**
+Want to improve Thunder? 🚀  
+1. Fork the repo  
+2. Create a feature branch (`git checkout -b feature-new`)  
+3. Commit your changes (`git commit -m "Added feature"`)  
+4. Push to your branch (`git push origin feature-new`)  
+5. Submit a PR!  
+
+---
+
+## **🔗 References**
+- 📜 [Go Documentation](https://golang.org/doc/)  
+- 📘 [gRPC-Gateway](https://grpc-ecosystem.github.io/grpc-gateway/)  
+- 🛠️ [Prisma ORM](https://www.prisma.io/docs/)  
+- ☁️ [Kubernetes Docs](https://kubernetes.io/docs/)  
+
+---
+
+## **📣 Stay Connected**
+⭐ Star the repo if you find it useful!  
+📧 For questions, reach out via [GitHub Issues](https://github.com/Raezil/Thunder/issues).  
