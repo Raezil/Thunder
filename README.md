@@ -148,8 +148,7 @@ kubectl describe pod $NAME -n default
 
 > **Register**
 ```
-curl --http2 -X POST https://localhost:8080/v1/auth/register \
-     --cacert certs/server.crt \
+curl -k --http2 -X POST https://localhost:8080/v1/auth/register \
      -H "Content-Type: application/json" \
      -d '{
            "email": "newuser@example.com",
@@ -162,8 +161,7 @@ curl --http2 -X POST https://localhost:8080/v1/auth/register \
 
 > **login**
 ```
-curl --http2 -X POST https://localhost:8080/v1/auth/login \
-     --cacert certs/server.crt \
+curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
      -H "Content-Type: application/json" \
      -d '{
            "email": "newuser@example.com",
