@@ -116,5 +116,4 @@ jobs:
 
       - name: Verify Deployment
         run: |
-          kubectl rollout status deployment/app-deployment --timeout=120s
-
+          kubectl wait --for=condition=available --timeout=120s deployment/app-deployment
