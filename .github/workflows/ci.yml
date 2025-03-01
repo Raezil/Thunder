@@ -1,0 +1,69 @@
+name: Thunder CI Pipeline
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  build-and-test:
+    name: Build, Lint, and Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: testdb
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser -d testdb"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Install Dependencies
+        run: go mod tidy
+
+      - name: Lint Code
+        run: |
+          go install golang.org/x/lint/golint@latest
+          golint ./...
+
+      - name: Build Project
+        run: go build -v ./...
+
+      - name: Run Unit Tests
+        run: go test -v ./...
+
+      - name: Start Thunder Server
+        run: |
+          go run server/main.go &
+          # Consider waiting longer or polling for readiness if necessary
+          sleep 5
+
+      - name: Run Integration Tests (gRPC + REST)
+        run: |
+          go test ./backend/... ./db/...
+
+      - name: Generate Coverage Report
+        run: go test -coverprofile=coverage.txt ./backend/... ./db/...
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage.txt
