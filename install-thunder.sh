@@ -42,6 +42,8 @@ case "$1" in
         kubectl apply -f app-deployment.yaml
         kubectl apply -f app-service.yaml
         kubectl apply -f app-loadbalancer.yaml
+        # Apply hpa
+        kubectl apply -f hpa.yaml
 
         # Apply PgBouncer for database connection pooling
         echo "🔄 Deploying PgBouncer..."
