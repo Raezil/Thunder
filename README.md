@@ -172,6 +172,7 @@ kubectl apply -f postgres-service.yaml
 kubectl apply -f postgres-pvc.yaml
 kubectl apply -f app-deployment.yaml
 kubectl apply -f app-service.yaml
+kubectl apply -f app-loadbalancer.yaml
 kubectl apply -f pgbouncer-all.yaml
 kubectl rollout restart deployment pgbouncer
 kubectl rollout restart deployment app-deployment
