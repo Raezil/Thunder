@@ -1,5 +1,7 @@
 # Thunder CLI 🚀
 
+The Thunder CLI is a dedicated command‐line tool designed to work with the Thunder backend framework. It provides developers with a streamlined way to generate code, manage configurations, and interact with various Thunder features directly from the terminal.
+
 A custom CLI tool to automate:
 - **Generating gRPC and Prisma files** (`thunder generate`)
 - **Deploying Kubernetes resources** (`thunder deploy`)
