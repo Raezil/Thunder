@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 set -e  # Exit immediately if a command exits with a non-zero status
 
 # Build the thunder-generate binary
@@ -16,6 +17,16 @@ cat << 'EOF' | sudo tee /usr/local/bin/thunder > /dev/null
 #!/bin/bash
 
 case "$1" in
+    new)
+        shift
+        # Use an optional directory name; default to "Thunder"
+        TARGET_DIR="${1:-Thunder}"
+        echo "Cloning Thunder repository into '${TARGET_DIR}'..."
+        git clone https://github.com/Raezil/Thunder "$TARGET_DIR" || { echo "❌ Error: Cloning failed."; exit 1; }
+        echo "Removing .git folder from '${TARGET_DIR}'..."
+        rm -rf "$TARGET_DIR/.git" || { echo "❌ Error: Could not remove .git folder."; exit 1; }
+        echo "Repository cloned to '${TARGET_DIR}' with git history removed."
+        ;;
     generate)
         shift
         thunder-generate "$@"
@@ -42,7 +53,7 @@ case "$1" in
         kubectl apply -f app-deployment.yaml
         kubectl apply -f app-service.yaml
         kubectl apply -f app-loadbalancer.yaml
-        # Apply hpa
+        # Apply HPA configuration
         kubectl apply -f hpa.yaml
 
         # Apply PgBouncer for database connection pooling
@@ -59,7 +70,7 @@ case "$1" in
         kubectl port-forward service/app-service 8080:8080 &
         ;;
     *)
-        echo "⚡ Usage: thunder [generate | deploy]"
+        echo "⚡ Usage: $0 [new | generate | deploy]"
         exit 1
         ;;
 esac
