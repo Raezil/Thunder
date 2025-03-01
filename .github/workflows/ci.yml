@@ -56,5 +56,5 @@ jobs:
           # Adjust the sleep duration or implement a readiness check if needed
           sleep 5
 
-      - name: Run Integration Tests (gRPC + REST)
+      - name: Run Tests (gRPC + REST)
         run: go test -v ./backend/... ./db/...
