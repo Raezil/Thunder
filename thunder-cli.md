@@ -34,6 +34,12 @@ or
 thunder generate --prisma
 ```
 
+### Generate project
+```
+thunder new projectname
+```
+> **Note** replace projectname with actual project name
+
 ### Deploy Kubernetes Resources
 Before deploying make sure You run those commands:
 ```
