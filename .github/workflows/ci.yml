@@ -39,21 +39,9 @@ jobs:
 
       - name: Install Dependencies
         run: go mod tidy
-
-      - name: Generate Self-Signed Certificates
-        run: |
-          mkdir -p certs
-          openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes \
-            -subj "/CN=localhost" \
-            -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
-
+        
       - name: Run Unit Tests
         run: go test -v ./...
-
-      - name: Start Thunder Server
-        run: |
-          go run server/main.go &
-          sleep 5  # Adjust if your server needs more time to be ready
 
       - name: Run Integration Tests (gRPC + REST)
         run: go test -v ./backend/... ./db/...
