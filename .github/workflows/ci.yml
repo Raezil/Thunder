@@ -98,7 +98,9 @@ jobs:
         with:
           version: 'latest'
 
+
       - name: Deploy to Kubernetes
+        working-directory: ./k8s
         run: |
           kubectl apply -f postgres-deployment.yaml
           kubectl apply -f postgres-service.yaml
