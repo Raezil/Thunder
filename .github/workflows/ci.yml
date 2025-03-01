@@ -98,11 +98,6 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Configure Kubernetes Context
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
-          kubectl config use-context my-cluster
-
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f postgres-deployment.yaml
