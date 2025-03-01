@@ -37,7 +37,7 @@ func TestVerifyJWT(t *testing.T) {
 
 func TestCurrentUser(t *testing.T) {
 	email := "user@test.com"
-	ctx := metadata.NewOutgoingContext(context.Background(), metadata.Pairs("current_user", email))
+	ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs("current_user", email))
 
 	currentUser, err := CurrentUser(ctx)
 	assert.NoError(t, err, "expected no error from CurrentUser")
