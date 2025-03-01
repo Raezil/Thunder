@@ -35,6 +35,15 @@ thunder generate --prisma
 ```
 
 ### Deploy Kubernetes Resources
+Before deploying make sure You run this commands:
+```
+docker build -t app:latest .
+docker login
+docker push $docker_username/app:latest
+```
+> **Note** $docker_username is your username, change it in k8s/app-deployment as well
+
+Congratulations!, Now You can use deploy!
 ```bash
 thunder deploy
 ```
@@ -44,6 +53,7 @@ This command will:
 3. Apply your app’s Kubernetes deployments and services.
 4. Restart PgBouncer and your app deployment.
 5. Forward port `8080` to access the application.
+
 
 ## Requirements
 - **Go** (for building `thunder-generate`)
