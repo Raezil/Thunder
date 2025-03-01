@@ -8,10 +8,10 @@ on:
 
 jobs:
   test:
-    name: Run Tests
+    name: Run Tests and Generate Coverage
     runs-on: ubuntu-latest
     env:
-      JWT_SECRET: "testsecret"  # Ensure this variable is set for your tests
+      JWT_SECRET: "testsecret"  # Set any required environment variables
 
     services:
       postgres:
@@ -53,8 +53,16 @@ jobs:
       - name: Start Thunder Server
         run: |
           go run server/main.go &
-          # Adjust the sleep duration or implement a readiness check if needed
-          sleep 5
+          sleep 5  # Adjust if your server needs more time to be ready
 
-      - name: Run Tests (gRPC + REST)
+      - name: Run Integration Tests (gRPC + REST)
         run: go test -v ./backend/... ./db/...
+
+      - name: Generate Coverage Report
+        run: go test -coverprofile=coverage.txt ./backend/... ./db/...
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.txt
