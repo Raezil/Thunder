@@ -187,6 +187,11 @@ kubectl get pods -n default
 kubectl describe pod $NAME -n default
 ```
 
+### Thunder CLI
+For a comprehensive guide on how to use Thunder CLI—including installation steps, available commands, and usage examples—you can refer to the official documentation here:
+https://github.com/Raezil/Thunder/blob/main/thunder-cli.md
+
+This file covers everything you need to get started with Thunder CLI and will help you integrate it into your development workflow.
 ---
 
 ## **📡 API Testing**
