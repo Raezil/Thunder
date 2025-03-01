@@ -35,7 +35,7 @@ thunder generate --prisma
 ```
 
 ### Deploy Kubernetes Resources
-Before deploying make sure You run this commands:
+Before deploying make sure You run those commands:
 ```
 docker build -t app:latest .
 docker login
