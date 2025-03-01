@@ -93,11 +93,17 @@ jobs:
       - name: Push Docker Image
         run: docker push raezil/app:latest
 
+      - name: Install and Start Minikube
+        run: |
+          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          chmod +x minikube-linux-amd64
+          sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+          minikube start --driver=docker
+
       - name: Set Up Kubectl
         uses: azure/setup-kubectl@v3
         with:
           version: 'latest'
-
 
       - name: Deploy to Kubernetes
         working-directory: ./k8s
