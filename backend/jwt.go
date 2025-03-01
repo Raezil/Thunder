@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-// getJWTSecret fetches the JWT secret dynamically at runtime
+// getJWTSecret fetches the JWT secret securely from environment variables.
 func getJWTSecret() ([]byte, error) {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
@@ -19,24 +19,30 @@ func getJWTSecret() ([]byte, error) {
 	return []byte(secret), nil
 }
 
-// Claims struct for JWT payload
+// Claims struct for JWT payload with added issuer claim.
 type Claims struct {
 	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
 
-// NewClaims creates a new Claims object with expiration time
+// NewClaims creates a new Claims object with expiration time and an issuer.
 func NewClaims(email string) *Claims {
 	expirationTime := time.Now().Add(24 * time.Hour)
+	issuer := os.Getenv("JWT_ISSUER")
+	if issuer == "" {
+		issuer = "default-issuer" // Fallback issuer, but best to set it in env.
+	}
 	return &Claims{
 		Email: email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			Issuer:    issuer,
+			// Optionally, add Audience, Subject, etc.
 		},
 	}
 }
 
-// GenerateJWT generates a JWT token securely
+// GenerateJWT generates a JWT token securely with additional claims.
 func GenerateJWT(email string) (string, error) {
 	secret, err := getJWTSecret()
 	if err != nil {
@@ -53,7 +59,7 @@ func GenerateJWT(email string) (string, error) {
 	return tokenString, nil
 }
 
-// VerifyJWT verifies a JWT token and extracts claims
+// VerifyJWT verifies a JWT token, strictly checks the signing method, and extracts claims.
 func VerifyJWT(tokenStr string) (*Claims, error) {
 	secret, err := getJWTSecret()
 	if err != nil {
@@ -62,16 +68,19 @@ func VerifyJWT(tokenStr string) (*Claims, error) {
 
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
+		// Ensure the token method conforms to expected signing method
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 		return secret, nil
 	})
-
 	if err != nil || !token.Valid {
-		return nil, fmt.Errorf("invalid or expired token: %v", err)
+		return nil, fmt.Errorf("invalid or expired token")
 	}
 	return claims, nil
 }
 
-// CurrentUser extracts the user email from context metadata safely
+// CurrentUser extracts the user email from context metadata safely.
 func CurrentUser(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
