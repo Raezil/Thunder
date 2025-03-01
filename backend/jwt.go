@@ -3,7 +3,6 @@ package backend
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -11,60 +10,86 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
-
-func init() {
-	if len(jwtSecret) == 0 {
-		log.Fatal("JWT_SECRET is not set")
+// getJWTSecret fetches the JWT secret securely from environment variables.
+func getJWTSecret() ([]byte, error) {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		return nil, fmt.Errorf("JWT_SECRET is not set in environment variables")
 	}
+	return []byte(secret), nil
 }
 
+// Claims struct for JWT payload with added issuer claim.
 type Claims struct {
 	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
 
-// NewClaims creates a new Claims object with the given email
+// NewClaims creates a new Claims object with expiration time and an issuer.
 func NewClaims(email string) *Claims {
 	expirationTime := time.Now().Add(24 * time.Hour)
+	issuer := os.Getenv("JWT_ISSUER")
+	if issuer == "" {
+		issuer = "default-issuer" // Fallback issuer, but best to set it in env.
+	}
 	return &Claims{
 		Email: email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			Issuer:    issuer,
+			// Optionally, add Audience, Subject, etc.
 		},
 	}
 }
 
-// GenerateJWT generates a new JWT token for the given email
+// GenerateJWT generates a JWT token securely with additional claims.
 func GenerateJWT(email string) (string, error) {
-	claims := NewClaims(email)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtSecret)
+	secret, err := getJWTSecret()
 	if err != nil {
 		return "", err
+	}
+
+	claims := NewClaims(email)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	tokenString, err := token.SignedString(secret)
+	if err != nil {
+		return "", fmt.Errorf("failed to sign token: %v", err)
 	}
 	return tokenString, nil
 }
 
-// VerifyJWT verifies the given JWT token and returns the claims
+// VerifyJWT verifies a JWT token, strictly checks the signing method, and extracts claims.
 func VerifyJWT(tokenStr string) (*Claims, error) {
+	secret, err := getJWTSecret()
+	if err != nil {
+		return nil, err
+	}
+
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtSecret, nil
+		// Ensure the token method conforms to expected signing method
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return secret, nil
 	})
-
 	if err != nil || !token.Valid {
-		return nil, fmt.Errorf("invalid token: %v", err)
+		return nil, fmt.Errorf("invalid or expired token")
 	}
 	return claims, nil
 }
 
-// CurrentUser extracts the current user email from the context metadata
+// CurrentUser extracts the user email from context metadata safely.
 func CurrentUser(ctx context.Context) (string, error) {
-	md, ok := metadata.FromOutgoingContext(ctx)
+	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return "", fmt.Errorf("missing metadata")
 	}
-	current_user := md["current_user"]
-	return current_user[0], nil
+
+	currentUser, exists := md["current_user"]
+	if !exists || len(currentUser) == 0 {
+		return "", fmt.Errorf("current_user metadata is missing")
+	}
+	return currentUser[0], nil
 }
