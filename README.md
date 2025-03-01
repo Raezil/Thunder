@@ -6,6 +6,35 @@
 [![Stars](https://img.shields.io/github/stars/Raezil/Thunder)](https://github.com/Raezil/Thunder/stargazers)
 [![Issues](https://img.shields.io/github/issues/Raezil/Thunder)](https://github.com/Raezil/Thunder/issues)
 
+## **Table of Contents**
+- [🚀 Features](#-features)
+- [📌 Getting Started](#-getting-started)
+  - [1️⃣ Install Dependencies](#1️⃣-install-dependencies)
+  - [2️⃣ Define Your gRPC Service](#2️⃣-define-your-grpc-service)
+- [🛠️ Prisma Integration](#️-prisma-integration)
+- [🚀 Running the Server](#-running-the-server)
+  - [a. Build and Install a Custom protoc Plugin](#a-build-and-install-a-custom-protoc-plugin)
+  - [b. Code Generation](#b-code-generation)
+  - [c. Start the **gRPC + REST API** server](#c-start-the-grpc--rest-api-server)
+- [🚀 Running the Tests](#-running-the-tests)
+  - [a. Mocking Tests](#a-mocking-tests)
+  - [b. Running the Tests](#b-running-the-tests)
+- [🔧 Kubernetes Deployment](#-kubernetes-deployment)
+  - [1️⃣ Generate TLS Certificates](#1️⃣-generate-tls-certificates)
+  - [2️⃣ Build & Push Docker Image](#2️⃣-build--push-docker-image)
+  - [3️⃣ Deploy to Kubernetes](#3️⃣-deploy-to-kubernetes)
+- [📡 API Testing](#-api-testing)
+  - [Register a User](#register-a-user)
+  - [Login](#login)
+- [💡 Example Implementations](#-example-implementations)
+  - [🔹 Server](#-server)
+  - [🔹 Client](#-client)
+- [📜 Contributing](#-contributing)
+- [🔗 References](#-references)
+- [📣 Stay Connected](#-stay-connected)
+
+---
+
 ## **🚀 Features**
 ✔️ **gRPC + REST (gRPC-Gateway)** – Automatically expose RESTful APIs from gRPC services.  
 ✔️ **Prisma Integration** – Use Prisma for efficient database access in Go.  
