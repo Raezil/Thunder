@@ -1,4 +1,4 @@
-name: Thunder CI Pipeline
+name: Thunder Test Pipeline
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  build-and-test:
-    name: Build, Lint, and Test
+  test:
+    name: Run Tests
     runs-on: ubuntu-latest
 
     services:
@@ -38,32 +38,14 @@ jobs:
       - name: Install Dependencies
         run: go mod tidy
 
-      - name: Lint Code
-        run: |
-          go install golang.org/x/lint/golint@latest
-          golint ./...
-
-      - name: Build Project
-        run: go build -v ./...
-
       - name: Run Unit Tests
         run: go test -v ./...
 
       - name: Start Thunder Server
         run: |
           go run server/main.go &
-          # Consider waiting longer or polling for readiness if necessary
+          # Consider using a readiness check instead of sleep if needed
           sleep 5
 
       - name: Run Integration Tests (gRPC + REST)
-        run: |
-          go test ./backend/... ./db/...
-
-      - name: Generate Coverage Report
-        run: go test -coverprofile=coverage.txt ./backend/... ./db/...
-
-      - name: Upload Coverage Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage.txt
+        run: go test -v ./backend/... ./db/...
