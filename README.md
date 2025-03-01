@@ -9,6 +9,7 @@
 ## **Table of Contents**
 - [🚀 Features](#-features)
 - [📌 Getting Started](#-getting-started)
+- - [⚡ Thunder CLI](#thunder-cli)
   - [1️⃣ Install Dependencies](#1️⃣-install-dependencies)
   - [2️⃣ Define Your gRPC Service](#2️⃣-define-your-grpc-service)
 - [🛠️ Prisma Integration](#️-prisma-integration)
@@ -45,7 +46,7 @@
 
 ## **📌 Getting Started**
 
-### Thunder CLI
+### **Thunder CLI**
 For a comprehensive guide on how to use Thunder CLI—including installation steps, available commands, and usage examples—you can refer to the official documentation here:
 https://github.com/Raezil/Thunder/blob/main/thunder-cli.md
 
