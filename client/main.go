@@ -29,7 +29,7 @@ func main() {
 	client := NewAuthClient(conn)
 	ctx := context.Background()
 	registerReply, err := client.Register(ctx, &RegisterRequest{
-		Email:    "kmosc111238@example.com",
+		Email:    "kmosc1211@example.com",
 		Password: "password",
 		Name:     "Kamil",
 		Surname:  "Mosciszko",
@@ -41,7 +41,7 @@ func main() {
 	fmt.Println("Received registration response:", registerReply)
 
 	loginReply, err := client.Login(ctx, &LoginRequest{
-		Email:    "kmosc111238@example.com",
+		Email:    "kmosc1211@example.com",
 		Password: "password",
 	})
 	if err != nil {
