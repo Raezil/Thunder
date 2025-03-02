@@ -6,7 +6,7 @@ A custom CLI tool to automate:
 - **Generating gRPC and Prisma files** (`thunder generate`)
 - **Deploying Kubernetes resources** (`thunder deploy`)
 - **Initializing project** (`thunder new`)
-
+- **Docker** (`thunder docker`)
 ## Installation
 
 ### 1. Clone or Download the Repository
@@ -46,11 +46,8 @@ thunder new projectname
 ### Deploy Kubernetes Resources
 Before deploying make sure You run those commands:
 ```
-docker build -t app:latest .
-docker login
-docker push $docker_username/app:latest
+thunder docker
 ```
-> **Note** $docker_username is your username, change it in k8s/app-deployment as well
 
 Congratulations!, Now You can use deploy!
 ```bash

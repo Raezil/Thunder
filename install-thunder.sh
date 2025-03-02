@@ -31,6 +31,16 @@ case "$1" in
         shift
         thunder-generate "$@"
         ;;
+    docker)
+        echo "Enter your Docker Hub username:"
+        read docker_username
+        echo "🔨 Building Docker image..."
+        docker build -t ${docker_username}/app:latest .
+        echo "🔑 Logging in to Docker Hub..."
+        docker login
+        echo "⬆️  Pushing Docker image..."
+        docker push ${docker_username}/app:latest
+        ;;
     deploy)
         echo "🚀 Starting Minikube..."
         minikube start
