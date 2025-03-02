@@ -44,7 +44,7 @@ thunder new projectname
 > **Note** replace projectname with actual project name
 
 ### Deploy Kubernetes Resources
-Before deploying make sure You run those commands:
+Before deploying make sure You run that command:
 ```
 thunder docker
 ```
