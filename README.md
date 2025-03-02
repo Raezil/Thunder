@@ -14,9 +14,8 @@
   - [2️⃣ Define Your gRPC Service](#2️⃣-define-your-grpc-service)
 - [🛠️ Prisma Integration](#️-prisma-integration)
 - [🚀 Running the Server](#-running-the-server)
-  - [a. Build and Install a Custom protoc Plugin](#a-build-and-install-a-custom-protoc-plugin)
-  - [b. Code Generation](#b-code-generation)
-  - [c. Start the **gRPC + REST API** server](#c-start-the-grpc--rest-api-server)
+  - [a. Code Generation](#a-code-generation)
+  - [b. Start the **gRPC + REST API** server](#b-start-the-grpc--rest-api-server)
 - [🚀 Running the Tests](#-running-the-tests)
   - [a. Mocking Tests](#a-mocking-tests)
   - [b. Running the Tests](#b-running-the-tests)
@@ -113,24 +112,14 @@ model User {
 
 ## **🚀 Running the Server**
 
-#### a. Build and Install a Custom protoc Plugin
-
-To generate your gRPC server implementations, you can build a custom protoc plugin. In Thunder, the plugin is built as follows:
-
-##### Adding `protoc` Plugin
-```
-go build -o protoc-gen-rpc-impl ./cmd/protoc-gen-rpc-impl.go
-sudo mv protoc-gen-rpc-impl /usr/local/bin
-sudo chmod +x /usr/local/bin/protoc-gen-rpc-impl
-```
-#### b. Code Generation
+#### a. Code Generation
 ```
 thunder generate -proto=filename.proto -prisma=true
 ```
 > **Note:** Replace `filename` with the actual name of your gRPC service.
 > **Note** Remember to install [ Thunder CLI](#thunder-cli)
 
-#### c. Start the **gRPC + REST API** server:
+#### b. Start the **gRPC + REST API** server:
 
 ```sh
 go run ./server/main.go
