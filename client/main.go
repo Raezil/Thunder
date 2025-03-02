@@ -4,7 +4,9 @@ import (
 	. "backend"
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
+	"io/ioutil"
 	"log"
 
 	"google.golang.org/grpc"
@@ -13,9 +15,22 @@ import (
 )
 
 func main() {
-	// Create a custom TLS config that skips certificate verification.
+
+	serverCert, err := ioutil.ReadFile("../certs/server.crt")
+	if err != nil {
+		log.Fatalf("could not read server certificate: %v", err)
+	}
+
+	// Create a certificate pool from the server certificate.
+	certPool := x509.NewCertPool()
+	if ok := certPool.AppendCertsFromPEM(serverCert); !ok {
+		log.Fatal("failed to append server certificate")
+	}
+
+	// Set up TLS configuration with the certificate pool and enforce TLS 1.2 or higher.
 	tlsConfig := &tls.Config{
-		InsecureSkipVerify: true, // Only use this for testing!
+		RootCAs:    certPool,
+		MinVersion: tls.VersionTLS12,
 	}
 	tlsCreds := credentials.NewTLS(tlsConfig)
 
