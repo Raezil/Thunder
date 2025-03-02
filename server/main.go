@@ -166,5 +166,5 @@ func main() {
 	}
 
 	sugar.Infof("Serving gRPC-Gateway on https://0.0.0.0%s", httpPort)
-	log.Fatalln(gwServer.ListenAndServeTLS("../certs/server.crt", "../certs/server.key"))
+	log.Fatalln(gwServer.ListenAndServeTLS(certFile, keyFile))
 }
