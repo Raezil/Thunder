@@ -125,9 +125,10 @@ sudo chmod +x /usr/local/bin/protoc-gen-rpc-impl
 ```
 #### b. Code Generation
 ```
-go run generator.go -proto=filename.proto -prisma=true
+thunder generate -proto=filename.proto -prisma=true
 ```
 > **Note:** Replace `filename` with the actual name of your gRPC service.
+> **Note** Remember to install [ Thunder CLI](#thunder-cli)
 
 #### c. Start the **gRPC + REST API** server:
 
@@ -163,29 +164,14 @@ openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.cr
 
 ### **2️⃣ Build & Push Docker Image**
 ```
-docker build -t app:latest .
-docker login
-docker push $docker_username/app:latest
+thunder docker
 ```
-
-> **Note:** Note $docker_username is your username, change it in k8s/app-deployment as well
 
 ### **3️⃣ Deploy to Kubernetes**
 ```sh
-minikube start
-cd k8s
-kubectl apply -f postgres-deployment.yaml
-kubectl apply -f postgres-service.yaml
-kubectl apply -f postgres-pvc.yaml
-kubectl apply -f app-deployment.yaml
-kubectl apply -f app-service.yaml
-kubectl apply -f app-loadbalancer.yaml
-kubectl apply -f pgbouncer-all.yaml
-kubectl apply -f hpa.yaml
-kubectl rollout restart deployment pgbouncer
-kubectl rollout restart deployment app-deployment
-kubectl port-forward service/app-service 8080:8080
+thunder deploy
 ```
+**Note** Remember to install [ Thunder CLI](#thunder-cli)
 
 #### Checking Pod Status
 ```
