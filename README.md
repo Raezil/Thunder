@@ -96,7 +96,7 @@ message UserResponse {
 ## **🛠️ Prisma Integration**
 Thunder automatically integrates Prisma for database management. Define your schema:
 
-## a. Create Your .proto File
+## a. Create Your schema.prisma File
 ```prisma
 datasource db {
   provider = "postgresql"
