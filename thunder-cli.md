@@ -48,11 +48,14 @@ Before deploying make sure You run that command:
 ```
 thunder docker
 ```
+**Note** Remember to change containers image name in k8s/app-deployment.yaml before building docker container
+
 
 Congratulations!, Now You can use deploy!
 ```bash
 thunder deploy
 ```
+
 This command will:
 1. Start Minikube.
 2. Apply PostgreSQL deployments and services.
