@@ -23,10 +23,6 @@ RUN go install github.com/steebchen/prisma-client-go@latest
 # Add Go binaries to PATH
 ENV PATH=$PATH:/go/bin
 
-# Set the database URL from the environment or default
-ENV DATABASE_URL="postgres://postgres:postgres@pgbouncer-service:6432/thunder?sslmode=disable"
-ENV JWT_SECRET="secret"
-
 # Expose necessary ports
 EXPOSE 50051 8080
 
