@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"time"
 
 	pb "backend"
 	"middlewares"
@@ -161,8 +162,9 @@ func main() {
 
 	httpPort := viper.GetString("http.port")
 	gwServer := &http.Server{
-		Addr:    httpPort,
-		Handler: mux,
+		Addr:              httpPort,
+		Handler:           mux,
+		ReadHeaderTimeout: 10 * time.Second, // Timeout for reading request headers
 	}
 
 	sugar.Infof("Serving gRPC-Gateway on https://0.0.0.0%s", httpPort)
