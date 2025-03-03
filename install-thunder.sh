@@ -65,7 +65,7 @@ case "$1" in
         kubectl apply -f app-loadbalancer.yaml
         # Apply HPA configuration
         kubectl apply -f hpa.yaml
-
+        kubectl apply -f network-policy.yaml
         # Apply PgBouncer for database connection pooling
         echo "🔄 Deploying PgBouncer..."
         kubectl apply -f pgbouncer-all.yaml
