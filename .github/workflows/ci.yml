@@ -94,7 +94,7 @@ jobs:
         run: docker push raezil/app:latest
 
       - name: Scan Docker Image with Trivy
-        uses: aquasecurity/trivy-action@v0.6.0
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: raezil/app:latest
           format: 'table'
