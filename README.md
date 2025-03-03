@@ -9,7 +9,7 @@
 ## **Table of Contents**
 - [🚀 Features](#-features)
 - [📌 Getting Started](#-getting-started)
-- - [⚡ Thunder CLI](#thunder-cli)
+  - [⚡ Thunder CLI](#thunder-cli)
   - [1️⃣ Install Dependencies](#1️⃣-install-dependencies)
   - [2️⃣ Define Your gRPC Service](#2️⃣-define-your-grpc-service)
 - [🛠️ Prisma Integration](#️-prisma-integration)
@@ -21,15 +21,16 @@
   - [b. Running the Tests](#b-running-the-tests)
 - [🔧 Kubernetes Deployment](#-kubernetes-deployment)
   - [1️⃣ Generate TLS Certificates](#1️⃣-generate-tls-certificates)
-  - [2️⃣ Generate secrets](#2️⃣generate-secrets)
-  - [3️⃣ Build & Push Docker Image](#2️⃣-build--push-docker-image)
-  - [4️⃣ Deploy to Kubernetes](#3️⃣-deploy-to-kubernetes)
+  - [2️⃣ Generate secrets](#2️⃣-generate-secrets)
+  - [3️⃣ Build & Push Docker Image](#3️⃣-build--push-docker-image)
+  - [4️⃣ Deploy to Kubernetes](#4️⃣-deploy-to-kubernetes)
 - [📡 API Testing](#-api-testing)
   - [Register a User](#register-a-user)
   - [Login](#login)
 - [📜 Contributing](#-contributing)
 - [🔗 References](#-references)
 - [📣 Stay Connected](#-stay-connected)
+
 
 ---
 
