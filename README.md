@@ -151,13 +151,20 @@ openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.cr
   -subj "/CN=localhost" \
   -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
 ```
+### **2️⃣ Generate secrets**
+```
+kubectl create secret generic app-secret   --from-literal=DATABASE_URL="postgres://postgres:postgres@pgbouncer-service:6432/thunder?sslmode=disable"   --from-literal=JWT_SECRET="secret"
 
-### **2️⃣ Build & Push Docker Image**
+kubectl create secret generic postgres-secret   --from-literal=POSTGRES_USER=postgres   --from-literal=POSTGRES_PASSWORD=postgres   --from-literal=POSTGRES_DB=thunder
+```
+
+
+### **3️⃣ Build & Push Docker Image**
 ```
 thunder docker
 ```
 
-### **3️⃣ Deploy to Kubernetes**
+### **4️⃣ Deploy to Kubernetes**
 ```sh
 thunder deploy
 ```
