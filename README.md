@@ -41,6 +41,7 @@
 ✔️ **Rate Limiting & Authentication** – Pre-configured middleware.  
 ✔️ **Modular & Extensible** – Easily extend Thunder for custom use cases.
 ✔️ **Thunder CLI** - generate, deploy, create new project by using dedicated CLI.
+
 ---
 
 ## **📌 Getting Started**
