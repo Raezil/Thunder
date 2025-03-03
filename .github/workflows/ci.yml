@@ -93,6 +93,14 @@ jobs:
       - name: Push Docker Image
         run: docker push raezil/app:latest
 
+      - name: Scan Docker Image with Trivy
+        uses: aquasecurity/trivy-action@v0.6.0
+        with:
+          image-ref: raezil/app:latest
+          format: 'table'
+          # Uncomment the following line to fail the job if vulnerabilities are found above a threshold
+          # exit-code: 1
+
       - name: Install and Start Minikube
         run: |
           curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
