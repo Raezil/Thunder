@@ -12,14 +12,14 @@ import (
 )
 
 // AuthenticatorServer is your gRPC server.
-type AuthenticatorServer struct {
+type AuthServiceServer struct {
 	UnimplementedAuthServer
 	PrismaClient *db.PrismaClient
 	Logger       *zap.SugaredLogger
 }
 
 // SampleProtected is a protected endpoint.
-func (s *AuthenticatorServer) SampleProtected(ctx context.Context, in *ProtectedRequest) (*ProtectedReply, error) {
+func (s *AuthServiceServer) SampleProtected(ctx context.Context, in *ProtectedRequest) (*ProtectedReply, error) {
 	currentUser, err := CurrentUser(ctx)
 	if err != nil {
 		s.Logger.Error(err)
@@ -31,7 +31,7 @@ func (s *AuthenticatorServer) SampleProtected(ctx context.Context, in *Protected
 }
 
 // Login verifies the user's credentials and returns a JWT token.
-func (s *AuthenticatorServer) Login(ctx context.Context, in *LoginRequest) (*LoginReply, error) {
+func (s *AuthServiceServer) Login(ctx context.Context, in *LoginRequest) (*LoginReply, error) {
 	s.Logger.Infof("Login attempt for email: %s", in.Email)
 
 	user, err := s.PrismaClient.User.FindUnique(
@@ -63,7 +63,7 @@ func (s *AuthenticatorServer) Login(ctx context.Context, in *LoginRequest) (*Log
 }
 
 // Register creates a new user after ensuring the email is unique and hashing the password.
-func (s *AuthenticatorServer) Register(ctx context.Context, in *RegisterRequest) (*RegisterReply, error) {
+func (s *AuthServiceServer) Register(ctx context.Context, in *RegisterRequest) (*RegisterReply, error) {
 	// Check if a user with the given email already exists.
 	existingUser, err := s.PrismaClient.User.FindUnique(
 		db.User.Email.Equals(in.Email),

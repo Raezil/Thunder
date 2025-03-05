@@ -48,7 +48,7 @@ func initJaeger(service string) (opentracing.Tracer, io.Closer) {
 
 // RegisterServers registers gRPC servers.
 func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.SugaredLogger) {
-	pb.RegisterAuthServer(server, &pb.AuthenticatorServer{
+	pb.RegisterAuthServer(server, &pb.AuthServiceServer{
 		PrismaClient: client,
 		Logger:       sugar,
 	})
