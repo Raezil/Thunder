@@ -1,7 +1,25 @@
 #!/bin/bash
 
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
 
-set -e  # Exit immediately if a command exits with a non-zero status
+# Check for required dependencies
+dependencies=( "go" "git" "docker" "minikube" "kubectl" "sudo" )
+missing=()
+
+for dep in "${dependencies[@]}"; do
+    if ! command_exists "$dep"; then
+        missing+=("$dep")
+    fi
+done
+
+if [ ${#missing[@]} -ne 0 ]; then
+    echo "❌ The following dependencies are missing: ${missing[*]}"
+    echo "Please install them before running this script."
+    exit 1
+fi
 
 # Build the thunder-generate binary
 echo "⚙️  Building thunder-generate..."
@@ -32,14 +50,25 @@ case "$1" in
         thunder-generate "$@"
         ;;
     docker)
+        DEPLOYMENT_FILE="./k8s/app-deployment.yaml"
+
+        # Verify the deployment file exists.
+        if [ ! -f "$DEPLOYMENT_FILE" ]; then
+            echo "Error: $DEPLOYMENT_FILE not found."
+            exit 1
+        fi
         echo "Enter your Docker Hub username:"
         read docker_username
+        echo "Enter your Docker project name:"
+        read docker_project
         echo "🔨 Building Docker image..."
-        docker build -t ${docker_username}/app:latest .
+        NEW_IMAGE="${docker_username}/${docker_project}:latest"
+        sed -i'' -E '/busybox/! s#^([[:space:]]*image:[[:space:]])[^[:space:]]+#\1'"${NEW_IMAGE}"'#' k8s/app-deployment.yaml
+        docker build -t ${docker_username}/${docker_project}:latest .
         echo "🔑 Logging in to Docker Hub..."
         docker login
         echo "⬆️  Pushing Docker image..."
-        docker push ${docker_username}/app:latest
+        docker push ${docker_username}/${docker_project}:latest
         ;;
     deploy)
         echo "🚀 Starting Minikube..."
