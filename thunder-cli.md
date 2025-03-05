@@ -48,8 +48,6 @@ Before deploying make sure You run that command:
 ```
 thunder docker
 ```
-**Note** Remember to change containers image name in k8s/app-deployment.yaml before building docker container
-
 
 Congratulations!, Now You can use deploy!
 ```bash
