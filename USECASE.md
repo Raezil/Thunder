@@ -41,7 +41,6 @@ Thunder is a minimalist backend framework in Go, designed for **gRPC-Gateway-pow
 | **Microservices Communication** | Uses **gRPC** for **fast, efficient, and scalable inter-service communication**. |
 | **Database-Driven Applications** | Integrated with **Prisma ORM** for **database management and migrations**. |
 | **Cloud & Kubernetes Deployments** | Designed for **Kubernetes**, supports **containerized deployments**. |
-| **High-Performance Backend for AI/ML APIs** | Thunder's **gRPC-first approach** ensures **low-latency AI/ML model serving**. |
 | **Backend for IoT & Realtime Applications** | Supports **bidirectional streaming**, making it ideal for **real-time systems**. |
 
 ---
