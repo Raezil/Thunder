@@ -23,6 +23,9 @@ fi
 
 # Build the thunder-generate binary
 echo "⚙️  Building thunder-generate..."
+go build -o protoc-gen-rpc-impl ./cmd/protoc-gen-rpc-impl.go
+sudo mv protoc-gen-rpc-impl /usr/local/bin
+sudo chmod +x /usr/local/bin/protoc-gen-rpc-impl
 go build -o thunder-generate generator.go
 
 # Move thunder-generate to /usr/local/bin/
