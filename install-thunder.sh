@@ -112,7 +112,7 @@ case "$1" in
         kubectl port-forward service/app-service 8080:8080 &
         ;;
     *)
-        echo "⚡ Usage: $0 [new | generate | deploy]"
+        echo "⚡ Usage: $0 [new | docker | generate | deploy]"
         exit 1
         ;;
 esac
