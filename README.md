@@ -1,105 +1,118 @@
 # **Thunder - A Minimalist Backend Framework in Go**
-*A gRPC-Gateway-powered framework with Prisma, Kubernetes and Go for scalable microservices.*
+*A gRPC-Gateway-powered framework with Prisma, Kubernetes, and Go for scalable microservices.*
 
 [![Go Version](https://img.shields.io/badge/Go-1.21-blue)](https://golang.org)
 [![License](https://img.shields.io/github/license/Raezil/Thunder)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/Raezil/Thunder)](https://github.com/Raezil/Thunder/stargazers)
 [![Issues](https://img.shields.io/github/issues/Raezil/Thunder)](https://github.com/Raezil/Thunder/issues)
 
-## **Table of Contents**
-- [🚀 Features](#-features)
-- [📌 Getting Started](#-getting-started)
-  - [⚡ Thunder CLI](#thunder-cli)
-  - [1️⃣ Install Dependencies](#1️⃣-install-dependencies)
-  - [2️⃣ Define Your gRPC Service](#2️⃣-define-your-grpc-service)
-- [🛠️ Prisma Integration](#️-prisma-integration)
-- [🚀 Running the Server](#-running-the-server)
-  - [a. Code Generation](#a-code-generation)
-  - [b. Start the **gRPC + REST API** server](#b-start-the-grpc--rest-api-server)
-- [🚀 Running the Tests](#-running-the-tests)
-  - [a. Mocking Tests](#a-mocking-tests)
-  - [b. Running the Tests](#b-running-the-tests)
-- [🔧 Kubernetes Deployment](#-kubernetes-deployment)
-  - [1️⃣ Generate TLS Certificates](#1️⃣-generate-tls-certificates)
-  - [2️⃣ Generate secrets](#2️⃣-generate-secrets)
-  - [3️⃣ Build & Push Docker Image](#3️⃣-build--push-docker-image)
-  - [4️⃣ Deploy to Kubernetes](#4️⃣-deploy-to-kubernetes)
-- [📡 API Testing](#-api-testing)
-  - [Register a User](#register-a-user)
-  - [Login](#login)
-- [📜 Contributing](#-contributing)
-- [🔗 References](#-references)
-- [📣 Stay Connected](#-stay-connected)
-
-
----
-
 ## **🚀 Features**
-✔️ **gRPC + REST (gRPC-Gateway)** – Automatically expose RESTful APIs from gRPC services.  
-✔️ **Prisma Integration** – Use Prisma for efficient database access in Go.  
-✔️ **Kubernetes Ready** – Easily deploy and scale with Kubernetes.  
-✔️ **TLS Security** – Secure gRPC communications with TLS.  
-✔️ **Structured Logging** – Built-in `zap` logging.  
-✔️ **Rate Limiting & Authentication** – Pre-configured middleware.  
-✔️ **Modular & Extensible** – Easily extend Thunder for custom use cases.  
-✔️ **Thunder CLI** - generate, deploy, create new project by using dedicated CLI.  
+- ✔️ **gRPC + REST (gRPC-Gateway)** – Automatically expose RESTful APIs from gRPC services.
+- ✔️ **Prisma Integration** – Efficient database management and migrations.
+- ✔️ **Kubernetes Ready** – Easily deploy and scale with Kubernetes.
+- ✔️ **TLS Security** – Secure gRPC communications with TLS.
+- ✔️ **Structured Logging** – Built-in `zap` logging.
+- ✔️ **Rate Limiting & Authentication** – Pre-configured middleware.
+- ✔️ **Modular & Extensible** – Easily extend Thunder for custom use cases.
+- ✔️ **Thunder CLI** - Generate, deploy, and create new projects effortlessly.
 
----
+## **📌 Use Cases**
+
+Thunder is designed for **scalable microservices** and **high-performance API development**, particularly suited for:
+
+### **1. High-Performance API Development**
+- gRPC-first APIs with RESTful interfaces via gRPC-Gateway.
+- Critical performance and low latency applications.
+- Strongly-typed APIs with protobufs.
+
+### **2. Microservices Architecture**
+- Efficient inter-service communication.
+- Kubernetes deployments with built-in service discovery and scaling.
+
+### **3. Database Management with Prisma**
+- Type-safe queries and easy database migrations.
+- Support for multiple databases (PostgreSQL, MySQL, SQLite).
+
+### **4. Lightweight Backend Alternative**
+- A minimalist and powerful alternative to traditional frameworks like Gin or Echo.
+- Fast, simple, and modular backend without unnecessary overhead.
+
+### **5. Kubernetes & Cloud-Native Applications**
+- Containerized environments using Docker.
+- Automatic service scaling and load balancing.
+
+### **When Not to Use Thunder**
+- If you need a traditional REST-only API (use Gin, Fiber, or Echo instead).
+- If you require a feature-heavy web framework with extensive middleware.
+- If you're not deploying on Kubernetes or prefer a monolithic backend.
 
 ## **📌 Getting Started**
 
-### **Thunder CLI**
-For a comprehensive guide on how to use Thunder CLI—including installation steps, available commands, and usage examples—you can refer to the official documentation here:
-[https://github.com/Raezil/Thunder/blob/main/thunder-cli.md](https://github.com/Raezil/Thunder/blob/main/cmd/README.md)
+### **Installation**
+```bash
+git clone https://github.com/Raezil/Thunder.git
+cd Thunder
+chmod +x install-thunder.sh
+./install-thunder.sh
+```
 
-This file covers everything you need to get started with Thunder CLI and will help you integrate it into your development workflow.
+### **Setup**
+Create a new Thunder application:
+```bash
+thunder new myapp
+cd myapp
+```
 
-
-### **1️⃣ Install Dependencies**
-Ensure you have Go, `protoc`, and Prisma installed.  
-
-```sh
+### **Install Dependencies**
+```bash
 go mod tidy
 ```
 
-### **2️⃣ Define Your gRPC Service**
-Create a `.proto` file, e.g., `user.proto`:
+### **Define Your gRPC Service**
+Create a `.proto` file (e.g., `example.proto`):
 
 ```proto
 syntax = "proto3";
 
 package example;
 
-option go_package = "backend/";
-
 import "google/api/annotations.proto";
 
-// A simple service definition.
-service UserService {
-  rpc GetUser (UserRequest) returns (UserResponse) {
-    option (google.api.http) = {
-      get: "/v1/users/{id}"
-    };
-  }
+service ExampleService {
+	rpc SayHello(HelloRequest) returns (HelloResponse) {
+		option (google.api.http) = {
+			post: "/v1/example/sayhello"
+			body: "*"
+		};
+	};
 }
 
-// Request and response messages.
-message UserRequest {
-  int32 id = 1;
+message HelloRequest {
+	string name = 1;
 }
 
-message UserResponse {
-  int32 id = 1;
-  string name = 2;
-  int32 age = 3;
+message HelloResponse {
+	string message = 1;
 }
 ```
----
+
+Add your service entry in `routes/route.go`:
+```go
+package routes
+
+var Services = []Service{
+	{
+		ServiceName:     "Example",
+		ServiceStruct:   "ExampleServiceServer",
+		ServiceRegister: "RegisterExampleServer",
+		HandlerRegister: "RegisterExampleHandler",
+	},
+}
+```
 
 ## **🛠️ Prisma Integration**
-Thunder automatically integrates Prisma for database management. Define your schema:
+Define your schema in `schema.prisma`:
 
-## a. Create Your schema.prisma File
 ```prisma
 datasource db {
   provider = "postgresql"
@@ -113,76 +126,66 @@ model User {
 }
 ```
 
+Generate the service implementation:
+```bash
+thunder generate --proto=example.proto
+```
+
 ## **🚀 Running the Server**
 
-#### a. Code Generation
-```
-thunder generate -proto=filename.proto -prisma=true
-```
-> **Note:** Replace `filename` with the actual name of your gRPC service.
-> **Note** Remember to install [ Thunder CLI](#thunder-cli)
-
-#### b. Start the **gRPC + REST API** server:
-
-```sh
+Start the server:
+```bash
 go run ./server/main.go
 ```
-> **Note:** Generate TLS certificates prior running the server.
+
+Server accessible via HTTP at `localhost:8080` and gRPC at `localhost:50051`.
 
 ## **🚀 Running the Tests**
-#### a. Mocking Tests
-To mock a gRPC server:
-```
+
+### Mocking Tests
+```bash
 cd backend
 mockgen -source=yourservice_grpc.pb.go -destination=yourservice_mock.go
 ```
-> **Note:** Replace `yourservice` with the actual name of your gRPC service. Look into /backend/authenticator_server_test.go to see how to develop tests or look into https://github.com/golang/mock
 
-#### b. Running the Tests
-```
+### Run Tests
+```bash
 go test ./backend/... ./db/...
 ```
 
----
-
 ## **🔧 Kubernetes Deployment**
-### **1️⃣ Generate TLS Certificates**
-```sh
+
+### Generate TLS Certificates
+```bash
 mkdir certs
 openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes \
   -subj "/CN=localhost" \
   -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
 ```
-### **2️⃣ Generate secrets**
-```
+
+### Generate Kubernetes Secrets
+```bash
 kubectl create secret generic app-secret   --from-literal=DATABASE_URL="postgres://postgres:postgres@pgbouncer-service:6432/thunder?sslmode=disable"   --from-literal=JWT_SECRET="secret"
 
 kubectl create secret generic postgres-secret   --from-literal=POSTGRES_USER=postgres   --from-literal=POSTGRES_PASSWORD=postgres   --from-literal=POSTGRES_DB=thunder
 ```
 
-
-### **3️⃣ Build & Push Docker Image**
-```
+### Build & Deploy Docker Image
+```bash
 thunder docker
-```
-
-### **4️⃣ Deploy to Kubernetes**
-```sh
 thunder deploy
 ```
-**Note** Remember to install [ Thunder CLI](#thunder-cli)
 
-#### Checking Pod Status
-```
+Check pod status:
+```bash
 kubectl get pods -n default
 kubectl describe pod $NAME -n default
 ```
 
----
-
 ## **📡 API Testing**
-### **Register a User**
-```sh
+
+### Register User
+```bash
 curl -k --http2 -X POST https://localhost:8080/v1/auth/register \
      -H "Content-Type: application/json" \
      -d '{
@@ -194,8 +197,8 @@ curl -k --http2 -X POST https://localhost:8080/v1/auth/register \
          }'
 ```
 
-### **Login**
-```sh
+### User Login
+```bash
 curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
      -H "Content-Type: application/json" \
      -d '{
@@ -203,26 +206,24 @@ curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
            "password": "password123"
          }'
 ```
----
 
 ## **📜 Contributing**
-Want to improve Thunder? 🚀  
-1. Fork the repo  
-2. Create a feature branch (`git checkout -b feature-new`)  
-3. Commit your changes (`git commit -m "Added feature"`)  
-4. Push to your branch (`git push origin feature-new`)  
-5. Submit a PR!  
 
----
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature-new`
+3. Commit changes: `git commit -m "Added feature"`
+4. Push to your branch: `git push origin feature-new`
+5. Submit a pull request.
 
 ## **🔗 References**
-- 📜 [Go Documentation](https://golang.org/doc/)  
-- 📘 [gRPC-Gateway](https://grpc-ecosystem.github.io/grpc-gateway/)  
-- 🛠️ [Prisma ORM](https://www.prisma.io/docs/)  
-- ☁️ [Kubernetes Docs](https://kubernetes.io/docs/)  
-
----
+- [Go Documentation](https://golang.org/doc/)
+- [gRPC-Gateway](https://grpc-ecosystem.github.io/grpc-gateway/)
+- [Prisma ORM](https://www.prisma.io/docs/)
+- [Kubernetes Docs](https://kubernetes.io/docs/)
 
 ## **📣 Stay Connected**
-⭐ Star the repo if you find it useful!  
-📧 For questions, reach out via [GitHub Issues](https://github.com/Raezil/Thunder/issues).  
+⭐ Star the repository if you find it useful!  
+📧 For support, use [GitHub Issues](https://github.com/Raezil/Thunder/issues).
+
+## **License**
+Thunder is released under the MIT License.
