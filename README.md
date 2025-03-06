@@ -50,7 +50,7 @@
 
 ### **Thunder CLI**
 For a comprehensive guide on how to use Thunder CLI—including installation steps, available commands, and usage examples—you can refer to the official documentation here:
-https://github.com/Raezil/Thunder/blob/main/thunder-cli.md
+[https://github.com/Raezil/Thunder/blob/main/thunder-cli.md](https://github.com/Raezil/Thunder/blob/main/cmd/README.md)
 
 This file covers everything you need to get started with Thunder CLI and will help you integrate it into your development workflow.
 
