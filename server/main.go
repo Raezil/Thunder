@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"db"
 	"io"
 	"log"
@@ -9,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	pb "backend"
 	"middlewares"
+	. "routes"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/opentracing/opentracing-go"
@@ -44,22 +43,6 @@ func initJaeger(service string) (opentracing.Tracer, io.Closer) {
 	}
 	opentracing.SetGlobalTracer(tracer)
 	return tracer, closer
-}
-
-// RegisterServers registers gRPC servers.
-func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.SugaredLogger) {
-	pb.RegisterAuthServer(server, &pb.AuthServiceServer{
-		PrismaClient: client,
-		Logger:       sugar,
-	})
-}
-
-// RegisterHandlers registers gRPC-Gateway handlers.
-func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
-	err := pb.RegisterAuthHandler(context.Background(), gwmux, conn)
-	if err != nil {
-		log.Fatalln("Failed to register gateway:", err)
-	}
 }
 
 func main() {
