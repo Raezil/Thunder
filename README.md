@@ -78,7 +78,7 @@ package example;
 
 import "google/api/annotations.proto";
 
-service ExampleService {
+service Example {
 	rpc SayHello(HelloRequest) returns (HelloResponse) {
 		option (google.api.http) = {
 			post: "/v1/example/sayhello"
