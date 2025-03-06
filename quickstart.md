@@ -68,7 +68,7 @@ message HelloResponse {
 }
 ```
 
-This command generates the Go implementation automatically, add logic to yours backend/example_server.go. You only need to add your service entry to `routes/route.go`:
+This command generates the Go implementation automatically, add logic to yours backend/example_server.go. You only need to add your service entry to `routes/route.go` before you generate:
 
 ```go
 package routes
