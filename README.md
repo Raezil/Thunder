@@ -150,7 +150,7 @@ mockgen -source=yourservice_grpc.pb.go -destination=../../tests/yourservice_mock
 
 ### Run Tests
 ```bash
-go test ./tests/...
+go test ./tests/... ./db/...
 ```
 
 ## **🔧 Kubernetes Deployment**
