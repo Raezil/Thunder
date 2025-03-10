@@ -4,6 +4,7 @@ import (
 	"context"
 	"db"
 	"fmt"
+	. "generated"
 
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -98,25 +99,5 @@ func (s *AuthServiceServer) Register(ctx context.Context, in *RegisterRequest) (
 		Reply: fmt.Sprintf("Congratulations, User email: %s got created!", obj.Email),
 	}, nil
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

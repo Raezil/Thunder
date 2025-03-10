@@ -2,7 +2,7 @@
 // Source: authenticator_grpc.pb.go
 
 // Package mock_backend is a generated GoMock package.
-package backend
+package generated
 
 import (
 	context "context"

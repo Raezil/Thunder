@@ -2,11 +2,11 @@
 // source: authenticator.proto
 
 /*
-Package backend is a reverse proxy.
+Package generated is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package backend
+package generated
 
 import (
 	"context"

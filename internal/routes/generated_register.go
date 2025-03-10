@@ -3,6 +3,7 @@ package routes
 import (
 	"context"
 	"log"
+	. "generated"
 
 	"google.golang.org/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -14,7 +15,7 @@ import (
 // RegisterServers registers gRPC services to the server.
 func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.SugaredLogger) {
 	
-	pb.RegisterAuthServer(server, &pb.AuthServiceServer{
+	RegisterAuthServer(server, &pb.AuthServiceServer{
 		PrismaClient: client,
 		Logger:       sugar,
 	})
@@ -25,7 +26,7 @@ func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.Su
 func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
 	var err error
 	
-	err = pb.RegisterAuthHandler(context.Background(), gwmux, conn)
+	err = RegisterAuthHandler(context.Background(), gwmux, conn)
 	if err != nil {
 		log.Fatalln("Failed to register gateway:", err)
 	}

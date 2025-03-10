@@ -3,6 +3,7 @@ package backend
 import (
 	"context"
 	"fmt"
+	. "generated"
 	"testing"
 
 	"github.com/golang/mock/gomock"

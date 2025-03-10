@@ -4,7 +4,7 @@
 // - protoc             v3.21.12
 // source: authenticator.proto
 
-package backend
+package generated
 
 import (
 	context "context"

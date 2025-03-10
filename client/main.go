@@ -1,11 +1,11 @@
 package main
 
 import (
-	. "backend"
 	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	. "generated"
 	"io/ioutil"
 	"log"
 
