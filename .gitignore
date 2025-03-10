@@ -1,2 +1,2 @@
 # Ignore TLS certificate files and keys
-app/certs/
+pkg/certs/
