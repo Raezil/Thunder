@@ -31,8 +31,7 @@ COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
 # Copy the certificates directory
-COPY app/certs /app/certs
-
+COPY app/certs /certs
 # Set the entrypoint and default command
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["go", "run", "./app/server/main.go"]
