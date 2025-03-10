@@ -1,4 +1,4 @@
-package backend
+package tests
 
 import (
 	"context"

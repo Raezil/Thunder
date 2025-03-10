@@ -5,8 +5,9 @@ toolchain go1.23.0
 use (
 	./
 	./db
-	./internal/backend
-	./internal/backend/generated
-	./internal/middlewares
-	./internal/routes
+	./app/internal/backend
+	./app/internal/backend/generated
+	./app/internal/middlewares
+	./app/internal/routes
+	./app/tests
 )

@@ -35,4 +35,4 @@ COPY certs ../certs
 
 # Set the entrypoint and default command
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["go", "run", "./server/main.go"]
+CMD ["go", "run", "./app/server/main.go"]

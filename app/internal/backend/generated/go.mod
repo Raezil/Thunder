@@ -2,8 +2,6 @@ module generated
 
 go 1.23.0
 
-toolchain go1.23.0
-
 require (
 	github.com/golang/mock v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3

@@ -29,7 +29,7 @@ func generateFile(gen *protogen.Plugin, file *protogen.File) error {
 	}
 	filenameWithoutExt := strings.TrimSuffix(string(*file.Proto.Name), ".proto")
 	// Build the filename where generated code will be merged
-	filename := "./internal/backend/" + filenameWithoutExt + "_server.go"
+	filename := "./app/internal/backend/" + filenameWithoutExt + "_server.go"
 
 	// Generate new content using a string builder
 	var sb strings.Builder
