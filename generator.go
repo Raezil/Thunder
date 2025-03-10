@@ -24,18 +24,19 @@ const templateCode = `package routes
 import (
 	"context"
 	"log"
+	. "generated"
 
 	"google.golang.org/grpc"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/zap"
 	"db"
-	pb "backend"
+	pb "services"
 )
 
 // RegisterServers registers gRPC services to the server.
 func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.SugaredLogger) {
 	{{range .}}
-	pb.{{.ServiceRegister}}(server, &pb.{{.ServiceStruct}}{
+	{{.ServiceRegister}}(server, &pb.{{.ServiceStruct}}{
 		PrismaClient: client,
 		Logger:       sugar,
 	})
@@ -46,7 +47,7 @@ func RegisterServers(server *grpc.Server, client *db.PrismaClient, sugar *zap.Su
 func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
 	var err error
 	{{range .}}
-	err = pb.{{.HandlerRegister}}(context.Background(), gwmux, conn)
+	err = {{.HandlerRegister}}(context.Background(), gwmux, conn)
 	if err != nil {
 		log.Fatalln("Failed to register gateway:", err)
 	}
@@ -74,7 +75,7 @@ func generateRegisterFile() {
 		log.Fatalf("Error parsing template: %v", err)
 	}
 
-	file, err := os.Create("routes/generated_register.go")
+	file, err := os.Create("app/internal/routes/generated_register.go")
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}
@@ -98,14 +99,14 @@ func main() {
 	if *proto != "" {
 		if err := runCommand("protoc",
 			"-I", ".",
-			"--go_out=./backend",
+			"--go_out=./pkg/internal/services/generated",
 			"--go_opt=paths=source_relative",
-			"--go-grpc_out=./backend",
+			"--go-grpc_out=./pkg/internal/services/generated",
 			"--go-grpc_opt=paths=source_relative",
-			"--grpc-gateway_out=./backend",
+			"--grpc-gateway_out=./pkg/internal/services/generated",
 			"--grpc-gateway_opt=paths=source_relative",
-			"--rpc-impl_out=.",
-			"--openapiv2_out=./backend",
+			"--rpc-impl_out=./pkg/internal/services",
+			"--openapiv2_out=./pkg/internal/services",
 			"--openapiv2_opt=logtostderr=true",
 			*proto,
 		); err != nil {

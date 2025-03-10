@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package authenticator;
 
-option go_package = "backend/";
+option go_package = "./pkg/internal/services/generated";
 
 import "google/api/annotations.proto";
 

@@ -1,9 +1,13 @@
-go 1.22.2
+go 1.23.0
+
+toolchain go1.23.0
 
 use (
 	./
-	./backend
 	./db
-	./middlewares
-	./routes
+	./pkg/internal/services
+	./pkg/internal/services/generated
+	./pkg/internal/middlewares
+	./pkg/internal/routes
+	./pkg/internal/tests
 )

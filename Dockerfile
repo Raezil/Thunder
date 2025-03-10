@@ -1,5 +1,5 @@
 # Use the official Go image
-FROM golang:1.22-alpine
+FROM golang:1.23-alpine
 
 # Install git (needed for 'go get' in some cases)
 RUN apk add --no-cache git
@@ -31,8 +31,7 @@ COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
 # Copy the certificates directory
-COPY certs ../certs
-
+COPY app/certs /certs
 # Set the entrypoint and default command
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["go", "run", "./server/main.go"]
+CMD ["go", "run", "./pkg/app/server/main.go"]
