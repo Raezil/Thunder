@@ -96,7 +96,7 @@ message HelloResponse {
 }
 ```
 
-Add your service entry in `routes/route.go`:
+Add your service entry in `app/internal/routes/route.go`:
 ```go
 package routes
 
