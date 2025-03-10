@@ -142,11 +142,11 @@ func main() {
 		w.Write([]byte("Ready"))
 	})
 	mux.Handle("/", gwmux)
-
+	handler := middlewares.CORSMiddleware(mux)
 	httpPort := viper.GetString("http.port")
 	gwServer := &http.Server{
 		Addr:              httpPort,
-		Handler:           mux,
+		Handler:           handler,
 		ReadHeaderTimeout: 10 * time.Second, // Timeout for reading request headers
 	}
 
