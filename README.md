@@ -96,7 +96,7 @@ message HelloResponse {
 }
 ```
 
-Add your service entry in `routes/route.go`:
+Add your service entry in `app/internal/routes/route.go`:
 ```go
 package routes
 
@@ -145,12 +145,13 @@ Server accessible via HTTP at `localhost:8080` and gRPC at `localhost:50051`.
 ### Mocking Tests
 ```bash
 cd backend
-mockgen -source=yourservice_grpc.pb.go -destination=yourservice_mock.go
+mockgen -source=yourservice_grpc.pb.go -destination=../tests/yourservice_mock.go
 ```
 
 ### Run Tests
 ```bash
-go test ./backend/... ./db/...
+cd app/internal
+go test ./tests/...
 ```
 
 ## **🔧 Kubernetes Deployment**

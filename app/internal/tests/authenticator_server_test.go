@@ -1,8 +1,9 @@
-package backend
+package tests
 
 import (
 	"context"
 	"fmt"
+	. "generated"
 	"testing"
 
 	"github.com/golang/mock/gomock"

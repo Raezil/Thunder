@@ -62,8 +62,8 @@ func main() {
 	defer closer.Close()
 
 	// Load TLS credentials for the gRPC server.
-	certFile := "../certs/server.crt"
-	keyFile := "../certs/server.key"
+	certFile := "../../certs/server.crt"
+	keyFile := "../../certs/server.key"
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
 	if err != nil {
 		sugar.Fatalf("Failed to load TLS credentials: %v", err)
