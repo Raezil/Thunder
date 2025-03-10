@@ -30,7 +30,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/zap"
 	"db"
-	pb "backend"
+	pb "services"
 )
 
 // RegisterServers registers gRPC services to the server.
@@ -99,14 +99,14 @@ func main() {
 	if *proto != "" {
 		if err := runCommand("protoc",
 			"-I", ".",
-			"--go_out=./app/internal/backend/generated",
+			"--go_out=./app/internal/services/generated",
 			"--go_opt=paths=source_relative",
-			"--go-grpc_out=./app/internal/backend/generated",
+			"--go-grpc_out=./app/internal/services/generated",
 			"--go-grpc_opt=paths=source_relative",
-			"--grpc-gateway_out=./app/internal/backend/generated",
+			"--grpc-gateway_out=./app/internal/services/generated",
 			"--grpc-gateway_opt=paths=source_relative",
-			"--rpc-impl_out=./app/internal/backend",
-			"--openapiv2_out=./app/internal/backend",
+			"--rpc-impl_out=./app/internal/services",
+			"--openapiv2_out=./app/internal/services",
 			"--openapiv2_opt=logtostderr=true",
 			*proto,
 		); err != nil {

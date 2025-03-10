@@ -29,11 +29,11 @@ func generateFile(gen *protogen.Plugin, file *protogen.File) error {
 	}
 	filenameWithoutExt := strings.TrimSuffix(string(*file.Proto.Name), ".proto")
 	// Build the filename where generated code will be merged
-	filename := "./app/internal/backend/" + filenameWithoutExt + "_server.go"
+	filename := "./app/internal/services/" + filenameWithoutExt + "_server.go"
 
 	// Generate new content using a string builder
 	var sb strings.Builder
-	sb.WriteString("package backend\n\n")
+	sb.WriteString("package services\n\n")
 	sb.WriteString("import (\n")
 	sb.WriteString(` . "generated"` + "\n")
 	sb.WriteString(`    "context"` + "\n")
