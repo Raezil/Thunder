@@ -1,5 +1,5 @@
 # Use the official Go image
-FROM golang:1.22-alpine
+FROM golang:1.23-alpine
 
 # Install git (needed for 'go get' in some cases)
 RUN apk add --no-cache git
