@@ -16,7 +16,7 @@ import (
 
 func main() {
 
-	serverCert, err := ioutil.ReadFile("../certs/server.crt")
+	serverCert, err := ioutil.ReadFile("../../certs/server.crt")
 	if err != nil {
 		log.Fatalf("could not read server certificate: %v", err)
 	}

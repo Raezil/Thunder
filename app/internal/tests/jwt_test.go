@@ -1,8 +1,8 @@
 package tests
 
 import (
-	. "backend"
 	"context"
+	. "services"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

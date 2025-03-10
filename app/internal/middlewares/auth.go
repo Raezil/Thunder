@@ -1,9 +1,9 @@
 package middlewares
 
 import (
-	pb "backend"
 	"context"
 	"fmt"
+	pb "services"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
