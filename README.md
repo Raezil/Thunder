@@ -135,7 +135,7 @@ thunder generate --proto=example.proto
 
 Start the server:
 ```bash
-go run ./server/main.go
+go run ./pkg/app/server/main.go
 ```
 
 Server accessible via HTTP at `localhost:8080` and gRPC at `localhost:50051`.
