@@ -15,7 +15,7 @@ RUN go mod download
 COPY . .
 
 # (Optional) Remove the unnecessary file if it exists
-RUN rm -f db/query-engine-debian-openssl-3.0.x_gen.go
+RUN rm -f pkg/db/query-engine-debian-openssl-3.0.x_gen.go
 
 # Install prisma-client-go
 RUN go install github.com/steebchen/prisma-client-go@latest

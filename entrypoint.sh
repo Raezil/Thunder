@@ -2,7 +2,8 @@
 set -e
 
 echo "Running Prisma migrations..."
-prisma-client-go db push
+cd pkg && prisma-client-go db push
 
 echo "Starting application..."
+cd ..
 exec "$@"
