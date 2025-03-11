@@ -88,6 +88,14 @@ func generateRegisterFile() {
 	fmt.Println("Generated register file: backend/generated_register.go")
 }
 
+func runCommandInDir(dir string, name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Dir = dir // Ustawienie katalogu roboczego
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
 // It generates proto files and builds from Prisma schema
 func main() {
 	proto := flag.String("proto", "", "Path to the .proto file")
@@ -118,10 +126,9 @@ func main() {
 
 	// Second command: Run Prisma command to push database changes
 	if *prisma {
-		if err := runCommand("go", "run", "github.com/steebchen/prisma-client-go", "db", "push"); err != nil {
+		if err := runCommandInDir("./pkg", "go", "run", "github.com/steebchen/prisma-client-go", "db", "push"); err != nil {
 			log.Fatalf("Error executing Prisma command: %v", err)
 		}
-
 		fmt.Println("Prisma database changes pushed successfully!")
 	}
 
