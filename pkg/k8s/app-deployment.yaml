@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.28
+          command: ['sh', '-c', 'until nc -z postgres-service 5432; do echo "waiting for postgres"; sleep 2; done']
+      containers:
+        - name: app
+          image: raezil/app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 50051
+            - containerPort: 8080
+          env:
+            - name: PGHOST
+              value: "postgres-service"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_DB
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DATABASE_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: JWT_SECRET

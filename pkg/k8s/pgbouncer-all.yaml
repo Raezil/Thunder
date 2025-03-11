@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgbouncer-config
+data:
+  pgbouncer.ini: |
+    [databases]
+    thunder = host=postgres-service port=5432 dbname=thunder
+    
+    [pgbouncer]
+    listen_addr = 0.0.0.0
+    listen_port = 6432
+    auth_type = md5
+    auth_file = /etc/pgbouncer/userlist.txt
+    pool_mode = session
+    max_client_conn = 100
+    default_pool_size = 20
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pgbouncer-secret
+type: Opaque
+data:
+  userlist.txt: InBvc3RncmVzIiAicG9zdGdyZXMi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgbouncer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgbouncer
+  template:
+    metadata:
+      labels:
+        app: pgbouncer
+    spec:
+      containers:
+      - name: pgbouncer
+        image: edoburu/pgbouncer:latest
+        ports:
+        - containerPort: 6432
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/pgbouncer
+      volumes:
+      - name: config-volume
+        projected:
+          sources:
+          - configMap:
+              name: pgbouncer-config
+              items:
+                - key: pgbouncer.ini
+                  path: pgbouncer.ini
+          - secret:
+              name: pgbouncer-secret
+              items:
+                - key: userlist.txt
+                  path: userlist.txt
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgbouncer-service
+spec:
+  selector:
+    app: pgbouncer
+  ports:
+  - name: pgbouncer
+    port: 6432
+    targetPort: 6432
+  type: ClusterIP

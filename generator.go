@@ -75,7 +75,7 @@ func generateRegisterFile() {
 		log.Fatalf("Error parsing template: %v", err)
 	}
 
-	file, err := os.Create("app/internal/routes/generated_register.go")
+	file, err := os.Create("./internal/routes/generated_register.go")
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}
@@ -99,14 +99,14 @@ func main() {
 	if *proto != "" {
 		if err := runCommand("protoc",
 			"-I", ".",
-			"--go_out=./pkg/internal/services/generated",
+			"--go_out=./internal/services/generated",
 			"--go_opt=paths=source_relative",
-			"--go-grpc_out=./pkg/internal/services/generated",
+			"--go-grpc_out=./internal/services/generated",
 			"--go-grpc_opt=paths=source_relative",
-			"--grpc-gateway_out=./pkg/internal/services/generated",
+			"--grpc-gateway_out=./internal/services/generated",
 			"--grpc-gateway_opt=paths=source_relative",
-			"--rpc-impl_out=./pkg/internal/services",
-			"--openapiv2_out=./pkg/internal/services",
+			"--rpc-impl_out=./internal/services",
+			"--openapiv2_out=./internal/services",
 			"--openapiv2_opt=logtostderr=true",
 			*proto,
 		); err != nil {
