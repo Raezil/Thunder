@@ -16,6 +16,9 @@
 - ✔️ **Modular & Extensible** – Easily extend Thunder for custom use cases.
 - ✔️ **Thunder CLI** - Generate, deploy, and create new projects effortlessly.
 
+## **🏗️ Architecture Overview**
+![mermaid-diagram-2025-03-11-091148](https://github.com/user-attachments/assets/ff55ef25-092e-4d7f-b9b9-f69f8b322c91)
+
 ## **📌 Use Cases**
 
 Thunder is designed for **scalable microservices** and **high-performance API development**, particularly suited for:
