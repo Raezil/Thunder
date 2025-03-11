@@ -23,8 +23,8 @@ fi
 
 # Build the thunder-generate binary
 echo "⚙️  Building thunder-generate..."
-go build -o ./cmd/protoc-gen-rpc-impl ./cmd/protoc-gen-rpc-impl.go
-sudo mv ./cmd/protoc-gen-rpc-impl /usr/local/bin
+go build -o ./pkg/cmd/protoc-gen-rpc-impl ./pkg/cmd/protoc-gen-rpc-impl.go
+sudo mv ./pkg/cmd/protoc-gen-rpc-impl /usr/local/bin
 sudo chmod +x /usr/local/bin/protoc-gen-rpc-impl
 go build -o thunder-generate generator.go
 
@@ -53,7 +53,7 @@ case "$1" in
         thunder-generate "$@"
         ;;
     docker)
-        DEPLOYMENT_FILE="./k8s/app-deployment.yaml"
+        DEPLOYMENT_FILE="./pkg/k8s/app-deployment.yaml"
 
         # Verify the deployment file exists.
         if [ ! -f "$DEPLOYMENT_FILE" ]; then
@@ -66,7 +66,7 @@ case "$1" in
         read docker_project
         echo "🔨 Building Docker image..."
         NEW_IMAGE="${docker_username}/${docker_project}:latest"
-        sed -i'' -E '/busybox/! s#^([[:space:]]*image:[[:space:]])[^[:space:]]+#\1'"${NEW_IMAGE}"'#' k8s/app-deployment.yaml
+        sed -i'' -E '/busybox/! s#^([[:space:]]*image:[[:space:]])[^[:space:]]+#\1'"${NEW_IMAGE}"'#' pkg/k8s/app-deployment.yaml
         docker build -t ${docker_username}/${docker_project}:latest .
         echo "🔑 Logging in to Docker Hub..."
         docker login
@@ -78,7 +78,7 @@ case "$1" in
         minikube start
 
         # Change to Kubernetes manifests directory
-        cd k8s || { echo "❌ Directory k8s not found!"; exit 1; }
+        cd pkg/k8s || { echo "❌ Directory k8s not found!"; exit 1; }
 
         # Apply PostgreSQL resources
         echo "📦 Deploying PostgreSQL..."
