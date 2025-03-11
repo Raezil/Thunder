@@ -75,7 +75,7 @@ func generateRegisterFile() {
 		log.Fatalf("Error parsing template: %v", err)
 	}
 
-	file, err := os.Create("app/internal/routes/generated_register.go")
+	file, err := os.Create("pkg/internal/routes/generated_register.go")
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}
