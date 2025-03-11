@@ -35,7 +35,11 @@ func main() {
 	tlsCreds := credentials.NewTLS(tlsConfig)
 
 	// Dial the gRPC server using TLS credentials.
-	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(tlsCreds), grpc.WithBlock())
+	conn, err := grpc.Dial("localhost:50051",
+		grpc.WithTransportCredentials(tlsCreds),
+		grpc.WithBlock(),
+		grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(1024*1024*5)),
+	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
