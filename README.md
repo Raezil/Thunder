@@ -17,7 +17,7 @@
 - ✔️ **Thunder CLI** - Generate, deploy, and create new projects effortlessly.
 
 ## **🏗️ Architecture Overview**
-![mermaid-diagram-2025-03-11-091148](https://github.com/user-attachments/assets/ff55ef25-092e-4d7f-b9b9-f69f8b322c91)
+![architecture_file](https://github.com/user-attachments/assets/4b92774b-ff61-41ce-8f33-81ee0bb3e5d8)
 
 ## **📌 Use Cases**
 
