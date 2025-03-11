@@ -17,7 +17,7 @@
 - ✔️ **Thunder CLI** - Generate, deploy, and create new projects effortlessly.
 
 ## **🏗️ Architecture Overview**
-![architecture](https://github.com/user-attachments/assets/54a1cead-6886-400a-a41a-f5eb4f375dc7)
+![421386849-54a1cead-6886-400a-a41a-f5eb4f375dc7(1)](https://github.com/user-attachments/assets/5074e533-b023-415d-9092-e8f5270ec88f)
 
 ## **📌 Use Cases**
 
