@@ -5,8 +5,6 @@ import (
 	"io"
 	"log"
 	"net"
-	"net/http"
-	"time"
 
 	"middlewares"
 	. "routes"
@@ -16,6 +14,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/uber/jaeger-client-go"
 	"github.com/uber/jaeger-client-go/config"
+	"github.com/valyala/fasthttp"
+	"github.com/valyala/fasthttp/fasthttpadaptor"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -30,7 +30,7 @@ func initConfig() {
 	viper.AutomaticEnv()
 }
 
-// initJaeger initializes a Jaeger tracer based on environment configuration.
+// initJaeger initializes a Jaeger tracer.
 func initJaeger(service string) (opentracing.Tracer, io.Closer) {
 	cfg, err := config.FromEnv()
 	if err != nil {
@@ -46,7 +46,6 @@ func initJaeger(service string) (opentracing.Tracer, io.Closer) {
 }
 
 func main() {
-	// Initialize configuration.
 	initConfig()
 
 	// Setup structured logging.
@@ -61,7 +60,7 @@ func main() {
 	_, closer := initJaeger("thunder-grpc")
 	defer closer.Close()
 
-	// Load TLS credentials for the gRPC server.
+	// Load TLS credentials for gRPC.
 	certFile := "../../certs/server.crt"
 	keyFile := "../../certs/server.key"
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
@@ -69,7 +68,7 @@ func main() {
 		sugar.Fatalf("Failed to load TLS credentials: %v", err)
 	}
 
-	// Listen on the configured gRPC port.
+	// Listen on the gRPC port.
 	grpcPort := viper.GetString("grpc.port")
 	lis, err := net.Listen("tcp", grpcPort)
 	if err != nil {
@@ -87,16 +86,16 @@ func main() {
 		}
 	}()
 
-	// Initialize rate limiter (e.g., 5 requests per second, burst of 10).
+	// Initialize rate limiter.
 	rateLimiter := middlewares.NewRateLimiter(5, 10)
 
-	// Create the gRPC server with TLS and custom interceptors.
+	// Create the gRPC server with TLS and middleware.
 	grpcServer := grpc.NewServer(
 		grpc.Creds(creds),
 		grpc.UnaryInterceptor(
 			middlewares.ChainUnaryInterceptors(
-				rateLimiter.RateLimiterInterceptor, // Rate limiting
-				middlewares.AuthUnaryInterceptor,   // Authentication
+				rateLimiter.RateLimiterInterceptor,
+				middlewares.AuthUnaryInterceptor,
 			),
 		),
 	)
@@ -117,10 +116,7 @@ func main() {
 	if err != nil {
 		sugar.Fatalf("Failed to load client TLS credentials: %v", err)
 	}
-	conn, err := grpc.Dial(
-		"localhost"+grpcPort,
-		grpc.WithTransportCredentials(clientCreds),
-	)
+	conn, err := grpc.Dial("localhost"+grpcPort, grpc.WithTransportCredentials(clientCreds))
 	if err != nil {
 		log.Fatalln("Failed to dial gRPC server:", err)
 	}
@@ -129,27 +125,36 @@ func main() {
 	gwmux := runtime.NewServeMux()
 	RegisterHandlers(gwmux, conn)
 
-	// Create a new HTTP mux and add health and readiness endpoints.
-	mux := http.NewServeMux()
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		// You can add more logic here if needed.
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
-	})
-	mux.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
-		// You might include checks (e.g., database connectivity) before reporting readiness.
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Ready"))
-	})
-	mux.Handle("/", gwmux)
-	handler := middlewares.CORSMiddleware(mux)
-	httpPort := viper.GetString("http.port")
-	gwServer := &http.Server{
-		Addr:              httpPort,
-		Handler:           handler,
-		ReadHeaderTimeout: 10 * time.Second, // Timeout for reading request headers
+	// Convert the gRPC-Gateway mux to work with fasthttp.
+	fasthttpHandler := fasthttpadaptor.NewFastHTTPHandler(gwmux)
+
+	// Define FastHTTP handlers.
+	healthCheckHandler := func(ctx *fasthttp.RequestCtx) {
+		ctx.SetStatusCode(fasthttp.StatusOK)
+		ctx.SetBody([]byte("OK"))
 	}
 
-	sugar.Infof("Serving gRPC-Gateway on https://0.0.0.0%s", httpPort)
-	log.Fatalln(gwServer.ListenAndServeTLS(certFile, keyFile))
+	readyCheckHandler := func(ctx *fasthttp.RequestCtx) {
+		ctx.SetStatusCode(fasthttp.StatusOK)
+		ctx.SetBody([]byte("Ready"))
+	}
+
+	// Create a FastHTTP router.
+	fastMux := func(ctx *fasthttp.RequestCtx) {
+		switch string(ctx.Path()) {
+		case "/health":
+			healthCheckHandler(ctx)
+		case "/ready":
+			readyCheckHandler(ctx)
+		default:
+			fasthttpHandler(ctx) // Pass other requests to gRPC-Gateway
+		}
+	}
+
+	// Start FastHTTP server.
+	httpPort := viper.GetString("http.port")
+	sugar.Infof("Serving gRPC-Gateway with FastHTTP on https://0.0.0.0%s", httpPort)
+	if err := fasthttp.ListenAndServeTLS(httpPort, certFile, keyFile, fastMux); err != nil {
+		sugar.Fatalf("FastHTTP server failed: %v", err)
+	}
 }
