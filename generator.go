@@ -1,21 +1,32 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
-	"routes"
 	"text/template"
 )
 
 // Service holds the metadata needed for generating the register functions.
 type Service struct {
-	ServiceName     string
-	ServiceStruct   string
-	ServiceRegister string
-	HandlerRegister string
+	ServiceName     string `json:"ServiceName"`
+	ServiceStruct   string `json:"ServiceStruct"`
+	ServiceRegister string `json:"ServiceRegister"`
+	HandlerRegister string `json:"HandlerRegister"`
+}
+
+// loadServicesFromJSON reads the service definitions from a JSON file.
+func loadServicesFromJSON(filepath string) ([]Service, error) {
+	data, err := os.ReadFile(filepath)
+	if err != nil {
+		return nil, err
+	}
+	var services []Service
+	err = json.Unmarshal(data, &services)
+	return services, err
 }
 
 // Template for RegisterServers and RegisterHandlers.
@@ -68,8 +79,7 @@ func runCommand(name string, args ...string) error {
 }
 
 // generateRegisterFile creates the register file dynamically
-func generateRegisterFile() {
-
+func generateRegisterFile(services []Service) {
 	tmpl, err := template.New("register").Parse(templateCode)
 	if err != nil {
 		log.Fatalf("Error parsing template: %v", err)
@@ -81,11 +91,11 @@ func generateRegisterFile() {
 	}
 	defer file.Close()
 
-	err = tmpl.Execute(file, routes.Services)
+	err = tmpl.Execute(file, services)
 	if err != nil {
 		log.Fatalf("Error executing template: %v", err)
 	}
-	fmt.Println("Generated register file: backend/generated_register.go")
+	fmt.Println("Generated register file: pkg/internal/routes/generated_register.go")
 }
 
 func runCommandInDir(dir string, name string, args ...string) error {
@@ -134,6 +144,10 @@ func main() {
 
 	// Third step: Generate gRPC registration file
 	if *generate {
-		generateRegisterFile()
+		services, err := loadServicesFromJSON("services.json")
+		if err != nil {
+			log.Fatalf("Error loading services from JSON: %v", err)
+		}
+		generateRegisterFile(services)
 	}
 }
