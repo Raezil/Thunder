@@ -1,0 +1,9 @@
+[
+    {
+      "ServiceName": "Auth",
+      "ServiceStruct": "AuthServiceServer",
+      "ServiceRegister": "RegisterAuthServer",
+      "HandlerRegister": "RegisterAuthHandler"
+    }
+  ]
+  
