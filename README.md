@@ -99,18 +99,16 @@ message HelloResponse {
 }
 ```
 
-Add your service entry in `app/internal/routes/route.go`:
+Add your service entry in `services.json`:
 ```go
-package routes
-
-var Services = []Service{
-	{
-		ServiceName:     "Example",
-		ServiceStruct:   "ExampleServiceServer",
-		ServiceRegister: "RegisterExampleServer",
-		HandlerRegister: "RegisterExampleHandler",
-	},
-}
+[
+    {
+      "ServiceName": "Example",
+      "ServiceStruct": "ExampleServiceServer",
+      "ServiceRegister": "RegisterExampleServer",
+      "HandlerRegister": "RegisterExampleHandler"
+    }
+]
 ```
 
 ## **🛠️ Prisma Integration**
