@@ -75,6 +75,7 @@ func TestContainers(t *testing.T) {
 		ExposedPorts: []string{"8080/tcp"},
 		Env: map[string]string{
 			"DATABASE_URL": dbConnStr,
+			"JWT_SECRET":   "supersecret",
 		},
 		Networks:   []string{networkName},
 		WaitingFor: wait.ForListeningPort("8080/tcp"),
