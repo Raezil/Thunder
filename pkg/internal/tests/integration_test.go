@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"testing"
@@ -117,7 +118,7 @@ func TestContainers(t *testing.T) {
 
 	t.Logf("Application is running at %s", appURL)
 	// Optionally wait for a few seconds to ensure the application is fully started.
-	time.Sleep(30 * time.Second)
+	time.Sleep(60 * time.Second)
 
 	// Configure an HTTP client. If your app doesn't use TLS, change the scheme above to "http".
 	client := &http.Client{
@@ -180,11 +181,11 @@ func postJSON(client *http.Client, url string, data interface{}, expectedStatus 
 	if err != nil {
 		return fmt.Errorf("failed to read response: %w", err)
 	}
+	log.Println("Response:", string(body))
 
 	if resp.StatusCode != expectedStatus {
 		return fmt.Errorf("unexpected status code: got %d, expected %d. Response: %s", resp.StatusCode, expectedStatus, string(body))
 	}
-	fmt.Println(string(body))
 
 	// Log the response for debugging purposes.
 	return nil
