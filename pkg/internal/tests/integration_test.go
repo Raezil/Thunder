@@ -45,8 +45,8 @@ func TestContainers(t *testing.T) {
 		Image:        "postgres:13",
 		ExposedPorts: []string{"5432/tcp"},
 		Env: map[string]string{
-			"POSTGRES_USER":     "testuser",
-			"POSTGRES_PASSWORD": "testpass",
+			"POSTGRES_USER":     "postgres",
+			"POSTGRES_PASSWORD": "postgres",
 			"POSTGRES_DB":       "testdb",
 		},
 		Networks: []string{networkName},
@@ -66,7 +66,7 @@ func TestContainers(t *testing.T) {
 	defer postgresC.Terminate(ctx)
 
 	// Update the connection string to use the network alias "postgres".
-	dbConnStr := "postgres://testuser:testpass@postgres:5432/testdb?sslmode=disable"
+	dbConnStr := "postgres://postgres:postgres@postgres:5432/testdb?sslmode=disable"
 	t.Logf("Postgres connection string: %s", dbConnStr)
 
 	// Launch the application container on the same network.
