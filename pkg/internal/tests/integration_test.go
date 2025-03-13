@@ -118,7 +118,7 @@ func TestContainers(t *testing.T) {
 
 	t.Logf("Application is running at %s", appURL)
 	// Optionally wait for a few seconds to ensure the application is fully started.
-	time.Sleep(15 * time.Second)
+	time.Sleep(45 * time.Second)
 
 	// Configure an HTTP client. If your app doesn't use TLS, change the scheme above to "http".
 	client := &http.Client{
