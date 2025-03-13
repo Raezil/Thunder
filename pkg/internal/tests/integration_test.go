@@ -46,8 +46,8 @@ func TestContainers(t *testing.T) {
 		Image:        "postgres:13",
 		ExposedPorts: []string{"5432/tcp"},
 		Env: map[string]string{
-			"POSTGRES_USER":     "postgres",
-			"POSTGRES_PASSWORD": "postgres",
+			"POSTGRES_USER":     "testuser",
+			"POSTGRES_PASSWORD": "testpass",
 			"POSTGRES_DB":       "testdb",
 		},
 		Networks: []string{networkName},
@@ -139,7 +139,7 @@ func TestContainers(t *testing.T) {
 		Age:      30,
 	}
 	// Expecting 201 Created or adjust as per your app behavior.
-	if err := postJSON(client, registerURL, registerPayload, 20); err != nil {
+	if err := postJSON(client, registerURL, registerPayload, 200); err != nil {
 		t.Fatalf("registration failed: %v", err)
 	}
 
