@@ -110,9 +110,10 @@ func TestContainers(t *testing.T) {
 	}
 	mappedPort, err := appContainer.MappedPort(ctx, "8080/tcp")
 	if err != nil {
-		t.Fatalf("failed to get app container port: %v", err)
+		t.Fatalf("failed to get mapped port: %v", err)
 	}
-	appURL := fmt.Sprintf("https://%s:%s", appHost, mappedPort.Port())
+	appURL := fmt.Sprintf("http://%s:%s", appHost, mappedPort.Port())
+
 	t.Logf("Application is running at %s", appURL)
 	// Optionally wait for a few seconds to ensure the application is fully started.
 	time.Sleep(5 * time.Second)
