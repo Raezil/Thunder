@@ -1,22 +1,23 @@
 package middlewares
 
-import (
-	"net/http"
-)
+import "github.com/valyala/fasthttp"
 
-// CORSMiddleware dodaje nagłówki CORS do odpowiedzi HTTP
-func CORSMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*") // Możesz podać konkretną domenę
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+// CORSMiddleware adds CORS headers to fasthttp requests.
+func CORSMiddleware(next fasthttp.RequestHandler) fasthttp.RequestHandler {
+	return func(ctx *fasthttp.RequestCtx) {
+		// Set CORS headers on the response.
+		header := ctx.Response.Header
+		header.Set("Access-Control-Allow-Origin", "*") // Or specify a particular domain.
+		header.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		header.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-		// Obsługa preflight requestów
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusNoContent)
+		// Handle preflight request.
+		if string(ctx.Method()) == "OPTIONS" {
+			ctx.SetStatusCode(fasthttp.StatusNoContent)
 			return
 		}
 
-		next.ServeHTTP(w, r)
-	})
+		// Continue processing the request.
+		next(ctx)
+	}
 }
