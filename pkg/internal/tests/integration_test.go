@@ -139,7 +139,7 @@ func TestContainers(t *testing.T) {
 		Age:      30,
 	}
 	// Expecting 201 Created or adjust as per your app behavior.
-	if err := postJSON(client, registerURL, registerPayload, 200); err != nil {
+	if err := postJSON(client, registerURL, registerPayload, 20); err != nil {
 		t.Fatalf("registration failed: %v", err)
 	}
 
@@ -150,7 +150,7 @@ func TestContainers(t *testing.T) {
 		Password: "password123",
 	}
 	// Expecting 200 OK or adjust as needed.
-	if err := postJSON(client, loginURL, loginPayload, 200); err != nil {
+	if err := postJSON(client, loginURL, loginPayload, 20); err != nil {
 		t.Fatalf("login failed: %v", err)
 	}
 
