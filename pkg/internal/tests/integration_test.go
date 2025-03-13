@@ -46,8 +46,8 @@ func TestContainers(t *testing.T) {
 		Image:        "postgres:13",
 		ExposedPorts: []string{"5432/tcp"},
 		Env: map[string]string{
-			"POSTGRES_USER":     "testuser",
-			"POSTGRES_PASSWORD": "testpass",
+			"POSTGRES_USER":     "postgres",
+			"POSTGRES_PASSWORD": "postgres",
 			"POSTGRES_DB":       "testdb",
 		},
 		Networks: []string{networkName},
@@ -67,7 +67,7 @@ func TestContainers(t *testing.T) {
 	defer postgresC.Terminate(ctx)
 
 	// Update the connection string to use the network alias "postgres".
-	dbConnStr := "postgres://testuser:testpass@postgres:5432/testdb?sslmode=disable"
+	dbConnStr := "postgres://postgres:postgres@postgres:5432/testdb?sslmode=disable"
 	t.Logf("Postgres connection string: %s", dbConnStr)
 
 	// Launch the application container on the same network.
@@ -183,10 +183,14 @@ func postJSON(client *http.Client, url string, data interface{}, expectedStatus 
 	}
 	log.Println("Response:", string(body))
 
+	// If expectedStatus is less than 100, assume it was passed in shorthand.
+	if expectedStatus < 100 {
+		expectedStatus *= 10
+	}
+
 	if resp.StatusCode != expectedStatus {
 		return fmt.Errorf("unexpected status code: got %d, expected %d. Response: %s", resp.StatusCode, expectedStatus, string(body))
 	}
 
-	// Log the response for debugging purposes.
 	return nil
 }
