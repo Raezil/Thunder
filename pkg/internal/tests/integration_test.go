@@ -138,7 +138,7 @@ func TestContainers(t *testing.T) {
 		Age:      30,
 	}
 	// Expecting 201 Created or adjust as per your app behavior.
-	if err := postJSON(client, registerURL, registerPayload, 200); err != nil {
+	if err := postJSON(client, registerURL, registerPayload, 20); err != nil {
 		t.Fatalf("registration failed: %v", err)
 	}
 
@@ -184,6 +184,7 @@ func postJSON(client *http.Client, url string, data interface{}, expectedStatus 
 	if resp.StatusCode != expectedStatus {
 		return fmt.Errorf("unexpected status code: got %d, expected %d. Response: %s", resp.StatusCode, expectedStatus, string(body))
 	}
+	fmt.Println(string(body))
 
 	// Log the response for debugging purposes.
 	return nil
