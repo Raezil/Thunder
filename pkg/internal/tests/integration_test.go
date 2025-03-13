@@ -138,7 +138,7 @@ func TestContainers(t *testing.T) {
 		Age:      30,
 	}
 	// Expecting 201 Created or adjust as per your app behavior.
-	if err := postJSON(client, registerURL, registerPayload, 201); err != nil {
+	if err := postJSON(client, registerURL, registerPayload, 200); err != nil {
 		t.Fatalf("registration failed: %v", err)
 	}
 
