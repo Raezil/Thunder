@@ -67,7 +67,7 @@ func TestContainers(t *testing.T) {
 	defer postgresC.Terminate(ctx)
 
 	// Update the connection string to use the network alias "postgres".
-	dbConnStr := "postgres://postgres:postgres@postgres:5432/testdb?sslmode=disable"
+	dbConnStr := "postgres://testuser:testpass@postgres:5432/testdb?sslmode=disable"
 	t.Logf("Postgres connection string: %s", dbConnStr)
 
 	// Launch the application container on the same network.
@@ -118,7 +118,7 @@ func TestContainers(t *testing.T) {
 
 	t.Logf("Application is running at %s", appURL)
 	// Optionally wait for a few seconds to ensure the application is fully started.
-	time.Sleep(60 * time.Second)
+	time.Sleep(15 * time.Second)
 
 	// Configure an HTTP client. If your app doesn't use TLS, change the scheme above to "http".
 	client := &http.Client{
