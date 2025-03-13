@@ -9,6 +9,8 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+// middleware verifies JWT tokens in the request context.
+// Rejects unauthorized requests with a detailed log entry.
 func AuthUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	if info.FullMethod == "/authenticator.Auth/Login" || info.FullMethod == "/authenticator.Auth/Register" {
 		return handler(ctx, req)
