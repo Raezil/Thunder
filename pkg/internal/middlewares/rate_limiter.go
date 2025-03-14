@@ -29,7 +29,7 @@ func NewRateLimiter(r rate.Limit, b int) *RateLimiter {
 }
 
 // getLimiter gets or creates a rate limiter for a specific client
-func (r *RateLimiter) getLimiter(clientID string) *rate.Limiter {
+func (r *RateLimiter) GetLimiter(clientID string) *rate.Limiter {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -61,7 +61,7 @@ func (r *RateLimiter) RateLimiterInterceptor(
 	// Extract client identifier (can use IP or API key)
 	clientID := "global" // Modify this to extract real client data if needed
 
-	limiter := r.getLimiter(clientID)
+	limiter := r.GetLimiter(clientID)
 	if !limiter.Allow() {
 		return nil, status.Errorf(codes.ResourceExhausted, "Too many requests, slow down")
 	}
