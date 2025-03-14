@@ -26,6 +26,10 @@ type User struct {
 	Age      int    `json:"age,omitempty"`
 }
 
+type TokenResponse struct {
+	Token string `json:"token"`
+}
+
 func TestContainers(t *testing.T) {
 	ctx := context.Background()
 	networkName := fmt.Sprintf("test-network-%d", time.Now().UnixNano())
@@ -154,7 +158,42 @@ func TestContainers(t *testing.T) {
 		t.Fatalf("login failed: %v", err)
 	}
 
+	var tokenResp TokenResponse
+	if err := postJSONWithResponse(client, loginURL, loginPayload, 200, &tokenResp); err != nil {
+		t.Fatalf("login failed: %v", err)
+	}
+
+	protectedURL := appURL + "/v1/auth/protected"
+	protectedPayload := map[string]string{"text": "sample request"}
+	if err := postJSONWithAuth(client, protectedURL, protectedPayload, 200, tokenResp.Token); err != nil {
+		t.Fatalf("protected request failed: %v", err)
+	}
 	t.Log("Both registration and login returned the expected status codes.")
+}
+
+func postJSONWithResponse(client *http.Client, url string, data interface{}, expectedStatus int, response interface{}) error {
+	payloadBytes, err := json.Marshal(data)
+	if err != nil {
+		return fmt.Errorf("failed to marshal JSON: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(payloadBytes)))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != expectedStatus {
+		return fmt.Errorf("unexpected status code: got %d, expected %d", resp.StatusCode, expectedStatus)
+	}
+
+	return json.NewDecoder(resp.Body).Decode(response)
 }
 
 // postJSON simulates a curl POST request with JSON payload,
@@ -190,6 +229,40 @@ func postJSON(client *http.Client, url string, data interface{}, expectedStatus 
 
 	if resp.StatusCode != expectedStatus {
 		return fmt.Errorf("unexpected status code: got %d, expected %d. Response: %s", resp.StatusCode, expectedStatus, string(body))
+	}
+
+	return nil
+}
+
+func postJSONWithAuth(client *http.Client, url string, data interface{}, expectedStatus int, token string) error {
+	payloadBytes, err := json.Marshal(data)
+	if err != nil {
+		return fmt.Errorf("failed to marshal JSON: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(payloadBytes)))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", token)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+	// Read the response body
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	// Log the response body content
+	log.Println("Response:", string(body))
+
+	if resp.StatusCode != expectedStatus {
+		return fmt.Errorf("unexpected status code: got %d, expected %d", resp.StatusCode, expectedStatus)
 	}
 
 	return nil
