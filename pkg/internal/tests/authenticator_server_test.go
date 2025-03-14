@@ -114,7 +114,7 @@ func TestSampleProtectedSuccess(t *testing.T) {
 
 	mockAuthClient := NewMockAuthClient(ctrl)
 
-	expectedRes := &ProtectedReply{message: "Access Granted"}
+	expectedRes := &ProtectedReply{Result: "Access Granted"}
 	mockAuthClient.EXPECT().SampleProtected(gomock.Any(), gomock.Any()).Return(expectedRes, nil)
 
 	// Call SampleProtected
