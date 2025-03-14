@@ -54,4 +54,9 @@ func TestRegisterAndLogin(t *testing.T) {
 	// Validate the login response
 	assert.NoError(t, loginErr)
 	assert.Equal(t, expectedLoginRes, loginRes)
+
+	mockAuthClient.EXPECT().SampleProtected(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("error"))
+	sampleRes, sampleErr := mockAuthClient.SampleProtected(context.Background(), &ProtectedRequest{})
+	assert.Error(t, sampleErr)
+	assert.Nil(t, sampleRes)
 }
