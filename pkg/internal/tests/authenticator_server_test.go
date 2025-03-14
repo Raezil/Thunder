@@ -2,8 +2,10 @@ package tests
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	. "generated"
+	generated "generated"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -135,4 +137,82 @@ func TestSampleProtectedFailure(t *testing.T) {
 	res, err := mockAuthClient.SampleProtected(context.Background(), &ProtectedRequest{})
 	assert.Error(t, err)
 	assert.Nil(t, res)
+}
+
+// TestNewMockAuthServer verifies that NewMockAuthServer properly creates an instance and initializes its recorder.
+func TestNewMockAuthServer(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockServer := NewMockAuthServer(ctrl)
+	if mockServer == nil {
+		t.Fatal("NewMockAuthServer returned nil")
+	}
+	if mockServer.recorder == nil {
+		t.Error("NewMockAuthServer did not initialize recorder")
+	}
+}
+
+// TestEXPECT checks that calling EXPECT() on the mock returns a valid recorder.
+func TestEXPECT(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockServer := NewMockAuthServer(ctrl)
+	rec := mockServer.EXPECT()
+	if rec == nil {
+		t.Fatal("EXPECT() returned nil")
+	}
+}
+
+// TestLogin sets an expectation for Login and then calls it.
+// It verifies that the returned reply and error match the expected values.
+func TestLogin(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockServer := NewMockAuthServer(ctrl)
+
+	// Create a dummy login request and expected reply.
+	req := &generated.LoginRequest{}
+	expectedReply := &generated.LoginReply{}
+	expectedErr := error(nil)
+
+	// Set expectation: Login should be called with any context and our req, and return expectedReply and no error.
+	mockServer.EXPECT().Login(gomock.Any(), req).Return(expectedReply, expectedErr)
+
+	// Call Login.
+	reply, err := mockServer.Login(context.Background(), req)
+	if err != expectedErr {
+		t.Errorf("Expected error %v, got %v", expectedErr, err)
+	}
+	if reply != expectedReply {
+		t.Errorf("Expected reply %v, got %v", expectedReply, reply)
+	}
+}
+
+// TestRegister sets an expectation for Register and then calls it.
+// It checks that the returned reply and error are as expected.
+func TestRegister(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockServer := NewMockAuthServer(ctrl)
+
+	req := &generated.RegisterRequest{}
+	expectedReply := &generated.RegisterReply{}
+	expectedErr := errors.New("registration error")
+
+	// Set expectation: Register should be called with any context and our req, and return expectedReply and a dummy error.
+	mockServer.EXPECT().Register(gomock.Any(), req).Return(expectedReply, expectedErr)
+
+	reply, err := mockServer.Register(context.Background(), req)
+	if err == nil {
+		t.Error("Expected an error, got nil")
+	} else if err.Error() != expectedErr.Error() {
+		t.Errorf("Expected error %v, got %v", expectedErr, err)
+	}
+	if reply != expectedReply {
+		t.Errorf("Expected reply %v, got %v", expectedReply, reply)
+	}
 }
