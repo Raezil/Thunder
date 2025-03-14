@@ -152,7 +152,7 @@ mockgen -source=yourservice_grpc.pb.go -destination=../tests/yourservice_mock.go
 
 ### Run Tests
 ```bash
-cd app/internal
+cd pkg/internal
 go test ./tests/...
 ```
 
@@ -160,6 +160,7 @@ go test ./tests/...
 
 ### Generate TLS Certificates
 ```bash
+cd pkg
 mkdir certs
 openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes \
   -subj "/CN=localhost" \
