@@ -252,6 +252,7 @@ func postJSONWithAuth(client *http.Client, url string, data interface{}, expecte
 		return fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
+	log.Println("Response:", resp.Body)
 
 	if resp.StatusCode != expectedStatus {
 		return fmt.Errorf("unexpected status code: got %d, expected %d", resp.StatusCode, expectedStatus)
