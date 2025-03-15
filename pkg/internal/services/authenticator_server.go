@@ -24,7 +24,7 @@ func (s *AuthServiceServer) SampleProtected(ctx context.Context, in *ProtectedRe
 	currentUser, err := CurrentUser(ctx)
 	if err != nil {
 		s.Logger.Error(err)
-		return nil, err
+		return nil, status.Errorf(codes.Unauthenticated, "failed to retrieve current user: %v", err)
 	}
 	return &ProtectedReply{
 		Result: in.Text + " " + currentUser,
@@ -99,7 +99,3 @@ func (s *AuthServiceServer) Register(ctx context.Context, in *RegisterRequest) (
 		Reply: fmt.Sprintf("Congratulations, User email: %s got created!", obj.Email),
 	}, nil
 }
-
-
-
-
