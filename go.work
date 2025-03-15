@@ -5,9 +5,8 @@ toolchain go1.23.0
 use (
 	./
 	./pkg/db
-	./pkg/internal/services
-	./pkg/internal/services/generated
-	./pkg/internal/middlewares
-	./pkg/internal/routes
-	./pkg/internal/tests
+	./pkg/services
+	./pkg/services/generated
+	./pkg/middlewares
+	./pkg/routes
 )

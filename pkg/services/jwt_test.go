@@ -1,8 +1,7 @@
-package tests
+package services
 
 import (
 	"context"
-	. "services"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

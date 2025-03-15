@@ -1,7 +1,6 @@
-package tests
+package middlewares
 
 import (
-	. "middlewares"
 	"testing"
 	"time"
 

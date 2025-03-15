@@ -2,11 +2,10 @@
 // Source: authenticator_grpc.pb.go
 
 // Package mock_generated is a generated GoMock package.
-package tests
+package generated
 
 import (
 	context "context"
-	generated "generated"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -37,14 +36,14 @@ func (m *MockAuthClient) EXPECT() *MockAuthClientMockRecorder {
 }
 
 // Login mocks base method.
-func (m *MockAuthClient) Login(ctx context.Context, in *generated.LoginRequest, opts ...grpc.CallOption) (*generated.LoginReply, error) {
+func (m *MockAuthClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Login", varargs...)
-	ret0, _ := ret[0].(*generated.LoginReply)
+	ret0, _ := ret[0].(*LoginReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -57,14 +56,14 @@ func (mr *MockAuthClientMockRecorder) Login(ctx, in interface{}, opts ...interfa
 }
 
 // Register mocks base method.
-func (m *MockAuthClient) Register(ctx context.Context, in *generated.RegisterRequest, opts ...grpc.CallOption) (*generated.RegisterReply, error) {
+func (m *MockAuthClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Register", varargs...)
-	ret0, _ := ret[0].(*generated.RegisterReply)
+	ret0, _ := ret[0].(*RegisterReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -77,14 +76,14 @@ func (mr *MockAuthClientMockRecorder) Register(ctx, in interface{}, opts ...inte
 }
 
 // SampleProtected mocks base method.
-func (m *MockAuthClient) SampleProtected(ctx context.Context, in *generated.ProtectedRequest, opts ...grpc.CallOption) (*generated.ProtectedReply, error) {
+func (m *MockAuthClient) SampleProtected(ctx context.Context, in *ProtectedRequest, opts ...grpc.CallOption) (*ProtectedReply, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "SampleProtected", varargs...)
-	ret0, _ := ret[0].(*generated.ProtectedReply)
+	ret0, _ := ret[0].(*ProtectedReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -120,10 +119,10 @@ func (m *MockAuthServer) EXPECT() *MockAuthServerMockRecorder {
 }
 
 // Login mocks base method.
-func (m *MockAuthServer) Login(arg0 context.Context, arg1 *generated.LoginRequest) (*generated.LoginReply, error) {
+func (m *MockAuthServer) Login(arg0 context.Context, arg1 *LoginRequest) (*LoginReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Login", arg0, arg1)
-	ret0, _ := ret[0].(*generated.LoginReply)
+	ret0, _ := ret[0].(*LoginReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -135,10 +134,10 @@ func (mr *MockAuthServerMockRecorder) Login(arg0, arg1 interface{}) *gomock.Call
 }
 
 // Register mocks base method.
-func (m *MockAuthServer) Register(arg0 context.Context, arg1 *generated.RegisterRequest) (*generated.RegisterReply, error) {
+func (m *MockAuthServer) Register(arg0 context.Context, arg1 *RegisterRequest) (*RegisterReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Register", arg0, arg1)
-	ret0, _ := ret[0].(*generated.RegisterReply)
+	ret0, _ := ret[0].(*RegisterReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -150,10 +149,10 @@ func (mr *MockAuthServerMockRecorder) Register(arg0, arg1 interface{}) *gomock.C
 }
 
 // SampleProtected mocks base method.
-func (m *MockAuthServer) SampleProtected(arg0 context.Context, arg1 *generated.ProtectedRequest) (*generated.ProtectedReply, error) {
+func (m *MockAuthServer) SampleProtected(arg0 context.Context, arg1 *ProtectedRequest) (*ProtectedReply, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SampleProtected", arg0, arg1)
-	ret0, _ := ret[0].(*generated.ProtectedReply)
+	ret0, _ := ret[0].(*ProtectedReply)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
