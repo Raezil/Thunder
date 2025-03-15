@@ -146,14 +146,13 @@ Server accessible via HTTP at `localhost:8080` and gRPC at `localhost:50051`.
 
 ### Mocking Tests
 ```bash
-cd backend
-mockgen -source=yourservice_grpc.pb.go -destination=../tests/yourservice_mock.go
+cd pkg/services
+mockgen -source=yourservice_grpc.pb.go -destination=../yourservice_mock.go
 ```
 
 ### Run Tests
 ```bash
-cd pkg/internal
-go test ./tests/...
+go test ./pkg/db ./pkg/middlewares/ ./pkg/services/ ./pkg/services/generated
 ```
 
 ## **🔧 Kubernetes Deployment**
