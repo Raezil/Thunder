@@ -53,7 +53,7 @@ case "$1" in
         thunder-generate "$@"
         ;;
     docker)
-        DEPLOYMENT_FILE="./pkg/k8s/app-deployment.yaml"
+        DEPLOYMENT_FILE="./k8s/app-deployment.yaml"
 
         # Verify the deployment file exists.
         if [ ! -f "$DEPLOYMENT_FILE" ]; then
