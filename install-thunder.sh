@@ -78,7 +78,7 @@ case "$1" in
         minikube start
 
         # Change to Kubernetes manifests directory
-        cd pkg/k8s || { echo "❌ Directory k8s not found!"; exit 1; }
+        cd k8s || { echo "❌ Directory k8s not found!"; exit 1; }
 
         # Apply PostgreSQL resources
         echo "📦 Deploying PostgreSQL..."
