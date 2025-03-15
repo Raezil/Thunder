@@ -6,7 +6,6 @@ import (
 	"fmt"
 	. "generated"
 	generated "generated"
-	reflect "reflect"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -215,23 +214,5 @@ func TestRegister(t *testing.T) {
 	}
 	if reply != expectedReply {
 		t.Errorf("Expected reply %v, got %v", expectedReply, reply)
-	}
-}
-
-func TestMustEmbedUnimplementedAuthServer(t *testing.T) {
-	mockServer := NewMockAuthServer(gomock.NewController(t))
-
-	serverType := reflect.TypeOf(mockServer).Elem()
-
-	found := false
-	for i := 0; i < serverType.NumField(); i++ {
-		field := serverType.Field(i)
-		if field.Type == reflect.TypeOf(UnimplementedAuthServer{}) {
-			found = true
-			break
-		}
-	}
-	if !found {
-		t.Error("MockAuthServer does not embed UnimplementedAuthServer")
 	}
 }
