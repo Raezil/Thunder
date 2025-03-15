@@ -6,7 +6,9 @@ import (
 	pb "services"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 // middleware verifies JWT tokens in the request context.
@@ -21,12 +23,12 @@ func AuthUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 	}
 	token := md["authorization"]
 	if len(token) == 0 {
-		return nil, fmt.Errorf("missing token")
+		return nil, status.Errorf(codes.Unauthenticated, "missing token")
 	}
 
 	claims, err := pb.VerifyJWT(token[0])
 	if err != nil {
-		return nil, fmt.Errorf("unauthorized: %v", err)
+		return nil, status.Errorf(codes.Unauthenticated, "unauthorized: %v", err)
 	}
 	// Set timeout for database operations to prevent hanging requests
 	md = metadata.Join(md, metadata.Pairs("current_user", claims.Email))
