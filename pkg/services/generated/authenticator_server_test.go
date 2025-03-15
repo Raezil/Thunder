@@ -1,11 +1,9 @@
-package tests
+package generated
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	. "generated"
-	generated "generated"
 	reflect "reflect"
 	"testing"
 
@@ -175,8 +173,8 @@ func TestLogin(t *testing.T) {
 	mockServer := NewMockAuthServer(ctrl)
 
 	// Create a dummy login request and expected reply.
-	req := &generated.LoginRequest{}
-	expectedReply := &generated.LoginReply{}
+	req := &LoginRequest{}
+	expectedReply := &LoginReply{}
 	expectedErr := error(nil)
 
 	// Set expectation: Login should be called with any context and our req, and return expectedReply and no error.
@@ -200,8 +198,8 @@ func TestRegister(t *testing.T) {
 
 	mockServer := NewMockAuthServer(ctrl)
 
-	req := &generated.RegisterRequest{}
-	expectedReply := &generated.RegisterReply{}
+	req := &RegisterRequest{}
+	expectedReply := &RegisterReply{}
 	expectedErr := errors.New("registration error")
 
 	// Set expectation: Register should be called with any context and our req, and return expectedReply and a dummy error.
@@ -244,8 +242,8 @@ func TestSampleProtected_Authorized(t *testing.T) {
 
 	mockServer := NewMockAuthServer(ctrl)
 	// Create a valid protected request; adjust the fields as needed.
-	req := &generated.ProtectedRequest{Text: "valid-token-text"}
-	expectedReply := &generated.ProtectedReply{Result: "Access Granted"}
+	req := &ProtectedRequest{Text: "valid-token-text"}
+	expectedReply := &ProtectedReply{Result: "Access Granted"}
 
 	// Set up expectation: when SampleProtected is called with the valid request,
 	// it should return the expected reply and no error.
@@ -269,7 +267,7 @@ func TestSampleProtected_Unauthorized(t *testing.T) {
 
 	mockServer := NewMockAuthServer(ctrl)
 	// Create a request with an invalid token.
-	req := &generated.ProtectedRequest{Text: "invalid-token-text"}
+	req := &ProtectedRequest{Text: "invalid-token-text"}
 
 	// Set up expectation: when SampleProtected is called with the invalid request,
 	// it should return nil and an "unauthorized" error.

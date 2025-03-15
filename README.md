@@ -137,7 +137,7 @@ thunder generate --proto=example.proto
 
 Start the server:
 ```bash
-go run ./pkg/app/server/main.go
+go run ./cmd/app/server/main.go
 ```
 
 Server accessible via HTTP at `localhost:8080` and gRPC at `localhost:50051`.
@@ -146,21 +146,20 @@ Server accessible via HTTP at `localhost:8080` and gRPC at `localhost:50051`.
 
 ### Mocking Tests
 ```bash
-cd backend
-mockgen -source=yourservice_grpc.pb.go -destination=../tests/yourservice_mock.go
+cd pkg/services
+mockgen -source=yourservice_grpc.pb.go -destination=../yourservice_mock.go
 ```
 
 ### Run Tests
 ```bash
-cd pkg/internal
-go test ./tests/...
+go test ./pkg/db ./pkg/middlewares/ ./pkg/services/ ./pkg/services/generated
 ```
 
 ## **🔧 Kubernetes Deployment**
 
 ### Generate TLS Certificates
 ```bash
-cd pkg
+cd cmd
 mkdir certs
 openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes \
   -subj "/CN=localhost" \
