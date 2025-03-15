@@ -140,7 +140,7 @@ func main() {
 	}
 
 	// Create a FastHTTP router.
-	fastMux := middlewares.LoggingMiddleware(func(ctx *fasthttp.RequestCtx) {
+	fastMux := middlewares.CORSMiddleware(middlewares.LoggingMiddleware(func(ctx *fasthttp.RequestCtx) {
 		switch string(ctx.Path()) {
 		case "/health":
 			healthCheckHandler(ctx)
@@ -149,7 +149,7 @@ func main() {
 		default:
 			fasthttpHandler(ctx) // Pass other requests to gRPC-Gateway
 		}
-	})
+	}))
 
 	// Start FastHTTP server.
 	httpPort := viper.GetString("http.port")
