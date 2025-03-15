@@ -216,3 +216,23 @@ func TestRegister(t *testing.T) {
 		t.Errorf("Expected reply %v, got %v", expectedReply, reply)
 	}
 }
+
+func TestNewMockUnsafeAuthServer(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mock := NewMockUnsafeAuthServer(ctrl)
+	if mock == nil {
+		t.Fatal("NewMockUnsafeAuthServer returned nil")
+	}
+}
+
+// TestEXPECT verifies that calling EXPECT on the mock returns a non-nil expectation object.
+func TestEXPECTMockUnsafeAuthServer(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mock := NewMockUnsafeAuthServer(ctrl)
+	expect := mock.EXPECT()
+	if expect == nil {
+		t.Fatal("EXPECT returned nil")
+	}
+}
