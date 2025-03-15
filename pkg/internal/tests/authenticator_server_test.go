@@ -6,6 +6,7 @@ import (
 	"fmt"
 	. "generated"
 	generated "generated"
+	reflect "reflect"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -234,5 +235,52 @@ func TestEXPECTMockUnsafeAuthServer(t *testing.T) {
 	expect := mock.EXPECT()
 	if expect == nil {
 		t.Fatal("EXPECT returned nil")
+	}
+}
+
+func TestSampleProtected_Authorized(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockServer := NewMockAuthServer(ctrl)
+	// Create a valid protected request; adjust the fields as needed.
+	req := &generated.ProtectedRequest{Text: "valid-token-text"}
+	expectedReply := &generated.ProtectedReply{Result: "Access Granted"}
+
+	// Set up expectation: when SampleProtected is called with the valid request,
+	// it should return the expected reply and no error.
+	mockServer.EXPECT().SampleProtected(gomock.Any(), gomock.Eq(req)).Return(expectedReply, nil)
+
+	// Call SampleProtected.
+	reply, err := mockServer.SampleProtected(context.Background(), req)
+	if err != nil {
+		t.Fatalf("Expected no error, got: %v", err)
+	}
+	if !reflect.DeepEqual(reply, expectedReply) {
+		t.Fatalf("Expected reply %+v, got %+v", expectedReply, reply)
+	}
+}
+
+// TestSampleProtected_Unauthorized verifies that SampleProtected returns an error
+// when provided with invalid credentials.
+func TestSampleProtected_Unauthorized(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockServer := NewMockAuthServer(ctrl)
+	// Create a request with an invalid token.
+	req := &generated.ProtectedRequest{Text: "invalid-token-text"}
+
+	// Set up expectation: when SampleProtected is called with the invalid request,
+	// it should return nil and an "unauthorized" error.
+	mockServer.EXPECT().SampleProtected(gomock.Any(), gomock.Eq(req)).Return(nil, errors.New("unauthorized"))
+
+	// Call SampleProtected.
+	reply, err := mockServer.SampleProtected(context.Background(), req)
+	if err == nil || err.Error() != "unauthorized" {
+		t.Fatalf("Expected 'unauthorized' error, got error: %v", err)
+	}
+	if reply != nil {
+		t.Fatalf("Expected nil reply, got: %+v", reply)
 	}
 }
