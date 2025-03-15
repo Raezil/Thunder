@@ -34,4 +34,4 @@ RUN chmod +x /app/entrypoint.sh
 COPY pkg/certs /certs
 # Set the entrypoint and default command
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["go", "run", "./pkg/app/server/main.go"]
+CMD ["go", "run", "./cmd/app/server/main.go"]
