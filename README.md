@@ -137,7 +137,7 @@ thunder generate --proto=example.proto
 
 Start the server:
 ```bash
-go run ./pkg/app/server/main.go
+go run ./cmd/app/server/main.go
 ```
 
 Server accessible via HTTP at `localhost:8080` and gRPC at `localhost:50051`.
@@ -159,7 +159,7 @@ go test ./pkg/db ./pkg/middlewares/ ./pkg/services/ ./pkg/services/generated
 
 ### Generate TLS Certificates
 ```bash
-cd pkg
+cd cmd
 mkdir certs
 openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes \
   -subj "/CN=localhost" \
