@@ -30,6 +30,20 @@ type TokenResponse struct {
 	Token string `json:"token"`
 }
 
+func waitForAppReady(url string, timeout time.Duration) error {
+	deadline := time.Now().Add(timeout)
+	client := http.Client{}
+
+	for time.Now().Before(deadline) {
+		resp, err := client.Get(url)
+		if err == nil && resp.StatusCode == 200 {
+			return nil // App is ready
+		}
+		time.Sleep(2 * time.Second) // Retry after 2 seconds
+	}
+	return fmt.Errorf("application did not become ready within %s", timeout)
+}
+
 func TestContainers(t *testing.T) {
 	ctx := context.Background()
 	networkName := fmt.Sprintf("test-network-%d", time.Now().UnixNano())
@@ -122,8 +136,9 @@ func TestContainers(t *testing.T) {
 
 	t.Logf("Application is running at %s", appURL)
 	// Optionally wait for a few seconds to ensure the application is fully started.
-	time.Sleep(45 * time.Second)
-
+	if err := waitForAppReady(appURL+"/health", 60*time.Second); err != nil {
+		t.Fatalf("App is not ready: %v", err)
+	}
 	// Configure an HTTP client. If your app doesn't use TLS, change the scheme above to "http".
 	client := &http.Client{
 		Transport: &http.Transport{
