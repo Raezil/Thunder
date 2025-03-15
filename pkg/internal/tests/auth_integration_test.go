@@ -131,10 +131,10 @@ func TestContainers(t *testing.T) {
 		},
 	}
 
-	// 4. Simulate the curl commands.
-
-	// Registration: simulate
+	// Base URLs and payloads.
 	registerURL := appURL + "/v1/auth/register"
+	loginURL := appURL + "/v1/auth/login"
+	protectedURL := appURL + "/v1/auth/protected"
 	registerPayload := User{
 		Email:    "newuser@example.com",
 		Password: "password123",
@@ -142,18 +142,18 @@ func TestContainers(t *testing.T) {
 		Surname:  "Doe",
 		Age:      30,
 	}
-	// Expecting 201 Created or adjust as per your app behavior.
-	if err := postJSON(client, registerURL, registerPayload, 200); err != nil {
-		t.Fatalf("registration failed: %v", err)
-	}
-
-	// Login: simulate
-	loginURL := appURL + "/v1/auth/login"
 	loginPayload := User{
 		Email:    "newuser@example.com",
 		Password: "password123",
 	}
-	// Expecting 200 OK or adjust as needed.
+	protectedPayload := map[string]string{"text": "sample request"}
+
+	// Registration: simulate
+	if err := postJSON(client, registerURL, registerPayload, 200); err != nil {
+		t.Fatalf("registration failed: %v", err)
+	}
+
+	// Login: simulate to verify basic functionality.
 	if err := postJSON(client, loginURL, loginPayload, 20); err != nil {
 		t.Fatalf("login failed: %v", err)
 	}
@@ -163,14 +163,67 @@ func TestContainers(t *testing.T) {
 		t.Fatalf("login failed: %v", err)
 	}
 
-	protectedURL := appURL + "/v1/auth/protected"
-	protectedPayload := map[string]string{"text": "sample request"}
 	if err := postJSONWithAuth(client, protectedURL, protectedPayload, 200, tokenResp.Token); err != nil {
 		t.Fatalf("protected request failed: %v", err)
 	}
 	t.Log("Both registration and login returned the expected status codes.")
+
+	// -------------------------
+	// Additional Sub-Tests
+	// -------------------------
+
+	// Test duplicate registration with the same email.
+	t.Run("Duplicate Registration", func(t *testing.T) {
+		// Attempt to register the same user again; expecting a failure (e.g. 400 Bad Request).
+		err := postJSON(client, registerURL, registerPayload, 40) // 40 becomes 400.
+		if err != nil {
+			t.Logf("Duplicate registration failed as expected: %v", err)
+		} else {
+			t.Error("Duplicate registration succeeded unexpectedly")
+		}
+	})
+
+	// Test login with an incorrect password.
+	t.Run("Login with Wrong Password", func(t *testing.T) {
+		wrongLogin := User{
+			Email:    "newuser@example.com",
+			Password: "wrongpassword",
+		}
+		// Expecting an unauthorized response (e.g. 401 Unauthorized).
+		err := postJSON(client, loginURL, wrongLogin, 40) // 40 becomes 400 or 401, adjust as needed.
+		if err != nil {
+			t.Logf("Login with wrong password failed as expected: %v", err)
+		} else {
+			t.Error("Login with wrong password succeeded unexpectedly")
+		}
+	})
+
+	// Test accessing the protected endpoint without a token.
+	t.Run("Protected Endpoint Without Token", func(t *testing.T) {
+		// No Authorization header is set.
+		err := postJSON(client, protectedURL, protectedPayload, 40) // expecting failure (e.g. 401 Unauthorized).
+		if err != nil {
+			t.Logf("Protected endpoint access without token failed as expected: %v", err)
+		} else {
+			t.Error("Access to protected endpoint without token succeeded unexpectedly")
+		}
+	})
+
+	// Test accessing the protected endpoint with an invalid token.
+	t.Run("Protected Endpoint With Invalid Token", func(t *testing.T) {
+		invalidToken := "invalid-token"
+		// Expecting failure (e.g. 401 Unauthorized).
+		err := postJSONWithAuth(client, protectedURL, protectedPayload, 40, invalidToken)
+		if err != nil {
+			t.Logf("Protected endpoint access with invalid token failed as expected: %v", err)
+		} else {
+			t.Error("Access to protected endpoint with invalid token succeeded unexpectedly")
+		}
+	})
 }
 
+// postJSONWithResponse simulates a curl POST request with JSON payload,
+// validates the HTTP response status code, and decodes the JSON response.
 func postJSONWithResponse(client *http.Client, url string, data interface{}, expectedStatus int, response interface{}) error {
 	payloadBytes, err := json.Marshal(data)
 	if err != nil {
@@ -234,6 +287,7 @@ func postJSON(client *http.Client, url string, data interface{}, expectedStatus 
 	return nil
 }
 
+// postJSONWithAuth is similar to postJSON but adds an Authorization header.
 func postJSONWithAuth(client *http.Client, url string, data interface{}, expectedStatus int, token string) error {
 	payloadBytes, err := json.Marshal(data)
 	if err != nil {
@@ -252,13 +306,11 @@ func postJSONWithAuth(client *http.Client, url string, data interface{}, expecte
 		return fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
-	// Read the response body
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("failed to read response body: %w", err)
 	}
-
-	// Log the response body content
 	log.Println("Response:", string(body))
 
 	if resp.StatusCode != expectedStatus {
