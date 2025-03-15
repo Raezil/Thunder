@@ -51,10 +51,10 @@ jobs:
         run: go test -v ./...
 
       - name: Run Integration Tests (gRPC + REST)
-        run: go test -v ./...
+        run: go test ./pkg/db ./pkg/middlewares/ ./pkg/services/ ./pkg/services/generated
 
       - name: Generate Coverage Report
-        run: go test -coverprofile=coverage.txt ./pkg/...
+        run: go test -coverprofile=coverage.txt ./pkg/db ./pkg/middlewares/ ./pkg/services/ ./pkg/services/generated
 
       - name: Print Coverage Summary
         run: go tool cover -func=coverage.txt
