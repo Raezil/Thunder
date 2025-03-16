@@ -38,7 +38,7 @@ cat << 'EOF' | sudo tee /usr/local/bin/thunder > /dev/null
 #!/bin/bash
 
 case "$1" in
-    new)
+    init)
         shift
         # Use an optional directory name; default to "Thunder"
         TARGET_DIR="${1:-Thunder}"
