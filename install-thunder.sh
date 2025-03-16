@@ -111,6 +111,11 @@ case "$1" in
         echo "🔗 Forwarding port 8080 to app-service..."
         kubectl port-forward service/app-service 8080:8080 &
         ;;
+    test)
+        echo "Running tests..."
+        go test -v ./pkg/db ./pkg/middlewares/ ./pkg/services/ ./pkg/services/generated
+        exit 0
+        ;;
     *)
         echo "⚡ Usage: $0 [new | docker | generate | deploy]"
         exit 1
