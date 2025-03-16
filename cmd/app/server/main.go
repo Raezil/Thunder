@@ -5,6 +5,9 @@ import (
 	"io"
 	"log"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"middlewares"
 	. "routes"
@@ -107,8 +110,11 @@ func main() {
 	grpc_health_v1.RegisterHealthServer(grpcServer, healthServer)
 
 	sugar.Infof("Serving gRPC with TLS on 0.0.0.0%s", grpcPort)
+	// Run gRPC server in a separate goroutine.
 	go func() {
-		log.Fatalln(grpcServer.Serve(lis))
+		if err := grpcServer.Serve(lis); err != nil {
+			sugar.Errorf("gRPC server stopped: %v", err)
+		}
 	}()
 
 	// Setup secure connection for gRPC-Gateway.
@@ -151,10 +157,34 @@ func main() {
 		}
 	}))
 
-	// Start FastHTTP server.
+	// Setup FastHTTP server.
 	httpPort := viper.GetString("http.port")
 	sugar.Infof("Serving gRPC-Gateway with FastHTTP on https://0.0.0.0%s", httpPort)
-	if err := fasthttp.ListenAndServeTLS(httpPort, certFile, keyFile, fastMux); err != nil {
-		sugar.Fatalf("FastHTTP server failed: %v", err)
+	httpServer := &fasthttp.Server{
+		Handler: fastMux,
+	}
+
+	// Run FastHTTP server in a separate goroutine.
+	go func() {
+		if err := httpServer.ListenAndServeTLS(httpPort, certFile, keyFile); err != nil {
+			sugar.Errorf("FastHTTP server stopped: %v", err)
+		}
+	}()
+
+	// Listen for interrupt or termination signals.
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
+	sugar.Info("Shutdown signal received. Initiating graceful shutdown...")
+
+	// Gracefully stop the gRPC server.
+	grpcServer.GracefulStop()
+	sugar.Info("gRPC server gracefully stopped.")
+
+	// Gracefully shutdown the FastHTTP server.
+	if err := httpServer.Shutdown(); err != nil {
+		sugar.Errorf("Error shutting down FastHTTP server: %v", err)
+	} else {
+		sugar.Info("Thunder server gracefully stopped.")
 	}
 }
