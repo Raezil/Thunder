@@ -8,6 +8,7 @@ import (
 	"golang.org/x/time/rate"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
 )
 
@@ -59,8 +60,15 @@ func (r *RateLimiter) RateLimiterInterceptor(
 	handler grpc.UnaryHandler) (interface{}, error) {
 
 	// Extract client identifier (can use IP or API key)
-	clientID := "global" // Modify this to extract real client data if needed
-
+	// Extract the client's IP address from the context using the peer package.
+	p, ok := peer.FromContext(ctx)
+	var clientID string
+	if ok {
+		clientID = p.Addr.String()
+		// Optionally, further parse clientID if needed (e.g., remove port information)
+	} else {
+		clientID = "unknown"
+	}
 	limiter := r.GetLimiter(clientID)
 	if !limiter.Allow() {
 		return nil, status.Errorf(codes.ResourceExhausted, "Too many requests, slow down")
