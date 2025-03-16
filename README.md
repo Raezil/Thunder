@@ -63,7 +63,7 @@ chmod +x install-thunder.sh
 ### **Setup**
 Create a new Thunder application:
 ```bash
-thunder new myapp
+thunder init myapp
 cd myapp
 ```
 
