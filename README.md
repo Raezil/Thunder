@@ -156,6 +156,29 @@ go test ./pkg/db ./pkg/middlewares/ ./pkg/services/ ./pkg/services/generated
 ```
 
 ## **🔧 Kubernetes Deployment**
+### PgBouncer Configuration
+
+This setup configures PgBouncer to connect to a PostgreSQL database using Kubernetes resources.
+
+### Updating the `userlist.txt` Secret
+
+To regenerate and update the `userlist.txt` secret, use the following command to encode the credentials:
+
+```bash
+echo '"postgres" "postgres"' | base64
+```
+
+Now, update `pgbouncer-all.yaml` under the `Secret` section with the new base64-encoded value:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pgbouncer-secret
+type: Opaque
+data:
+  userlist.txt: <BASE64_ENCODED_VALUE>  # "postgres" "postgres" in base64
+```
 
 ### Generate TLS Certificates
 ```bash
