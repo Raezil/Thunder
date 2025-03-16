@@ -117,7 +117,7 @@ case "$1" in
         exit 0
         ;;
     *)
-        echo "⚡ Usage: $0 [new | docker | generate | deploy]"
+        echo "⚡ Usage: $0 [init | docker | generate | deploy | test]"
         exit 1
         ;;
 esac
