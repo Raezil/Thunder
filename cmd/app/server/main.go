@@ -19,6 +19,7 @@ import (
 	"github.com/uber/jaeger-client-go/config"
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpadaptor"
+	graphqlruntime "github.com/ysugimoto/grpc-graphql-gateway/runtime"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -129,6 +130,8 @@ func main() {
 
 	// Register gRPC-Gateway handlers.
 	gwmux := runtime.NewServeMux()
+	gwmuxGraphql := graphqlruntime.NewServeMux()
+	RegisterGraphQLHandlers(gwmuxGraphql, conn)
 	RegisterHandlers(gwmux, conn)
 
 	// Convert the gRPC-Gateway mux to work with fasthttp.
@@ -152,6 +155,8 @@ func main() {
 			healthCheckHandler(ctx)
 		case "/ready":
 			readyCheckHandler(ctx)
+		case "/graphql":
+			fasthttpadaptor.NewFastHTTPHandler(gwmuxGraphql)(ctx)
 		default:
 			fasthttpHandler(ctx) // Pass other requests to gRPC-Gateway
 		}
