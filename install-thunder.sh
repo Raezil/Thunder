@@ -66,7 +66,7 @@ case "$1" in
         read docker_project
         echo "🔨 Building Docker image..."
         NEW_IMAGE="${docker_username}/${docker_project}:latest"
-        sed -i'' -E '/busybox/! s#^([[:space:]]*image:[[:space:]])[^[:space:]]+#\1'"${NEW_IMAGE}"'#' pkg/k8s/app-deployment.yaml
+        sed -i'' -E '/busybox/! s#^([[:space:]]*image:[[:space:]])[^[:space:]]+#\1'"${NEW_IMAGE}"'#' k8s/app-deployment.yaml
         docker build -t ${docker_username}/${docker_project}:latest .
         echo "🔑 Logging in to Docker Hub..."
         docker login
