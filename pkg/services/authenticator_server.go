@@ -23,7 +23,7 @@ type AuthServiceServer struct {
 func (s *AuthServiceServer) SampleProtected(ctx context.Context, in *ProtectedRequest) (*ProtectedReply, error) {
 	currentUser, err := CurrentUser(ctx)
 	if err != nil {
-		s.Logger.Error(err)
+		s.Logger.Warnw("Failed to retrieve current user", "error", err)
 		return nil, status.Errorf(codes.Unauthenticated, "failed to retrieve current user: %v", err)
 	}
 	return &ProtectedReply{
@@ -41,19 +41,19 @@ func (s *AuthServiceServer) Login(ctx context.Context, in *LoginRequest) (*Login
 
 	// Handle user not found (or any error retrieving the user).
 	if err != nil || user == nil {
-		s.Logger.Errorw("Failed to get user", "error", err)
+		s.Logger.Warnw("Login failed: user not found", "email", in.Email, "error", err)
 		return nil, status.Errorf(codes.Unauthenticated, "incorrect email or password")
 	}
 
 	// Compare the stored hashed password with the password provided.
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password)); err != nil {
-		s.Logger.Errorf("Invalid password for email %s", in.Email)
+		s.Logger.Warnw("Invalid password attempt", "email", in.Email)
 		return nil, status.Errorf(codes.Unauthenticated, "Invalid credentials: %v", err)
 	}
 
 	token, err := GenerateJWT(in.Email)
 	if err != nil {
-		s.Logger.Errorf("Error generating token for email %s: %v", in.Email, err)
+		s.Logger.Errorw("Error generating token", "email", in.Email, "error", err)
 		return nil, status.Errorf(codes.Internal, "could not generate token: %v", err)
 	}
 
@@ -66,11 +66,12 @@ func (s *AuthServiceServer) Login(ctx context.Context, in *LoginRequest) (*Login
 // Register creates a new user after ensuring the email is unique and hashing the password.
 func (s *AuthServiceServer) Register(ctx context.Context, in *RegisterRequest) (*RegisterReply, error) {
 	// Check if a user with the given email already exists.
+	s.Logger.Debugw("Register request received", "email", in.Email)
 	existingUser, err := s.PrismaClient.User.FindUnique(
 		db.User.Email.Equals(in.Email),
 	).Exec(ctx)
 	if err == nil && existingUser != nil {
-		s.Logger.Errorf("User with email %s already exists", in.Email)
+		s.Logger.Warnw("Registration failed: email already in use", "email", in.Email)
 		return nil, status.Errorf(codes.AlreadyExists, "failed to register user: email already in use")
 	}
 
@@ -78,7 +79,7 @@ func (s *AuthServiceServer) Register(ctx context.Context, in *RegisterRequest) (
 	// Hash the password using bcrypt with the default cost.
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcryptCost)
 	if err != nil {
-		s.Logger.Errorf("failed to hash password: %v", err)
+		s.Logger.Errorw("Failed to hash password", "email", in.Email, "error", err)
 		return nil, status.Errorf(codes.Internal, "failed to register user: %v", err)
 	}
 
@@ -90,11 +91,11 @@ func (s *AuthServiceServer) Register(ctx context.Context, in *RegisterRequest) (
 		db.User.Age.Set(int(in.Age)),
 	).Exec(ctx)
 	if err != nil {
-		s.Logger.Errorf("failed to create user: %v", err)
+		s.Logger.Errorw("Failed to create user", "email", in.Email, "error", err)
 		return nil, status.Errorf(codes.Internal, "failed to register user: %v", err)
 	}
 
-	s.Logger.Infof("User registered successfully with email: %s", obj.Email)
+	s.Logger.Infow("User registered successfully", "email", obj.Email)
 	return &RegisterReply{
 		Reply: fmt.Sprintf("Congratulations, User email: %s got created!", obj.Email),
 	}, nil
