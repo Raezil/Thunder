@@ -70,18 +70,19 @@ func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
 const graphqlTemplateCode = `package routes
 
 import (
-	"context"
 	"log"
+
+	. "generated"
+
 	"github.com/ysugimoto/grpc-graphql-gateway/runtime"
 	"google.golang.org/grpc"
-	pb "services"
 )
 
 // RegisterGraphQLHandlers registers GraphQL Gateway handlers.
 func RegisterGraphQLHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) {
 	var err error
 	{{range .}}
-	err = pb.{{.GraphqlHandlerRegister}}(context.Background(), mux, conn)
+	err = {{.GraphqlHandlerRegister}}(mux, conn)
 	if err != nil {
 		log.Fatalln("Failed to register GraphQL gateway:", err)
 	}

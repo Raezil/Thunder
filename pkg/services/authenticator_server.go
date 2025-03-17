@@ -100,37 +100,3 @@ func (s *AuthServiceServer) Register(ctx context.Context, in *RegisterRequest) (
 		Reply: fmt.Sprintf("Congratulations, User email: %s got created!", obj.Email),
 	}, nil
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

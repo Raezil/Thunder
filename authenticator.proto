@@ -51,7 +51,7 @@ message ProtectedRequest {
 }
 
 message ProtectedReply {
-    string result = 1 [(graphql.field) = {required: true}];
+    string result = 1;
 }
 
 message LoginRequest {
@@ -68,9 +68,9 @@ message RegisterRequest {
 }
 
 message LoginReply {
-    string token = 1 [(graphql.field) = {required: true}];
+    string token = 1;
 }
 
 message RegisterReply {
-    string reply = 1 [(graphql.field) = {required: true}];
+    string reply = 1;
 }

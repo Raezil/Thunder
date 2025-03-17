@@ -57,7 +57,7 @@ func Gql__type_RegisterReply() *graphql.Object {
 			Name: "Generated_Type_RegisterReply",
 			Fields: graphql.Fields{
 				"reply": &graphql.Field{
-					Type: graphql.NewNonNull(graphql.String),
+					Type: graphql.String,
 				},
 			},
 		})
@@ -85,7 +85,7 @@ func Gql__type_ProtectedReply() *graphql.Object {
 			Name: "Generated_Type_ProtectedReply",
 			Fields: graphql.Fields{
 				"result": &graphql.Field{
-					Type: graphql.NewNonNull(graphql.String),
+					Type: graphql.String,
 				},
 			},
 		})
@@ -116,7 +116,7 @@ func Gql__type_LoginReply() *graphql.Object {
 			Name: "Generated_Type_LoginReply",
 			Fields: graphql.Fields{
 				"token": &graphql.Field{
-					Type: graphql.NewNonNull(graphql.String),
+					Type: graphql.String,
 				},
 			},
 		})
@@ -156,7 +156,7 @@ func Gql__input_RegisterReply() *graphql.InputObject {
 			Name: "Generated_Input_RegisterReply",
 			Fields: graphql.InputObjectConfigFieldMap{
 				"reply": &graphql.InputObjectFieldConfig{
-					Type: graphql.NewNonNull(graphql.String),
+					Type: graphql.String,
 				},
 			},
 		})
@@ -184,7 +184,7 @@ func Gql__input_ProtectedReply() *graphql.InputObject {
 			Name: "Generated_Input_ProtectedReply",
 			Fields: graphql.InputObjectConfigFieldMap{
 				"result": &graphql.InputObjectFieldConfig{
-					Type: graphql.NewNonNull(graphql.String),
+					Type: graphql.String,
 				},
 			},
 		})
@@ -215,7 +215,7 @@ func Gql__input_LoginReply() *graphql.InputObject {
 			Name: "Generated_Input_LoginReply",
 			Fields: graphql.InputObjectConfigFieldMap{
 				"token": &graphql.InputObjectFieldConfig{
-					Type: graphql.NewNonNull(graphql.String),
+					Type: graphql.String,
 				},
 			},
 		})

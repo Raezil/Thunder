@@ -12,10 +12,10 @@ import (
 // RegisterGraphQLHandlers registers GraphQL Gateway handlers.
 func RegisterGraphQLHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) {
 	var err error
-
+	
 	err = RegisterAuthGraphqlHandler(mux, conn)
 	if err != nil {
 		log.Fatalln("Failed to register GraphQL gateway:", err)
 	}
-
+	
 }
