@@ -41,7 +41,7 @@ service Auth {
         };
         option (graphql.schema) = {
             type: QUERY   // declare as Query
-            name: "register" // query name
+            name: "sample" // query name
         };
     }
 }
