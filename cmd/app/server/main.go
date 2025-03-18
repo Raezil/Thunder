@@ -2,7 +2,7 @@ package main
 
 import (
 	"db"
-	"helpers"
+	. "helpers"
 	"io"
 	"log"
 	"net"
@@ -131,7 +131,7 @@ func main() {
 
 	// Register gRPC-Gateway handlers.
 	gwmux := runtime.NewServeMux()
-	gwmuxGraphql := helpers.NewGraphqlServeMux()
+	gwmuxGraphql := NewGraphqlServeMux()
 
 	gwmuxGraphql.SetIncomingHeaderMatcher(func(key string) (string, bool) {
 		if strings.ToLower(key) == "authorization" {
