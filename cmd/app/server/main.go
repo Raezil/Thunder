@@ -156,6 +156,8 @@ func main() {
 		case "/ready":
 			readyCheckHandler(ctx)
 		case "/graphql":
+			graphqlHandler := middlewares.HeaderForwarderMiddleware(fasthttpadaptor.NewFastHTTPHandler(gwmuxGraphql))
+			graphqlHandler(ctx)
 			fasthttpadaptor.NewFastHTTPHandler(gwmuxGraphql)(ctx)
 		default:
 			fasthttpHandler(ctx) // Pass other requests to gRPC-Gateway
