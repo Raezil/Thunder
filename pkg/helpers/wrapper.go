@@ -10,58 +10,64 @@ import (
 )
 
 // CustomServeMux wraps graphqlruntime.ServeMux and adds an incoming header matcher.
-type CustomServeMux struct {
+type GraphqlServeMux struct {
 	*graphqlruntime.ServeMux
-	// incomingHeaderMatcher maps incoming header keys to their desired form.
 	incomingHeaderMatcher func(string) (string, bool)
 }
 
-// NewCustomServeMux returns a new instance of CustomServeMux.
-func NewCustomServeMux() *CustomServeMux {
-	return &CustomServeMux{
+func NewGraphqlServeMux() *GraphqlServeMux {
+	return &GraphqlServeMux{
 		ServeMux:              graphqlruntime.NewServeMux(),
 		incomingHeaderMatcher: defaultHeaderMatcher,
 	}
 }
 
-// defaultHeaderMatcher is a simple implementation that converts keys to lower-case.
 func defaultHeaderMatcher(key string) (string, bool) {
 	return strings.ToLower(key), true
 }
 
-// SetIncomingHeaderMatcher allows setting a custom header matcher.
-func (c *CustomServeMux) SetIncomingHeaderMatcher(matcher func(string) (string, bool)) {
+func (c *GraphqlServeMux) SetIncomingHeaderMatcher(matcher func(string) (string, bool)) {
 	c.incomingHeaderMatcher = matcher
 }
 
-// ServeHTTP intercepts incoming requests, applies the header matcher, injects matching headers as gRPC metadata,
-// and then delegates to the underlying ServeMux.
-func (c *CustomServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Create an empty metadata map.
-	mdMap := make(map[string]string)
+func (c *GraphqlServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Create a fresh metadata map for this request
+	mdMap := make(map[string][]string)
 
-	// Iterate over incoming headers.
+	// Process Authorization header specifically
+	authHeader := r.Header.Get("Authorization")
+	if authHeader != "" {
+		// Store as a slice since metadata uses string slices
+		mdMap["authorization"] = []string{authHeader}
+	}
+
+	// Process other headers
 	for key, values := range r.Header {
-		if len(values) > 0 {
-			// If the header is an authorization header (any case), map it to "Authorization"
-			if strings.ToLower(key) == "authorization" {
-				log.Println(values[0])
-				mdMap["Authorization"] = values[0]
-			} else {
-				mdMap[strings.ToLower(key)] = values[0]
+		if len(values) > 0 && strings.ToLower(key) != "authorization" {
+			if mappedKey, ok := c.incomingHeaderMatcher(key); ok {
+				mdMap[mappedKey] = []string{values[0]}
 			}
 		}
 	}
 
-	// Create gRPC metadata from the map.
-	md := metadata.New(mdMap)
+	// Create metadata directly using pairs to ensure format consistency
+	pairs := []string{}
+	for k, vs := range mdMap {
+		for _, v := range vs {
+			pairs = append(pairs, k, v)
+		}
+	}
 
-	// Attach the metadata to the incoming context.
+	md := metadata.Pairs(pairs...)
+
+	// Create a new context with the metadata
 	newCtx := metadata.NewIncomingContext(r.Context(), md)
 
-	// Replace the request's context with the new context.
-	r = r.WithContext(newCtx)
+	// Update the request with the new context
+	newRequest := r.WithContext(newCtx)
 
-	// Delegate to the underlying ServeMux.
-	c.ServeMux.ServeHTTP(w, r)
+	log.Printf("GraphQL metadata: %v", md)
+
+	// Forward to the underlying handler
+	c.ServeMux.ServeHTTP(w, newRequest)
 }

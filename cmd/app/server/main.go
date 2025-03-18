@@ -131,7 +131,7 @@ func main() {
 
 	// Register gRPC-Gateway handlers.
 	gwmux := runtime.NewServeMux()
-	gwmuxGraphql := helpers.NewCustomServeMux()
+	gwmuxGraphql := helpers.NewGraphqlServeMux()
 
 	gwmuxGraphql.SetIncomingHeaderMatcher(func(key string) (string, bool) {
 		if strings.ToLower(key) == "authorization" {
