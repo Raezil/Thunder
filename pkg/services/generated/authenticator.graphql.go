@@ -292,7 +292,7 @@ func (x *graphql__resolver_Auth) GetQueries(conn *grpc.ClientConn) graphql.Field
 				return resp, nil
 			},
 		},
-		"register": &graphql.Field{
+		"sample": &graphql.Field{
 			Type: Gql__type_ProtectedReply(),
 			Args: graphql.FieldConfigArgument{
 				"text": &graphql.ArgumentConfig{
@@ -303,7 +303,7 @@ func (x *graphql__resolver_Auth) GetQueries(conn *grpc.ClientConn) graphql.Field
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				var req ProtectedRequest
 				if err := runtime.MarshalRequest(p.Args, &req, false); err != nil {
-					return nil, errors.Wrap(err, "Failed to marshal request for register")
+					return nil, errors.Wrap(err, "Failed to marshal request for sample")
 				}
 				client := NewAuthClient(conn)
 				resp, err := client.SampleProtected(p.Context, &req)
