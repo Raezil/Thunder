@@ -3,6 +3,7 @@ package middlewares
 import (
 	"context"
 	"fmt"
+	"log"
 	pb "services"
 
 	"google.golang.org/grpc"
@@ -21,6 +22,7 @@ func AuthUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 	if !ok {
 		return nil, fmt.Errorf("missing metadata")
 	}
+	log.Println(md)
 	token := md["authorization"]
 	if len(token) == 0 {
 		return nil, status.Errorf(codes.Unauthenticated, "missing token")
