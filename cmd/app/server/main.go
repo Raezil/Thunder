@@ -2,11 +2,13 @@ package main
 
 import (
 	"db"
+	. "helpers"
 	"io"
 	"log"
 	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"middlewares"
@@ -127,8 +129,25 @@ func main() {
 		log.Fatalln("Failed to dial gRPC server:", err)
 	}
 
-	// Register gRPC-Gateway handlers.
-	gwmux := runtime.NewServeMux()
+	// In your main.go, ensure both handlers use the same header matcher
+	headerMatcher := func(key string) (string, bool) {
+		log.Printf("Header received: %s", key) // Debug log
+		key = strings.ToLower(key)
+		if key == "authorization" {
+			return key, true
+		}
+		return runtime.DefaultHeaderMatcher(key)
+	}
+	// For gRPC gateway
+	gwmux := runtime.NewServeMux(
+		runtime.WithIncomingHeaderMatcher(headerMatcher),
+	)
+
+	// For GraphQL
+	gwmuxGraphql := NewGraphqlServeMux()
+	gwmuxGraphql.SetIncomingHeaderMatcher(headerMatcher)
+
+	RegisterGraphQLHandlers(gwmuxGraphql.ServeMux, conn)
 	RegisterHandlers(gwmux, conn)
 
 	// Convert the gRPC-Gateway mux to work with fasthttp.
@@ -152,6 +171,9 @@ func main() {
 			healthCheckHandler(ctx)
 		case "/ready":
 			readyCheckHandler(ctx)
+		case "/graphql":
+			graphqlHandler := middlewares.HeaderForwarderMiddleware(fasthttpadaptor.NewFastHTTPHandler(gwmuxGraphql))
+			graphqlHandler(ctx)
 		default:
 			fasthttpHandler(ctx) // Pass other requests to gRPC-Gateway
 		}
