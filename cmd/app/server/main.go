@@ -131,10 +131,12 @@ func main() {
 
 	// In your main.go, ensure both handlers use the same header matcher
 	headerMatcher := func(key string) (string, bool) {
-		if strings.ToLower(key) == "authorization" {
-			return "authorization", true
+		switch strings.ToLower(key) {
+		case "authorization":
+			return key, true
+		default:
+			return runtime.DefaultHeaderMatcher(key)
 		}
-		return runtime.DefaultHeaderMatcher(key)
 	}
 
 	// For gRPC gateway
