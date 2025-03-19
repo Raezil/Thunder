@@ -131,14 +131,13 @@ func main() {
 
 	// In your main.go, ensure both handlers use the same header matcher
 	headerMatcher := func(key string) (string, bool) {
-		switch strings.ToLower(key) {
-		case "authorization":
+		log.Printf("Header received: %s", key) // Debug log
+		key = strings.ToLower(key)
+		if key == "authorization" {
 			return key, true
-		default:
-			return runtime.DefaultHeaderMatcher(key)
 		}
+		return runtime.DefaultHeaderMatcher(key)
 	}
-
 	// For gRPC gateway
 	gwmux := runtime.NewServeMux(
 		runtime.WithIncomingHeaderMatcher(headerMatcher),
