@@ -58,6 +58,7 @@ func NewApp() (*App, error) {
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatal(err)
+		return nil, err
 	}
 
 	certFile := "../../certs/server.crt"
@@ -66,6 +67,7 @@ func NewApp() (*App, error) {
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
 	if err != nil {
 		sugar.Fatalf("Failed to load TLS credentials: %v", err)
+		return nil, err
 	}
 	rateLimiter := middlewares.NewRateLimiter(5, 10)
 
