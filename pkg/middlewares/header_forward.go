@@ -12,14 +12,17 @@ func HeaderForwarderMiddleware(next fasthttp.RequestHandler) fasthttp.RequestHan
 		authHeader := ctx.Request.Header.Peek("Authorization")
 		if authHeader != nil {
 			// Ensure the header is preserved in the expected format
-			// This ensures consistency regardless of how the client sent it
 			authValue := string(authHeader)
-			if !strings.HasPrefix(strings.ToLower(authValue), "bearer ") && !strings.HasPrefix(strings.ToLower(authValue), "basic ") {
+			if !strings.HasPrefix(strings.ToLower(authValue), "bearer ") &&
+				!strings.HasPrefix(strings.ToLower(authValue), "basic ") {
 				authValue = "Bearer " + authValue
 			}
 			// Set the canonical Authorization header
 			ctx.Request.Header.Set("Authorization", authValue)
+			// Ensure it's also set as lowercase for consistency with gRPC metadata
+			ctx.Request.Header.Set("authorization", authValue)
 		}
+
 		next(ctx)
 	}
 }

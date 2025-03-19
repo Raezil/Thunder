@@ -129,17 +129,23 @@ func main() {
 		log.Fatalln("Failed to dial gRPC server:", err)
 	}
 
-	// Register gRPC-Gateway handlers.
-	gwmux := runtime.NewServeMux()
-	gwmuxGraphql := NewGraphqlServeMux()
-
-	gwmuxGraphql.SetIncomingHeaderMatcher(func(key string) (string, bool) {
+	// In your main.go, ensure both handlers use the same header matcher
+	headerMatcher := func(key string) (string, bool) {
 		if strings.ToLower(key) == "authorization" {
-			// Map any version of the header to "Authorization"
-			return "Authorization", true
+			return "authorization", true
 		}
-		return strings.ToLower(key), true
-	})
+		return runtime.DefaultHeaderMatcher(key)
+	}
+
+	// For gRPC gateway
+	gwmux := runtime.NewServeMux(
+		runtime.WithIncomingHeaderMatcher(headerMatcher),
+	)
+
+	// For GraphQL
+	gwmuxGraphql := NewGraphqlServeMux()
+	gwmuxGraphql.SetIncomingHeaderMatcher(headerMatcher)
+
 	RegisterGraphQLHandlers(gwmuxGraphql.ServeMux, conn)
 	RegisterHandlers(gwmux, conn)
 
