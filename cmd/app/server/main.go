@@ -195,6 +195,7 @@ func (app *App) Run() error {
 	return nil
 }
 
+// main program
 func main() {
 	initConfig()
 	initJaeger("grpc-gateway")
