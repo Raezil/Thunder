@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	. "routes"
 
@@ -167,7 +168,10 @@ func (app *App) Run() error {
 	httpPort := viper.GetString("http.port")
 	app.logger.Infof("Serving gRPC-Gateway with FastHTTP on https://0.0.0.0%s", httpPort)
 	httpServer := &fasthttp.Server{
-		Handler: app.RegisterMux(),
+		Handler:      app.RegisterMux(),
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  60 * time.Second,
 	}
 
 	// Run FastHTTP server in a separate goroutine.
