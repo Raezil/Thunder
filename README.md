@@ -246,6 +246,7 @@ curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
 - [gRPC-Gateway](https://grpc-ecosystem.github.io/grpc-gateway/)
 - [Prisma ORM](https://www.prisma.io/docs/)
 - [Kubernetes Docs](https://kubernetes.io/docs/)
+- [Tutorial](https://gist.github.com/Raezil/f649ae8c5201f60d479ed796299af679)
 
 ## **📣 Stay Connected**
 ⭐ Star the repository if you find it useful!  
