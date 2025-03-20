@@ -64,6 +64,10 @@ Before proceeding with the installation, please ensure that you have the followi
 - **Docker:** Required for containerizing and deploying your application.
 - **Minikube:** For running a local Kubernetes cluster.
 - **Kubectl:** Command-line tool for interacting with your Kubernetes cluster.
+- **Prisma**:
+  ```bash
+  go install github.com/steebchen/prisma-client-go@latest
+  ```
 - **Protoc (Golang):** Protocol Buffers compiler.
 - **gRPC-Gateway Plugin:** 
   ```bash
