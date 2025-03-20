@@ -93,6 +93,7 @@ func NewApp() (*App, error) {
 }
 
 func (app *App) RegisterMux() fasthttp.RequestHandler {
+	// fasthttp handler
 	fasthttpHandler := fasthttpadaptor.NewFastHTTPHandler(app.gwmux)
 
 	// Define FastHTTP handlers.
@@ -120,6 +121,7 @@ func (app *App) RegisterMux() fasthttp.RequestHandler {
 	return fastMux
 }
 
+// running
 func (app *App) Run() error {
 	grpcPort := viper.GetString("grpc.port")
 	lis, err := net.Listen("tcp", grpcPort)
