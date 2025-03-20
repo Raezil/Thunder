@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/97223feb-9c64-4d77-8854-971bad695903" alt="centered image">
+  <img src="https://github.com/user-attachments/assets/8268d5d9-4715-49d3-a60f-f90ec3edceeb" alt="centered image">
 </p>
 
-# **Thunder - A Minimalist Backend Framework in Go**
+# **Thunder- A Minimalist Backend Framework in Go**
 
 
 *A gRPC-Gateway-powered framework with Prisma, Kubernetes, and Go for scalable microservices.*
