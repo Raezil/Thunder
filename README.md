@@ -270,6 +270,7 @@ curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
 
 ## **🔗 References**
 - [Go Documentation](https://golang.org/doc/)
+- [gRPC](https://grpc.io/docs/languages/go/quickstart/)
 - [gRPC-Gateway](https://grpc-ecosystem.github.io/grpc-gateway/)
 - [Prisma ORM](https://www.prisma.io/docs/)
 - [Kubernetes Docs](https://kubernetes.io/docs/)
