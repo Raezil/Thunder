@@ -57,6 +57,27 @@ Thunder is designed for **scalable microservices** and **high-performance API de
 - If you're not deploying on Kubernetes or prefer a monolithic backend.
 
 ## **📌 Getting Started**
+### **Install Prerequisites**
+
+Before proceeding with the installation, please ensure that you have the following prerequisites installed on your system:
+
+- **Docker:** Required for containerizing and deploying your application.
+- **Minikube:** For running a local Kubernetes cluster.
+- **Kubectl:** Command-line tool for interacting with your Kubernetes cluster.
+- **Protoc (Golang):** Protocol Buffers compiler.
+- **gRPC-Gateway Plugin:** 
+  ```bash
+  go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+  ```
+- **Protoc-Gen-Go Plugin:**
+   ```bash
+   go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+   ```
+- **Protoc-Gen-Go-Grpc Plugin:**
+  ```bash
+  go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+  ```
+
 
 ### **Installation**
 ```bash
