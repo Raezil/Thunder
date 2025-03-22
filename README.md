@@ -81,7 +81,7 @@ Before proceeding with the installation, please ensure that you have the followi
   ```bash
   go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
   ```
-  **Protoc-get swagger:**
+  **Protoc Swagger:**
   ```bash
   go install github.com/swaggo/swag/cmd/swag@latest
   ```
