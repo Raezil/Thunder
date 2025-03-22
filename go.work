@@ -11,4 +11,5 @@ use (
 	./pkg/services/generated
 	./pkg/middlewares
 	./pkg/routes
+	./cmd/helpers
 )
