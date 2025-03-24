@@ -69,6 +69,18 @@ Before proceeding with the installation, please ensure that you have the followi
   go install github.com/steebchen/prisma-client-go@latest
   ```
 - **Protoc (Golang):** Protocol Buffers compiler.
+	- linux:
+	  ```bash
+	  apt install -y protobuf-compiler
+	  ```
+	- macos:
+	  ```bash
+	  brew install protobuf
+	  ```
+	- windows
+	  ```bash
+	  winget install protobuf
+	  ```
 - **gRPC-Gateway Plugin:** 
   ```bash
   go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
@@ -81,7 +93,7 @@ Before proceeding with the installation, please ensure that you have the followi
   ```bash
   go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
   ```
-  **Protoc Swagger:**
+- **Protoc Swagger:**
   ```bash
   go install github.com/swaggo/swag/cmd/swag@latest
   ```
