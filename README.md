@@ -57,53 +57,6 @@ Thunder is designed for **scalable microservices** and **high-performance API de
 - If you're not deploying on Kubernetes or prefer a monolithic backend.
 
 ## **📌 Getting Started**
-### **Install Prerequisites**
-
-Before proceeding with the installation, please ensure that you have the following prerequisites installed on your system:
-
-- **Docker:** Required for containerizing and deploying your application.
-- **Minikube:** For running a local Kubernetes cluster.
-- **Kubectl:** Command-line tool for interacting with your Kubernetes cluster.
-> installation tutorial: https://kubernetes.io/docs/tasks/tools/
-- **Prisma**:
-  ```bash
-  go install github.com/steebchen/prisma-client-go@latest
-  ```
-- **Protoc (Golang):** Protocol Buffers compiler.
-	- linux:
-	  ```bash
-	  apt install -y protobuf-compiler
-	  ```
-	- macos:
-	  ```bash
-	  brew install protobuf
-	  ```
-	- windows
-	  ```bash
-	  winget install protobuf
-	  ```
-- **gRPC-Gateway Plugin:** 
-  ```bash
-  go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
-  ```
-- **Protoc-Gen-Go Plugin:**
-   ```bash
-   go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-   ```
-- **Protoc-Gen-Go-Grpc Plugin:**
-	- [x] Installation
-	  ```bash
-	  go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	  ```
-	- [x] Update your PATH so that the protoc compiler can find the plugins. edit ~/.bashrc:
-	  ```bash
-	  export PATH="$PATH:$(go env GOPATH)/bin"
-	  ```
-	- [x] Reload ~/.bashrc
-	  ```bash
-	  source ~/.bashrc
-	  ```  
-
 ### **Installation**
 ```bash
 git clone https://github.com/Raezil/Thunder.git
