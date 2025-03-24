@@ -91,9 +91,18 @@ Before proceeding with the installation, please ensure that you have the followi
    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
    ```
 - **Protoc-Gen-Go-Grpc Plugin:**
-  ```bash
-  go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-  ```
+	- [x] Installation
+	  ```bash
+	  go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	  ```
+	- [x] Update your PATH so that the protoc compiler can find the plugins. edit ~/.bashrc:
+	  ```bash
+	  export PATH="$PATH:$(go env GOPATH)/bin"
+	  ```
+	- [x] Reload ~/.bashrc
+	  ```bash
+	  source ~/.bashrc
+	  ```  
 
 ### **Installation**
 ```bash
