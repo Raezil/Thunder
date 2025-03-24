@@ -64,6 +64,7 @@ cd Thunder
 chmod +x install-thunder.sh
 ./install-thunder.sh
 ```
+> Remember to install prerequisites, there is tutorial for this https://github.com/Raezil/Thunder/issues/99
 
 ### **Setup**
 Create a new Thunder application:
