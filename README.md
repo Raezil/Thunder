@@ -64,6 +64,7 @@ Before proceeding with the installation, please ensure that you have the followi
 - **Docker:** Required for containerizing and deploying your application.
 - **Minikube:** For running a local Kubernetes cluster.
 - **Kubectl:** Command-line tool for interacting with your Kubernetes cluster.
+> installation tutorial: https://kubernetes.io/docs/tasks/tools/
 - **Prisma**:
   ```bash
   go install github.com/steebchen/prisma-client-go@latest
