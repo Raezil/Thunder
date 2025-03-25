@@ -204,7 +204,7 @@ kubectl create secret generic postgres-secret   --from-literal=POSTGRES_USER=pos
 
 ### Build & Deploy Docker Image
 ```bash
-thunder docker
+thunder build
 thunder deploy
 ```
 
