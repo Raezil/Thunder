@@ -52,7 +52,7 @@ case "$1" in
         shift
         thunder-generate "$@"
         ;;
-    docker)
+    build)
         DEPLOYMENT_FILE="./k8s/app-deployment.yaml"
 
         # Verify the deployment file exists.
@@ -127,4 +127,4 @@ EOF
 echo "🔧 Making thunder command executable..."
 sudo chmod +x /usr/local/bin/thunder
 
-echo "✅ Installation complete! You can now use 'thunder generate' and 'thunder deploy'."
+echo "✅ Installation complete! You can now use 'thunder init', 'thunder build', 'thunder generate' and 'thunder deploy'."
