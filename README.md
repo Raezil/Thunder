@@ -61,7 +61,7 @@ Thunder is designed for **scalable microservices** and **high-performance API de
 ```bash
 git clone https://github.com/Raezil/Thunder.git
 cd Thunder
-chmod +x install-thunder.sh
+chmod +x install.sh
 ./install-thunder.sh
 ```
 > Remember to install prerequisites, there is tutorial for this https://github.com/Raezil/Thunder/issues/99
