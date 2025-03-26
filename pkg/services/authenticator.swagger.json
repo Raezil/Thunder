@@ -49,7 +49,7 @@
       }
     },
     "/v1/auth/protected": {
-      "post": {
+      "get": {
         "operationId": "Auth_SampleProtected",
         "responses": {
           "200": {
@@ -67,12 +67,10 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/authenticatorProtectedRequest"
-            }
+            "name": "text",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -137,14 +135,6 @@
       "type": "object",
       "properties": {
         "result": {
-          "type": "string"
-        }
-      }
-    },
-    "authenticatorProtectedRequest": {
-      "type": "object",
-      "properties": {
-        "text": {
           "type": "string"
         }
       }

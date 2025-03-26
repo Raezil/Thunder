@@ -23,8 +23,7 @@ service Auth {
 
     rpc SampleProtected (ProtectedRequest) returns (ProtectedReply) {
         option (google.api.http) = {
-            post: "/v1/auth/protected"
-            body: "*"
+            get: "/v1/auth/protected"
         };
     }
 }
