@@ -146,7 +146,6 @@ func TestContainers(t *testing.T) {
 		Email:    "newuser@example.com",
 		Password: "password123",
 	}
-	protectedPayload := map[string]string{"text": "sample request"}
 
 	// Registration: simulate
 	if err := postJSON(client, registerURL, registerPayload, 200); err != nil {
@@ -163,7 +162,7 @@ func TestContainers(t *testing.T) {
 		t.Fatalf("login failed: %v", err)
 	}
 
-	if err := postJSONWithAuth(client, protectedURL, protectedPayload, 200, tokenResp.Token); err != nil {
+	if err := getJSONWithAuth(client, protectedURL+"?text=hello", 200, tokenResp.Token); err != nil {
 		t.Fatalf("protected request failed: %v", err)
 	}
 	t.Log("Both registration and login returned the expected status codes.")
@@ -201,7 +200,8 @@ func TestContainers(t *testing.T) {
 	// Test accessing the protected endpoint without a token.
 	t.Run("Protected Endpoint Without Token", func(t *testing.T) {
 		// No Authorization header is set.
-		err := postJSON(client, protectedURL, protectedPayload, 40) // expecting failure (e.g. 401 Unauthorized).
+
+		err := getJSON(client, protectedURL+"?text=hello", 40) // expecting failure (e.g. 401 Unauthorized).
 		if err != nil {
 			t.Logf("Protected endpoint access without token failed as expected: %v", err)
 		} else {
@@ -213,7 +213,7 @@ func TestContainers(t *testing.T) {
 	t.Run("Protected Endpoint With Invalid Token", func(t *testing.T) {
 		invalidToken := "invalid-token"
 		// Expecting failure (e.g. 401 Unauthorized).
-		err := postJSONWithAuth(client, protectedURL, protectedPayload, 40, invalidToken)
+		err := getJSONWithAuth(client, protectedURL+"?text=hello", 40, invalidToken)
 		if err != nil {
 			t.Logf("Protected endpoint access with invalid token failed as expected: %v", err)
 		} else {
@@ -288,13 +288,9 @@ func postJSON(client *http.Client, url string, data interface{}, expectedStatus 
 }
 
 // postJSONWithAuth is similar to postJSON but adds an Authorization header.
-func postJSONWithAuth(client *http.Client, url string, data interface{}, expectedStatus int, token string) error {
-	payloadBytes, err := json.Marshal(data)
-	if err != nil {
-		return fmt.Errorf("failed to marshal JSON: %w", err)
-	}
+func getJSONWithAuth(client *http.Client, url string, expectedStatus int, token string) error {
 
-	req, err := http.NewRequest("POST", url, strings.NewReader(string(payloadBytes)))
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -315,6 +311,38 @@ func postJSONWithAuth(client *http.Client, url string, data interface{}, expecte
 
 	if resp.StatusCode != expectedStatus {
 		return fmt.Errorf("unexpected status code: got %d, expected %d", resp.StatusCode, expectedStatus)
+	}
+
+	return nil
+}
+
+func getJSON(client *http.Client, url string, expectedStatus int) error {
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response: %w", err)
+	}
+	log.Println("Response:", string(body))
+
+	// If expectedStatus is less than 100, assume it was passed in shorthand.
+	if expectedStatus < 100 {
+		expectedStatus *= 10
+	}
+
+	if resp.StatusCode != expectedStatus {
+		return fmt.Errorf("unexpected status code: got %d, expected %d. Response: %s", resp.StatusCode, expectedStatus, string(body))
 	}
 
 	return nil
