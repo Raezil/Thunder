@@ -287,7 +287,7 @@ func postJSON(client *http.Client, url string, data interface{}, expectedStatus 
 	return nil
 }
 
-// postJSONWithAuth is similar to postJSON but adds an Authorization header.
+// getJSONWithAuth is similar to postJSON but adds an Authorization header.
 func getJSONWithAuth(client *http.Client, url string, expectedStatus int, token string) error {
 
 	req, err := http.NewRequest("GET", url, nil)
