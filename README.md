@@ -239,6 +239,14 @@ curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
          }'
 ```
 
+### Sample protected
+```bash
+curl -k -X GET "https://localhost:8080/v1/auth/protected?text=hello" \
+  -H "Authorization: $token"
+```
+> $token is returned by login
+
+
 ## **📜 Contributing**
 
 1. Fork the repository.
