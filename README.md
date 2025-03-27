@@ -151,7 +151,7 @@ Server accessible via HTTP at `localhost:8080` and gRPC at `localhost:50051`.
 
 ### Mocking Tests
 ```bash
-cd pkg/services
+cd pkg/services/generated
 mockgen -source=yourservice_grpc.pb.go -destination=./yourservice_mock.go
 ```
 
