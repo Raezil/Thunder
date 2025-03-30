@@ -11,7 +11,6 @@
 [![Go Version](https://img.shields.io/badge/Go-1.23-blue)](https://golang.org)
 [![License](https://img.shields.io/github/license/Raezil/Thunder)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/Raezil/Thunder)](https://github.com/Raezil/Thunder/stargazers)
-[![Issues](https://img.shields.io/github/issues/Raezil/Thunder)](https://github.com/Raezil/Thunder/issues)
 
 ## **🚀 Features**
 - ✔️ **gRPC + REST (gRPC-Gateway)** – Automatically expose RESTful APIs from gRPC services.
