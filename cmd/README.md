@@ -32,9 +32,10 @@ This script will:
 ```bash
 thunder generate --proto yourfile.proto
 ```
-or
+
+### Test application
 ```bash
-thunder generate --prisma
+thunder test
 ```
 
 ### Generate project
@@ -46,7 +47,7 @@ thunder new projectname
 ### Deploy Kubernetes Resources
 Before deploying make sure You run that command:
 ```
-thunder docker
+thunder build
 ```
 
 Congratulations!, Now You can use deploy!
