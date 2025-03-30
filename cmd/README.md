@@ -6,7 +6,9 @@ A custom CLI tool to automate:
 - **Generating gRPC and Prisma files** (`thunder generate`)
 - **Deploying Kubernetes resources** (`thunder deploy`)
 - **Initializing project** (`thunder new`)
-- **Docker** (`thunder docker`)
+- **Docker** (`thunder build`)
+- **Test**: (`thunder test`)
+
 ## Installation
 
 ### 1. Clone or Download the Repository
