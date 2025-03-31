@@ -5,7 +5,7 @@ The Thunder CLI is a dedicated command‐line tool designed to work with the Thu
 A custom CLI tool to automate:
 - **Generating gRPC and Prisma files** (`thunder generate`)
 - **Deploying Kubernetes resources** (`thunder deploy`)
-- **Initializing project** (`thunder new`)
+- **Initializing project** (`thunder init`)
 - **Docker** (`thunder build`)
 - **Test**: (`thunder test`)
 
@@ -20,7 +20,7 @@ Make sure you have **Go**, **Minikube**, and **kubectl** installed.
 Run the following command:
 
 ```bash
-chmod +x install-thunder.sh && ./install-thunder.sh
+chmod +x install.sh && ./install.sh
 ```
 
 This script will:
@@ -42,7 +42,7 @@ thunder test
 
 ### Generate project
 ```
-thunder new projectname
+thunder init projectname
 ```
 > **Note** replace projectname with actual project name
 
@@ -71,13 +71,6 @@ This command will:
 - **kubectl** (to manage Kubernetes resources)
 - **Prisma Client Go** (if using Prisma)
 - **Protobuf Compiler (`protoc`)** (if using gRPC)
-
-## Uninstallation
-To remove the CLI:
-
-```bash
-sudo rm /usr/local/bin/thunder /usr/local/bin/thunder-generate
-```
 
 ## Troubleshooting
 - If `thunder` is not recognized, make sure `/usr/local/bin/` is in your `$PATH`:
