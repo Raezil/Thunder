@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thunder Framework - Minimalist Backend in Go</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- AOS CSS for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" 
+    integrity="sha512-GYf0GqN9xkzvO8i7eKf7R70X4dN8iWSxTWccBzk9J+eIqxNY5h6FWN3/ZO2s1wS6iWw8B8o7bC0U0qKZdIPm2Q==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f4f7f9;
+      color: #333;
+      scroll-behavior: smooth;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      animation: bounceIn 1s ease;
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    .hero {
+      background: url('https://github.com/user-attachments/assets/d7152297-06ce-49d4-8f33-1dd4565f5f17') no-repeat center center/cover;
+      color: #fff;
+      padding: 100px 0;
+      text-align: center;
+      position: relative;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .hero .content {
+      position: relative;
+      z-index: 1;
+    }
+    .section-title {
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 5px;
+      border-bottom: 2px solid #e2e2e2;
+    }
+    pre, code {
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+    pre {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    footer {
+      background: #343a40;
+      color: #ccc;
+      padding: 20px 0;
+      text-align: center;
+    }
+    /* Button hover transition */
+    .btn {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    @media (max-width: 767px) {
+      .hero {
+        padding: 60px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm" data-aos="fade-down">
+    <div class="container">
+      <a class="navbar-brand" href="#">Thunder</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+         <ul class="navbar-nav ms-auto">
+           <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+           <li class="nav-item"><a class="nav-link" href="#architecture">Architecture</a></li>
+           <li class="nav-item"><a class="nav-link" href="#use-cases">Use Cases</a></li>
+           <li class="nav-item"><a class="nav-link" href="#getting-started">Getting Started</a></li>
+           <li class="nav-item"><a class="nav-link" href="#prisma-integration">Prisma</a></li>
+           <li class="nav-item"><a class="nav-link" href="#kubernetes-deployment">Kubernetes</a></li>
+           <li class="nav-item"><a class="nav-link" href="#api-testing">API Testing</a></li>
+           <li class="nav-item"><a class="nav-link" href="#license">License</a></li>
+         </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero" data-aos="fade-in">
+    <div class="content container">
+      <h1 class="display-4" data-aos="zoom-in">Thunder</h1>
+      <p class="lead" data-aos="fade-up" data-aos-delay="200">A Minimalist Backend Framework in Go with gRPC-Gateway, Prisma, and Kubernetes</p>
+      <div class="d-flex justify-content-center mt-4" data-aos="fade-up" data-aos-delay="400">
+        <a href="https://github.com/Raezil/Thunder" class="btn btn-outline-light">GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container my-5">
+    <!-- Features Section -->
+    <section id="features" class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">🚀 Features</h2>
+      <div class="row">
+        <div class="col-md-6">
+          <ul class="list-unstyled">
+            <li><strong>gRPC + REST (gRPC-Gateway):</strong> Expose RESTful APIs from gRPC services.</li>
+            <li><strong>Prisma Integration:</strong> Efficient database management and migrations.</li>
+            <li><strong>Kubernetes Ready:</strong> Deploy and scale effortlessly.</li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <ul class="list-unstyled">
+            <li><strong>TLS Security:</strong> Secure gRPC communications.</li>
+            <li><strong>Structured Logging:</strong> Built-in <code>zap</code> logging.</li>
+            <li><strong>Rate Limiting &amp; Authentication:</strong> Pre-configured middleware.</li>
+            <li><strong>Thunder CLI:</strong> Generate, deploy, and create projects effortlessly.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Overview -->
+    <section id="architecture" class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">🏗️ Architecture Overview</h2>
+      <div class="text-center">
+        <img src="https://github.com/user-attachments/assets/5074e533-b023-415d-9092-e8f5270ec88f" alt="Architecture Diagram" class="img-fluid rounded" data-aos="zoom-in">
+      </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section id="use-cases" class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">📌 Use Cases</h2>
+      <div class="accordion" id="useCasesAccordion">
+        <div class="accordion-item" data-aos="fade-right">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+              High-Performance API Development
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+              gRPC-first APIs with RESTful interfaces via gRPC-Gateway. Suitable for critical, low-latency applications with strongly-typed APIs.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item" data-aos="fade-left">
+          <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+              Microservices Architecture
+            </button>
+          </h2>
+          <div id="collapseTwo" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              Efficient inter-service communication and Kubernetes deployments with built-in service discovery and scaling.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item" data-aos="fade-right">
+          <h2 class="accordion-header" id="headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+              Database Management with Prisma
+            </button>
+          </h2>
+          <div id="collapseThree" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              Type-safe queries, easy migrations, and support for PostgreSQL, MySQL, SQLite, and more.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item" data-aos="fade-left">
+          <h2 class="accordion-header" id="headingFour">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+              Lightweight Backend Alternative
+            </button>
+          </h2>
+          <div id="collapseFour" class="accordion-collapse collapse">
+            <div class="accordion-body">
+              A minimalist framework that’s a powerful alternative to feature-heavy backends, ideal for fast, modular API development.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Getting Started -->
+    <section id="getting-started" class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">📌 Getting Started</h2>
+      <h4>Installation</h4>
+      <pre><code>git clone https://github.com/Raezil/Thunder.git
+cd Thunder
+chmod +x install.sh
+./install.sh</code></pre>
+      <blockquote class="blockquote">
+        <p>Remember to install prerequisites. For a tutorial, see <a href="https://github.com/Raezil/Thunder/issues/99" target="_blank">this guide</a>.</p>
+      </blockquote>
+      <h4>Setup</h4>
+      <pre><code>thunder init myapp
+cd myapp</code></pre>
+      <h4>Install Dependencies</h4>
+      <pre><code>go mod tidy</code></pre>
+      <h4>Define Your gRPC Service</h4>
+      <pre><code>syntax = "proto3";
+
+package example;
+
+import "google/api/annotations.proto";
+
+service Example {
+  rpc SayHello(HelloRequest) returns (HelloResponse) {
+    option (google.api.http) = {
+      get: "/v1/example/sayhello"
+    };
+  }
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloResponse {
+  string message = 1;
+}</code></pre>
+      <p>Add your service entry in <code>services.json</code>:</p>
+      <pre><code>[
+  {
+    "ServiceName": "Example",
+    "ServiceStruct": "ExampleServiceServer",
+    "ServiceRegister": "RegisterExampleServer",
+    "HandlerRegister": "RegisterExampleHandler"
+  }
+]</code></pre>
+    </section>
+
+    <!-- Prisma Integration -->
+    <section id="prisma-integration" class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">🛠️ Prisma Integration</h2>
+      <pre><code>datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @default(cuid()) @id
+  name  String
+  email String @unique
+}</code></pre>
+      <p>Generate the service implementation:</p>
+      <pre><code>thunder generate --proto=example.proto</code></pre>
+    </section>
+
+    <!-- Kubernetes Deployment -->
+    <section id="kubernetes-deployment" class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">🔧 Kubernetes Deployment</h2>
+      <h4>PgBouncer Configuration &amp; Updating the Secret</h4>
+      <p>This setup configures PgBouncer to connect to a PostgreSQL database using Kubernetes resources. To update the <code>userlist.txt</code> secret, run:</p>
+      <pre><code>echo '"postgres" "postgres"' | base64</code></pre>
+      <p>Then update your <code>pgbouncer-all.yaml</code> file:</p>
+      <pre><code>apiVersion: v1
+kind: Secret
+metadata:
+  name: pgbouncer-secret
+type: Opaque
+data:
+  userlist.txt: &lt;BASE64_ENCODED_VALUE&gt;  # "postgres" "postgres" in base64</code></pre>
+      <h4>Generate TLS Certificates</h4>
+      <pre><code>cd cmd
+mkdir certs
+openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes \
+  -subj "/CN=localhost" \
+  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"</code></pre>
+      <h4>Generate Kubernetes Secrets</h4>
+      <pre><code>kubectl create secret generic app-secret --from-literal=DATABASE_URL="postgres://postgres:postgres@pgbouncer-service:6432/thunder?sslmode=disable" --from-literal=JWT_SECRET="secret"
+
+kubectl create secret generic postgres-secret --from-literal=POSTGRES_USER=postgres --from-literal=POSTGRES_PASSWORD=postgres --from-literal=POSTGRES_DB=thunder</code></pre>
+      <h4>Build &amp; Deploy Docker Image</h4>
+      <pre><code>thunder build
+thunder deploy</code></pre>
+      <p>Check pod status:</p>
+      <pre><code>kubectl get pods -n default
+kubectl describe pod $NAME -n default</code></pre>
+    </section>
+
+    <!-- API Testing -->
+    <section id="api-testing" class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">📡 API Testing</h2>
+      <h4>Register User</h4>
+      <pre><code>curl -k --http2 -X POST https://localhost:8080/v1/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{
+           "email": "newuser@example.com",
+           "password": "password123",
+           "name": "John",
+           "surname": "Doe",
+           "age": 30
+         }'</code></pre>
+      <h4>User Login</h4>
+      <pre><code>curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
+     -H "Content-Type: application/json" \
+     -d '{
+           "email": "newuser@example.com",
+           "password": "password123"
+         }'</code></pre>
+    </section>
+
+    <!-- License -->
+    <section id="license" class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">License</h2>
+      <p>Thunder is released under the MIT License.</p>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer data-aos="fade-in">
+    <div class="container">
+      <p>&copy; 2025 Thunder Framework. All Rights Reserved.</p>
+    </div>
+  </footer>
+  
+  <!-- Bootstrap & AOS Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" 
+    integrity="sha512-A7AYSTIEk7guyRW3I89LKB/c0wifv6eE7J0H1WcxgLLXfC8KHnDbIC5e+NE8wVZOz0YIR5ELbM1MxIsXk5WQ8g==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+  </script>
+</body>
+</html>
