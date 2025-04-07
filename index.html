@@ -1,229 +1,589 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Thunder Framework - Minimalist Backend in Go</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- AOS CSS for animations -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" 
-    integrity="sha512-GYf0GqN9xkzvO8i7eKf7R70X4dN8iWSxTWccBzk9J+eIqxNY5h6FWN3/ZO2s1wS6iWw8B8o7bC0U0qKZdIPm2Q==" 
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: #f4f7f9;
-      color: #333;
-      scroll-behavior: smooth;
-    }
-    .navbar-brand {
-      font-weight: 700;
-      font-size: 1.5rem;
-      animation: bounceIn 1s ease;
-    }
-    @keyframes bounceIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      60% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(1); }
-    }
-    .hero {
-      background: url('https://github.com/user-attachments/assets/d7152297-06ce-49d4-8f33-1dd4565f5f17') no-repeat center center/cover;
-      color: #fff;
-      padding: 100px 0;
-      text-align: center;
-      position: relative;
-    }
-    .hero::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-    }
-    .hero .content {
-      position: relative;
-      z-index: 1;
-    }
-    .section-title {
-      font-weight: 700;
-      margin-bottom: 20px;
-      padding-bottom: 5px;
-      border-bottom: 2px solid #e2e2e2;
-    }
-    pre, code {
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-    }
-    pre {
-      background: #2d2d2d;
-      color: #f8f8f2;
-      padding: 15px;
-      border-radius: 5px;
-      overflow-x: auto;
-    }
-    footer {
-      background: #343a40;
-      color: #ccc;
-      padding: 20px 0;
-      text-align: center;
-    }
-    /* Button hover transition */
-    .btn {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    @media (max-width: 767px) {
-      .hero {
-        padding: 60px 0;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thunder - A Minimalist Backend Framework in Go</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+            z-index: 1;
+        }
+        
+        .hero-container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+            border-top: 4px solid transparent;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-top: 4px solid #3b82f6;
+        }
+        
+        .glow {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        
+        .code-block {
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .code-block::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background-color: #0f172a;
+            border-radius: 0.5rem 0.5rem 0 0;
+            border-bottom: 1px solid #2d3748;
+        }
+        
+        .code-block::after {
+            content: "•••";
+            position: absolute;
+            top: 8px;
+            left: 15px;
+            color: #64748b;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+        
+        .code-block code {
+            display: block;
+            margin-top: 20px;
+            padding-top: 10px;
+            color: #e2e8f0;
+            line-height: 1.8;
+        }
+        
+        .section-spacing {
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+        
+        .navbar-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-scrolled {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            border: 2px solid white;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn-secondary:hover {
+            background-color: white;
+            color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.5);
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 4px;
+            background-color: #3b82f6;
+            border-radius: 2px;
+        }
+        
+        /* Floating animation */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Pulse animation */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        
+        /* Terminal design */
+        .terminal {
+            background-color: #1a1d21;
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .terminal-header {
+            height: 2rem;
+            background-color: #2d333a;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+        }
+        
+        .terminal-button {
+            height: 0.75rem;
+            width: 0.75rem;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .terminal-button.red { background-color: #ff5f57; }
+        .terminal-button.yellow { background-color: #ffbd2e; }
+        .terminal-button.green { background-color: #28c840; }
+        
+        .terminal-body {
+            padding: 1rem;
+            color: #e2e8f0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+        
+        .terminal-prompt {
+            color: #3b82f6;
+            font-weight: bold;
+        }
+        
+        .terminal-output {
+            color: #cbd5e1;
+        }
+        
+        .terminal-success {
+            color: #10b981;
+        }
+        
+        /* Rotating icons */
+        .rotating-icon {
+            animation: rotate 10s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Card hover effects */
+        .doc-card {
+            transition: all 0.3s ease;
+        }
+        
+        .doc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Pulsing dots animation */
+        .pulsing-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin: 0 3px;
+            animation: pulsingDots 1.5s infinite ease-in-out;
+            background-color: #3b82f6;
+        }
+        
+        .pulsing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .pulsing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes pulsingDots {
+            0%, 100% { transform: scale(0.2); opacity: 0.2; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Badge style */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background-color: #dbeafe;
+            color: #1e40af;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge i {
+            margin-right: 0.25rem;
+        }
+        
+        /* Custom gradient */
+        .custom-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+        }
+    </style>
 </head>
-<body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm" data-aos="fade-down">
-    <div class="container">
-      <a class="navbar-brand" href="#">Thunder</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-         <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-         <ul class="navbar-nav ms-auto">
-           <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-           <li class="nav-item"><a class="nav-link" href="#architecture">Architecture</a></li>
-           <li class="nav-item"><a class="nav-link" href="#use-cases">Use Cases</a></li>
-           <li class="nav-item"><a class="nav-link" href="#getting-started">Getting Started</a></li>
-           <li class="nav-item"><a class="nav-link" href="#prisma-integration">Prisma</a></li>
-           <li class="nav-item"><a class="nav-link" href="#kubernetes-deployment">Kubernetes</a></li>
-           <li class="nav-item"><a class="nav-link" href="#api-testing">API Testing</a></li>
-           <li class="nav-item"><a class="nav-link" href="#license">License</a></li>
-         </ul>
-      </div>
-    </div>
-  </nav>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav id="navbar" class="navbar-fixed">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                </svg>
+                <span class="ml-2 text-xl font-bold text-gray-800">Thunder</span>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#features" class="text-gray-700 hover:text-blue-600 transition font-medium">Features</a>
+                <a href="#use-cases" class="text-gray-700 hover:text-blue-600 transition font-medium">Use Cases</a>
+                <a href="#deploy" class="text-gray-700 hover:text-blue-600 transition font-medium">Deploy on Kubernetes</a>
+            </div>
+            <div>
+                <a href="https://github.com/Raezil/Thunder" class="btn-primary">
+                    <i class="fab fa-github mr-2"></i> GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
 
-  <!-- Hero Section -->
-  <header class="hero" data-aos="fade-in">
-    <div class="content container">
-      <h1 class="display-4" data-aos="zoom-in">Thunder</h1>
-      <p class="lead" data-aos="fade-up" data-aos-delay="200">A Minimalist Backend Framework in Go with gRPC-Gateway, Prisma, and Kubernetes</p>
-      <div class="d-flex justify-content-center mt-4" data-aos="fade-up" data-aos-delay="400">
-        <a href="https://github.com/Raezil/Thunder" class="btn btn-outline-light">GitHub</a>
-      </div>
-    </div>
-  </header>
+    <!-- Hero Section -->
+    <section class="hero-gradient pt-32 pb-20 text-white">
+        <div class="hero-grid"></div>
+        <div class="container mx-auto px-6 hero-container">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0 animate__animated animate__fadeInLeft">
+                    <div class="badge mb-4">
+                        <i class="fas fa-bolt"></i> High Performance
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6">Thunder</h1>
+                    <h2 class="text-2xl md:text-3xl font-light mb-6">A Minimalist Backend Framework in Go</h2>
+                    <p class="text-lg mb-8 text-blue-100">A gRPC-Gateway-powered framework with Prisma, Kubernetes, and Go for building scalable microservices.</p>
+                    <div class="flex space-x-4">
+                        <a href="#getting-started" class="btn-primary">
+                            <i class="fas fa-rocket mr-2"></i> Get Started
+                        </a>
+                        <a href="https://github.com/Raezil/Thunder" class="btn-secondary">
+                            <i class="fab fa-github mr-2"></i> GitHub
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center animate__animated animate__fadeInRight">
+                    <div class="terminal floating">
+                        <div class="terminal-header">
+                            <div class="terminal-button red"></div>
+                            <div class="terminal-button yellow"></div>
+                            <div class="terminal-button green"></div>
+                        </div>
+                        <div class="terminal-body">
+                            <p><span class="terminal-prompt">$</span> ./install.sh</p>
+                            <p><span class="terminal-prompt">$</span> thunder init myproject</p>
+                            <p class="terminal-output">Creating new Thunder project: myproject</p>
+                            <p class="terminal-output">Setting up project structure...</p>
+                            <p class="terminal-success">✓ Project created successfully!</p>
+                            <p><span class="terminal-prompt">$</span> cd myproject</p>
+                            <p><span class="terminal-prompt">$</span> go mod tidy</p>
+                            <p><span class="terminal-prompt">$</span> thunder serve</p>
+                            <p class="terminal-output">Starting gRPC server on port 50051</p>
+                            <p class="terminal-output">Starting REST gateway on port 8080</p>
+                            <p class="terminal-success">✓ Server is running!</p>
+                            <div class="pulsing-dots mt-2">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <!-- Main Content -->
-  <main class="container my-5">
+    <!-- Badges Section -->
+    <section class="bg-white py-8 shadow-md">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-wrap justify-center gap-4 items-center">
+                <a href="https://libs.tech/project/882664523/thunder" class="inline-block transform hover:scale-105 transition">
+                    <img src="https://libs.tech/project/882664523/badge.svg" alt="libs.tech recommends" />
+                </a>
+                <a href="https://golang.org" class="inline-block transform hover:scale-105 transition">
+                    <img src="https://img.shields.io/badge/Go-1.23-blue" alt="Go Version" />
+                </a>
+                <a href="LICENSE" class="inline-block transform hover:scale-105 transition">
+                    <img src="https://img.shields.io/github/license/Raezil/Thunder" alt="License" />
+                </a>
+                <a href="https://github.com/Raezil/Thunder/stargazers" class="inline-block transform hover:scale-105 transition">
+                    <img src="https://img.shields.io/github/stars/Raezil/Thunder" alt="Stars" />
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Features Section -->
-    <section id="features" class="mb-5" data-aos="fade-up">
-      <h2 class="section-title">🚀 Features</h2>
-      <div class="row">
-        <div class="col-md-6">
-          <ul class="list-unstyled">
-            <li><strong>gRPC + REST (gRPC-Gateway):</strong> Expose RESTful APIs from gRPC services.</li>
-            <li><strong>Prisma Integration:</strong> Efficient database management and migrations.</li>
-            <li><strong>Kubernetes Ready:</strong> Deploy and scale effortlessly.</li>
-          </ul>
+    <section id="features" class="section-spacing">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center section-title">Key Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Feature Cards (existing content) -->
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-bolt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">gRPC + REST</h3>
+                    <p class="text-gray-600">Automatically expose RESTful APIs from gRPC services with gRPC-Gateway.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-database text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Prisma Integration</h3>
+                    <p class="text-gray-600">Efficient database management and migrations with Prisma ORM.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-cubes text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Kubernetes Ready</h3>
+                    <p class="text-gray-600">Easily deploy and scale your services with Kubernetes.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">TLS Security</h3>
+                    <p class="text-gray-600">Secure gRPC communications with TLS for enhanced security.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
+                <!-- More Feature Cards -->
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-file-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Structured Logging</h3>
+                    <p class="text-gray-600">Built-in zap logging for better insights into your application.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.5s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-tachometer-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Rate Limiting & Auth</h3>
+                    <p class="text-gray-600">Pre-configured middleware for rate limiting and authentication.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.6s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-puzzle-piece text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Modular & Extensible</h3>
+                    <p class="text-gray-600">Easily extend Thunder for custom use cases and requirements.</p>
+                </div>
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.7s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-terminal text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Thunder CLI</h3>
+                    <p class="text-gray-600">Generate, deploy, and create new projects effortlessly.</p>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-          <ul class="list-unstyled">
-            <li><strong>TLS Security:</strong> Secure gRPC communications.</li>
-            <li><strong>Structured Logging:</strong> Built-in <code>zap</code> logging.</li>
-            <li><strong>Rate Limiting &amp; Authentication:</strong> Pre-configured middleware.</li>
-            <li><strong>Thunder CLI:</strong> Generate, deploy, and create projects effortlessly.</li>
-          </ul>
-        </div>
-      </div>
     </section>
 
-    <!-- Architecture Overview -->
-    <section id="architecture" class="mb-5" data-aos="fade-up">
-      <h2 class="section-title">🏗️ Architecture Overview</h2>
-      <div class="text-center">
-        <img src="https://github.com/user-attachments/assets/5074e533-b023-415d-9092-e8f5270ec88f" alt="Architecture Diagram" class="img-fluid rounded" data-aos="zoom-in">
-      </div>
+    <!-- Use Cases Section -->
+    <section id="use-cases" class="section-spacing">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center section-title">Use Cases</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                <!-- Existing Use Cases Cards -->
+                <div class="bg-white p-6 rounded-lg shadow-md feature-card animate__animated animate__fadeInUp">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-bolt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">High-Performance API Development</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>gRPC-first APIs with RESTful interfaces</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Critical performance and low latency applications</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Strongly-typed APIs with protobufs</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-network-wired text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Microservices Architecture</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Efficient inter-service communication</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Kubernetes deployments with built-in service discovery</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Automatic scaling and load balancing</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-database text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Database Management with Prisma</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Type-safe queries and easy migrations</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Support for multiple databases</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Efficient database management</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-feather-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Lightweight Backend Alternative</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Minimalist and powerful framework</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Alternative to Gin or Echo</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Fast, simple, and modular backend</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
+                        <i class="fas fa-feather-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Kubernetes & Cloud-Native</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Containerized environments using Docker.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span>Automatic service scaling and load balancing.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </section>
-
-    <!-- Use Cases -->
-    <section id="use-cases" class="mb-5" data-aos="fade-up">
-      <h2 class="section-title">📌 Use Cases</h2>
-      <div class="accordion" id="useCasesAccordion">
-        <div class="accordion-item" data-aos="fade-right">
-          <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
-              High-Performance API Development
-            </button>
-          </h2>
-          <div id="collapseOne" class="accordion-collapse collapse show">
-            <div class="accordion-body">
-              gRPC-first APIs with RESTful interfaces via gRPC-Gateway. Suitable for critical, low-latency applications with strongly-typed APIs.
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item" data-aos="fade-left">
-          <h2 class="accordion-header" id="headingTwo">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
-              Microservices Architecture
-            </button>
-          </h2>
-          <div id="collapseTwo" class="accordion-collapse collapse">
-            <div class="accordion-body">
-              Efficient inter-service communication and Kubernetes deployments with built-in service discovery and scaling.
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item" data-aos="fade-right">
-          <h2 class="accordion-header" id="headingThree">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
-              Database Management with Prisma
-            </button>
-          </h2>
-          <div id="collapseThree" class="accordion-collapse collapse">
-            <div class="accordion-body">
-              Type-safe queries, easy migrations, and support for PostgreSQL, MySQL, SQLite, and more.
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item" data-aos="fade-left">
-          <h2 class="accordion-header" id="headingFour">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
-              Lightweight Backend Alternative
-            </button>
-          </h2>
-          <div id="collapseFour" class="accordion-collapse collapse">
-            <div class="accordion-body">
-              A minimalist framework that’s a powerful alternative to feature-heavy backends, ideal for fast, modular API development.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Getting Started -->
-    <section id="getting-started" class="mb-5" data-aos="fade-up">
-      <h2 class="section-title">📌 Getting Started</h2>
-      <h4>Installation</h4>
-      <pre><code>git clone https://github.com/Raezil/Thunder.git
-cd Thunder
-chmod +x install.sh
-./install.sh</code></pre>
-      <blockquote class="blockquote">
-        <p>Remember to install prerequisites. For a tutorial, see <a href="https://github.com/Raezil/Thunder/issues/99" target="_blank">this guide</a>.</p>
-      </blockquote>
-      <h4>Setup</h4>
-      <pre><code>thunder init myapp
-cd myapp</code></pre>
-      <h4>Install Dependencies</h4>
-      <pre><code>go mod tidy</code></pre>
-      <h4>Define Your gRPC Service</h4>
-      <pre><code>syntax = "proto3";
+<!-- Getting Started Section -->
+<section id="getting-started" class="section-spacing bg-gray-50">
+    <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center section-title">Getting Started</h2>
+        <div class="mt-8">
+            <pre class="code-block"><code>
+# Create a Protobuf file (example.proto)
+syntax = "proto3";
 
 package example;
 
@@ -234,7 +594,7 @@ service Example {
     option (google.api.http) = {
       get: "/v1/example/sayhello"
     };
-  }
+  };
 }
 
 message HelloRequest {
@@ -243,113 +603,96 @@ message HelloRequest {
 
 message HelloResponse {
   string message = 1;
-}</code></pre>
-      <p>Add your service entry in <code>services.json</code>:</p>
-      <pre><code>[
+}
+
+# Define the service in services.json
+[
   {
     "ServiceName": "Example",
     "ServiceStruct": "ExampleServiceServer",
     "ServiceRegister": "RegisterExampleServer",
     "HandlerRegister": "RegisterExampleHandler"
   }
-]</code></pre>
-    </section>
+]
 
-    <!-- Prisma Integration -->
-    <section id="prisma-integration" class="mb-5" data-aos="fade-up">
-      <h2 class="section-title">🛠️ Prisma Integration</h2>
-      <pre><code>datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model User {
-  id    String @default(cuid()) @id
-  name  String
-  email String @unique
-}</code></pre>
-      <p>Generate the service implementation:</p>
-      <pre><code>thunder generate --proto=example.proto</code></pre>
-    </section>
-
-    <!-- Kubernetes Deployment -->
-    <section id="kubernetes-deployment" class="mb-5" data-aos="fade-up">
-      <h2 class="section-title">🔧 Kubernetes Deployment</h2>
-      <h4>PgBouncer Configuration &amp; Updating the Secret</h4>
-      <p>This setup configures PgBouncer to connect to a PostgreSQL database using Kubernetes resources. To update the <code>userlist.txt</code> secret, run:</p>
-      <pre><code>echo '"postgres" "postgres"' | base64</code></pre>
-      <p>Then update your <code>pgbouncer-all.yaml</code> file:</p>
-      <pre><code>apiVersion: v1
-kind: Secret
-metadata:
-  name: pgbouncer-secret
-type: Opaque
-data:
-  userlist.txt: &lt;BASE64_ENCODED_VALUE&gt;  # "postgres" "postgres" in base64</code></pre>
-      <h4>Generate TLS Certificates</h4>
-      <pre><code>cd cmd
-mkdir certs
-openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes \
-  -subj "/CN=localhost" \
-  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"</code></pre>
-      <h4>Generate Kubernetes Secrets</h4>
-      <pre><code>kubectl create secret generic app-secret --from-literal=DATABASE_URL="postgres://postgres:postgres@pgbouncer-service:6432/thunder?sslmode=disable" --from-literal=JWT_SECRET="secret"
-
-kubectl create secret generic postgres-secret --from-literal=POSTGRES_USER=postgres --from-literal=POSTGRES_PASSWORD=postgres --from-literal=POSTGRES_DB=thunder</code></pre>
-      <h4>Build &amp; Deploy Docker Image</h4>
-      <pre><code>thunder build
-thunder deploy</code></pre>
-      <p>Check pod status:</p>
-      <pre><code>kubectl get pods -n default
-kubectl describe pod $NAME -n default</code></pre>
-    </section>
-
-    <!-- API Testing -->
-    <section id="api-testing" class="mb-5" data-aos="fade-up">
-      <h2 class="section-title">📡 API Testing</h2>
-      <h4>Register User</h4>
-      <pre><code>curl -k --http2 -X POST https://localhost:8080/v1/auth/register \
-     -H "Content-Type: application/json" \
-     -d '{
-           "email": "newuser@example.com",
-           "password": "password123",
-           "name": "John",
-           "surname": "Doe",
-           "age": 30
-         }'</code></pre>
-      <h4>User Login</h4>
-      <pre><code>curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
-     -H "Content-Type: application/json" \
-     -d '{
-           "email": "newuser@example.com",
-           "password": "password123"
-         }'</code></pre>
-    </section>
-
-    <!-- License -->
-    <section id="license" class="mb-5" data-aos="fade-up">
-      <h2 class="section-title">License</h2>
-      <p>Thunder is released under the MIT License.</p>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer data-aos="fade-in">
-    <div class="container">
-      <p>&copy; 2025 Thunder Framework. All Rights Reserved.</p>
+# Generate the service implementation
+thunder generate --proto=example.proto
+            </code></pre>
+        </div>
     </div>
-  </footer>
-  
-  <!-- Bootstrap & AOS Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" 
-    integrity="sha512-A7AYSTIEk7guyRW3I89LKB/c0wifv6eE7J0H1WcxgLLXfC8KHnDbIC5e+NE8wVZOz0YIR5ELbM1MxIsXk5WQ8g==" 
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script>
-    AOS.init({
-      duration: 1000,
-      once: true
-    });
-  </script>
+</section>
+
+
+<!-- Deploy on Kubernetes Section -->
+<section id="deploy" class="section-spacing bg-gray-50">
+    <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center section-title">Deploy on Kubernetes</h2>
+        <div class="mt-8">
+            <p class="text-gray-700 text-center mb-4">Follow these steps to deploy Thunder on Kubernetes:</p>
+            <pre class="code-block"><code>
+<span class="terminal-prompt">$</span> # PgBouncer Secret Configuration
+<span class="terminal-prompt">$</span> echo '"postgres" "postgres"' | base64
+<span class="terminal-output">InBvc3RncmVzIiAicG9zdGdyZXMiCg==</span>
+<span class="terminal-prompt">$</span> # Update the pgbouncer-all.yaml with the new base64 value
+
+<span class="terminal-prompt">$</span> # Generate TLS Certificates
+<span class="terminal-prompt">$</span> cd cmd
+<span class="terminal-prompt">$</span> mkdir certs
+<span class="terminal-prompt">$</span> openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes \
+  -subj "/CN=localhost" \
+  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+<span class="terminal-output">Generating a RSA private key</span>
+<span class="terminal-output">...............+++++</span>
+<span class="terminal-output">...+++++</span>
+<span class="terminal-output">writing new private key to 'certs/server.key'</span>
+<span class="terminal-output">-----</span>
+
+<span class="terminal-prompt">$</span> # Create Kubernetes Secrets
+<span class="terminal-prompt">$</span> kubectl create secret generic app-secret \
+  --from-literal=DATABASE_URL="postgres://postgres:postgres@pgbouncer-service:6432/thunder?sslmode=disable" \
+  --from-literal=JWT_SECRET="secret"
+<span class="terminal-success">secret/app-secret created</span>
+
+<span class="terminal-prompt">$</span> kubectl create secret generic postgres-secret \
+  --from-literal=POSTGRES_USER=postgres \
+  --from-literal=POSTGRES_PASSWORD=postgres \
+  --from-literal=POSTGRES_DB=thunder
+<span class="terminal-success">secret/postgres-secret created</span>
+
+<span class="terminal-prompt">$</span> # Build & Deploy Docker Image
+<span class="terminal-prompt">$</span> thunder build
+<span class="terminal-output">Building Thunder container image...</span>
+<span class="terminal-success">✓ Successfully built thunder:latest</span>
+
+<span class="terminal-prompt">$</span> thunder deploy
+<span class="terminal-output">Deploying Thunder to Kubernetes...</span>
+<span class="terminal-success">✓ Deployment successful!</span>
+
+<span class="terminal-prompt">$</span> # Check pod status
+<span class="terminal-prompt">$</span> kubectl get pods -n default
+<span class="terminal-output">NAME                        READY   STATUS    RESTARTS   AGE</span>
+<span class="terminal-output">thunder-5f7b849d8d-x2jtl    1/1     Running   0          30s</span>
+<span class="terminal-output">postgres-0                  1/1     Running   0          30s</span>
+<span class="terminal-output">pgbouncer-7c8b6d5b4-rmvp9  1/1     Running   0          30s</span>
+
+<span class="terminal-prompt">$</span> kubectl describe pod thunder-5f7b849d8d-x2jtl -n default
+<span class="terminal-output">Name:         thunder-5f7b849d8d-x2jtl</span>
+<span class="terminal-output">Namespace:    default</span>
+<span class="terminal-output">Priority:     0</span>
+<span class="terminal-output">...</span>
+            </code></pre>
+        </div>
+    </div>
+</section>
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 Thunder. All rights reserved.</p>
+            <p>
+                <a href="https://github.com/Raezil/Thunder" class="text-blue-400 hover:underline">GitHub</a> |
+                <a href="LICENSE" class="text-blue-400 hover:underline">License</a>
+            </p>
+        </div>
+    </footer>
 </body>
 </html>
