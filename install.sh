@@ -74,6 +74,7 @@ case "$1" in
         docker login
         echo "⬆️  Pushing Docker image..."
         docker push ${docker_username}/${docker_project}:latest
+        echo -e "\e[32m✓ Successfully built ${NEW_IMAGE}!\e[0m"
         ;;
     deploy)
         echo "🚀 Starting Minikube..."
@@ -108,6 +109,7 @@ case "$1" in
         echo "🔄 Restarting PgBouncer and Thunder API deployments..."
         kubectl rollout restart deployment pgbouncer
         kubectl rollout restart deployment app-deployment
+        echo -e "\e[32m ✓ Deployment successful!!\e[0m"
 
         # Port forward the app service
         echo "🔗 Forwarding port 8080 to app-service..."
