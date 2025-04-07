@@ -174,7 +174,7 @@ func (app *App) Run() error {
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
 	}
-	log.Println("✓ Server is running!")
+	log.Println("\033[32m✓ Server is running!\033[0m")
 
 	// Run FastHTTP server in a separate goroutine.
 	go func() {

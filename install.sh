@@ -48,6 +48,7 @@ case "$1" in
         rm -rf "$TARGET_DIR/.git" || { echo "❌ Error: Could not remove .git folder."; exit 1; }
         echo "Creating new Thunder project: '${TARGET_DIR}'."
         echo "Setting up project structure..."
+        echo -e "\e[32m✓ Project created successfully!\e[0m"
         ;;
     generate)
         shift
