@@ -42,11 +42,12 @@ case "$1" in
         shift
         # Use an optional directory name; default to "Thunder"
         TARGET_DIR="${1:-Thunder}"
-        echo "Cloning Thunder repository into '${TARGET_DIR}'..."
-        git clone https://github.com/Raezil/Thunder "$TARGET_DIR" || { echo "❌ Error: Cloning failed."; exit 1; }
-        echo "Removing .git folder from '${TARGET_DIR}'..."
+        # Remove or comment out the logging below if you don't want it printed:
+        # echo "Cloning Thunder repository into '${TARGET_DIR}'..."
+        git clone -q https://github.com/Raezil/Thunder "$TARGET_DIR" || { echo "❌ Error: Cloning failed."; exit 1; }
         rm -rf "$TARGET_DIR/.git" || { echo "❌ Error: Could not remove .git folder."; exit 1; }
-        echo "Repository cloned to '${TARGET_DIR}' with git history removed."
+        echo "Creating new Thunder project: '${TARGET_DIR}'."
+        echo "Setting up project structure..."
         ;;
     generate)
         shift
@@ -114,6 +115,11 @@ case "$1" in
     test)
         echo "Running tests..."
         go test -v ./pkg/db ./pkg/middlewares/ ./pkg/services/ ./pkg/services/generated
+        exit 0
+        ;;
+    serve)
+        cd ./cmd/app/server
+        go run main.go
         exit 0
         ;;
     *)

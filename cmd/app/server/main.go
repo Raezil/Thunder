@@ -2,6 +2,7 @@ package main
 
 import (
 	"db"
+	"fmt"
 	"io"
 	"log"
 	"middlewares"
@@ -141,7 +142,7 @@ func (app *App) Run() error {
 	// Register gRPC services before starting the server.
 	RegisterServers(app.grpcServer, app.db, app.logger)
 
-	app.logger.Infof("Serving gRPC with TLS on 0.0.0.0%s", grpcPort)
+	log.Println(fmt.Sprintf("Starting gRPC server on port %s", grpcPort))
 	// Run gRPC server in a separate goroutine.
 	go func() {
 		if err := app.grpcServer.Serve(lis); err != nil {
@@ -166,13 +167,14 @@ func (app *App) Run() error {
 
 	// Setup FastHTTP server.
 	httpPort := viper.GetString("http.port")
-	app.logger.Infof("Serving gRPC-Gateway with FastHTTP on https://0.0.0.0%s", httpPort)
+	log.Println(fmt.Sprintf("Starting REST gateway on port %s", httpPort))
 	httpServer := &fasthttp.Server{
 		Handler:      app.RegisterMux(),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
 	}
+	log.Println("✓ Server is running!")
 
 	// Run FastHTTP server in a separate goroutine.
 	go func() {
