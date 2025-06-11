@@ -71,7 +71,11 @@ func NewApp() (*App, error) {
 		sugar.Fatalf("Failed to load TLS credentials: %v", err)
 		return nil, err
 	}
-	rateLimiter := middlewares.NewRateLimiter(5, 10)
+
+	// Initialize rate limiter with default trusted proxies
+	trustedProxies := middlewares.DefaultTrustedProxies()
+	sugar.Infof("Initializing rate limiter with trusted proxies: %v", trustedProxies)
+	rateLimiter := middlewares.NewRateLimiter(5, 10, trustedProxies)
 
 	// Create the gRPC server with TLS and middleware.
 	grpcServer := grpc.NewServer(

@@ -48,7 +48,7 @@ func TestCORSMiddleware(t *testing.T) {
 
 // Test Rate Limiting Middleware
 func TestRateLimiter(t *testing.T) {
-	limiter := NewRateLimiter(1, 1) // 1 request per second
+	limiter := NewRateLimiter(1, 1, DefaultTrustedProxies()) // 1 request per second
 
 	clientID := "test-client"
 
