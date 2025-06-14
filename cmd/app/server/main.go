@@ -189,7 +189,7 @@ func (app *App) Run() error {
 
 	// Register gRPC-Gateway handlers.
 	RegisterHandlers(app.gwmux, conn)
-
+	RegisterGraphQLHandlers(app.graphqlmux.ServeMux, conn)
 	// Convert the gRPC-Gateway mux to work with fasthttp.
 
 	// Setup FastHTTP server.

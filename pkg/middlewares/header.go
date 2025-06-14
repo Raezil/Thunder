@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/valyala/fasthttp"
@@ -9,10 +10,11 @@ import (
 func HeaderForwarderMiddleware(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
 		// Get the Authorization header
-		authHeader := ctx.Request.Header.Peek("Authorization")
+		authHeader := ctx.Request.Header.Peek("authorization")
 		if authHeader != nil {
 			// Ensure the header is preserved in the expected format
 			authValue := string(authHeader)
+			fmt.Println(authValue)
 			if !strings.HasPrefix(strings.ToLower(authValue), "bearer ") &&
 				!strings.HasPrefix(strings.ToLower(authValue), "basic ") {
 				authValue = "Bearer " + authValue

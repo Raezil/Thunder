@@ -169,7 +169,11 @@ func main() {
 			"--go-grpc_out=./pkg/services/generated",
 			"--go-grpc_opt=paths=source_relative",
 			"--grpc-gateway_out=./pkg/services/generated",
+			"--graphql_out=./pkg/services/generated",
+
+			"--graphql_opt=paths=source_relative",
 			"--grpc-gateway_opt=paths=source_relative",
+
 			"--rpc-impl_out=./pkg/services",
 			"--openapiv2_out=./pkg/services",
 			"--openapiv2_opt=logtostderr=true",
@@ -189,13 +193,6 @@ func main() {
 		fmt.Println("Prisma database changes pushed successfully!")
 	}
 	if *graphql {
-		if err := runCommand("protoc",
-			"-I", ".",
-			"--graphql_out=.",
-			*proto,
-		); err != nil {
-			log.Fatalf("Error executing protoc command: %v", err)
-		}
 		generateGraphQLRegisterFile(services)
 	}
 
