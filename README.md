@@ -5,7 +5,7 @@
 # **Thunder- A Minimalist Backend Framework in Go**
 
 
-*A gRPC-Gateway-powered framework with Prisma, Kubernetes, and Go for scalable microservices.*
+*A scalable microservices framework powered by Go, gRPC-Gateway, Prisma, and Kubernetes.*
 
 [![libs.tech recommends](https://libs.tech/project/882664523/badge.svg)](https://libs.tech/project/882664523/thunder)
 [![Go Version](https://img.shields.io/badge/Go-1.23-blue)](https://golang.org)
