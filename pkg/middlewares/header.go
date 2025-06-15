@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/valyala/fasthttp"
@@ -14,7 +13,6 @@ func HeaderForwarderMiddleware(next fasthttp.RequestHandler) fasthttp.RequestHan
 		if authHeader != nil {
 			// Ensure the header is preserved in the expected format
 			authValue := string(authHeader)
-			fmt.Println(authValue)
 			if !strings.HasPrefix(strings.ToLower(authValue), "bearer ") &&
 				!strings.HasPrefix(strings.ToLower(authValue), "basic ") {
 				authValue = "Bearer " + authValue

@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"log"
 	"net/http"
 	"strings"
 
@@ -36,15 +35,9 @@ func (c *GraphqlServeMux) SetIncomingHeaderMatcher(matcher func(string) (string,
 
 // Custom handler that intercepts the request and manually sets up metadata
 func (c *GraphqlServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Custom GraphQL handler - Incoming HTTP headers: %v", r.Header)
 
 	// Get the authorization header
 	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		log.Printf("No Authorization header found")
-	} else {
-		log.Printf("Authorization header found: %s", authHeader)
-	}
 
 	// Create a custom context with metadata
 	ctx := r.Context()
@@ -52,7 +45,6 @@ func (c *GraphqlServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if authHeader != "" {
 		// Create metadata with the authorization header
 		md := metadata.Pairs("authorization", authHeader)
-		log.Printf("Creating metadata with authorization: %v", md)
 
 		// Set both incoming and outgoing metadata
 		ctx = metadata.NewIncomingContext(ctx, md)
