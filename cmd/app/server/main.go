@@ -96,7 +96,7 @@ func NewApp() (*App, error) {
 		log.Printf("Header received: %s", key) // Debug log
 		key = strings.ToLower(key)
 		if key == "authorization" {
-			return key, true
+			return "authorization", true // Return lowercase for consistency
 		}
 		return runtime.DefaultHeaderMatcher(key)
 	}
