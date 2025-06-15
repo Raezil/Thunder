@@ -9,10 +9,13 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	. "routes"
+
+	. "helpers"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/opentracing/opentracing-go"
@@ -54,6 +57,7 @@ type App struct {
 	grpcServer *grpc.Server
 	logger     *zap.SugaredLogger
 	gwmux      *runtime.ServeMux
+	graphqlmux *GraphqlServeMux
 }
 
 func NewApp() (*App, error) {
@@ -88,13 +92,28 @@ func NewApp() (*App, error) {
 		),
 	)
 
+	headerMatcher := func(key string) (string, bool) {
+		key = strings.ToLower(key)
+		if key == "authorization" {
+			return "authorization", true // Return lowercase for consistency
+		}
+		return runtime.DefaultHeaderMatcher(key)
+	}
+	// For gRPC gateway
+	gwmux := runtime.NewServeMux(
+		runtime.WithIncomingHeaderMatcher(headerMatcher),
+	)
+
+	gwmuxGraphql := NewGraphqlServeMux()
+	gwmuxGraphql.SetIncomingHeaderMatcher(headerMatcher)
 	return &App{
 		certFile:   certFile,
 		keyFile:    keyFile,
 		db:         db.NewClient(),
 		grpcServer: grpcServer,
 		logger:     sugar,
-		gwmux:      runtime.NewServeMux(),
+		gwmux:      gwmux,
+		graphqlmux: gwmuxGraphql,
 	}, nil
 }
 
@@ -120,6 +139,9 @@ func (app *App) RegisterMux() fasthttp.RequestHandler {
 			healthCheckHandler(ctx)
 		case "/ready":
 			readyCheckHandler(ctx)
+		case "/graphql":
+			graphqlHandler := middlewares.HeaderForwarderMiddleware(fasthttpadaptor.NewFastHTTPHandler(app.graphqlmux))
+			graphqlHandler(ctx)
 		default:
 			fasthttpHandler(ctx) // Pass other requests to gRPC-Gateway
 		}
@@ -166,12 +188,12 @@ func (app *App) Run() error {
 
 	// Register gRPC-Gateway handlers.
 	RegisterHandlers(app.gwmux, conn)
-
+	RegisterGraphQLHandlers(app.graphqlmux.ServeMux, conn)
 	// Convert the gRPC-Gateway mux to work with fasthttp.
 
 	// Setup FastHTTP server.
 	httpPort := viper.GetString("http.port")
-	log.Println(fmt.Sprintf("Starting REST gateway on port %s", httpPort))
+	log.Println(fmt.Sprintf("Starting Thunder on port %s", httpPort))
 	httpServer := &fasthttp.Server{
 		Handler:      app.RegisterMux(),
 		ReadTimeout:  5 * time.Second,

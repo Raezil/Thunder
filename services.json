@@ -3,7 +3,7 @@
       "ServiceName": "Auth",
       "ServiceStruct": "AuthServiceServer",
       "ServiceRegister": "RegisterAuthServer",
-      "HandlerRegister": "RegisterAuthHandler"
+      "HandlerRegister": "RegisterAuthHandler",
+      "GraphqlHandlerRegister": "RegisterAuthGraphqlHandler"
     }
-  ]
-  
+]

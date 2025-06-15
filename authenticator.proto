@@ -5,12 +5,24 @@ package authenticator;
 option go_package = "./pkg/services/generated";
 
 import "google/api/annotations.proto";
+import "graphql.proto";
 
 service Auth {
+
+    // gRPC service information
+    option (graphql.service) = {
+        host: "localhost:50051"
+        insecure: true
+    };
+
     rpc Login (LoginRequest) returns (LoginReply) {
         option (google.api.http) = {
             post: "/v1/auth/login"
             body: "*"
+        };
+        option (graphql.schema) = {
+            type: QUERY   // declare as Query
+            name: "login" // query name
         };
     }
 
@@ -19,17 +31,25 @@ service Auth {
             post: "/v1/auth/register"
             body: "*"
         };
+        option (graphql.schema) = {
+            type: MUTATION   // declare as Query
+            name: "register" // query name
+        };
     }
 
     rpc SampleProtected (ProtectedRequest) returns (ProtectedReply) {
         option (google.api.http) = {
             get: "/v1/auth/protected"
         };
+        option (graphql.schema) = {
+            type: QUERY   // declare as Query
+            name: "protected" // query name
+        };
     }
 }
 
 message ProtectedRequest {
-    string text = 1;
+    string text = 1 [(graphql.field) = {required: true}];
 }
 
 message ProtectedReply {
@@ -37,16 +57,16 @@ message ProtectedReply {
 }
 
 message LoginRequest {
-    string email = 1;
-    string password = 2;
+    string email = 1 [(graphql.field) = {required: true}];
+    string password = 2 [(graphql.field) = {required: true}];
 }
 
 message RegisterRequest {
-    string email = 1;
-    string password = 2;
-    string name = 3;
-    string surname = 4;
-    int32 age = 5;
+    string email = 1  [(graphql.field) = {required: true}];
+    string password = 2 [(graphql.field) = {required: true}];
+    string name = 3 [(graphql.field) = {required: true}];
+    string surname = 4 [(graphql.field) = {required: true}];
+    int32 age = 5 [(graphql.field) = {required: true}];
 }
 
 message LoginReply {

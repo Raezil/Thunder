@@ -12,10 +12,11 @@ import (
 
 // Service holds the metadata needed for generating the register functions.
 type Service struct {
-	ServiceName     string `json:"ServiceName"`
-	ServiceStruct   string `json:"ServiceStruct"`
-	ServiceRegister string `json:"ServiceRegister"`
-	HandlerRegister string `json:"HandlerRegister"`
+	ServiceName            string `json:"ServiceName"`
+	ServiceStruct          string `json:"ServiceStruct"`
+	ServiceRegister        string `json:"ServiceRegister"`
+	HandlerRegister        string `json:"HandlerRegister"`
+	GraphqlHandlerRegister string `json:"GraphqlHandlerRegister"`
 }
 
 // loadServicesFromJSON reads the service definitions from a JSON file.
@@ -66,6 +67,29 @@ func RegisterHandlers(gwmux *runtime.ServeMux, conn *grpc.ClientConn) {
 }
 `
 
+const graphqlTemplateCode = `package routes
+
+import (
+	"log"
+
+	. "generated"
+
+	"github.com/ysugimoto/grpc-graphql-gateway/runtime"
+	"google.golang.org/grpc"
+)
+
+// RegisterGraphQLHandlers registers GraphQL Gateway handlers.
+func RegisterGraphQLHandlers(mux *runtime.ServeMux, conn *grpc.ClientConn) {
+	var err error
+	{{range .}}
+	err = {{.GraphqlHandlerRegister}}(mux, conn)
+	if err != nil {
+		log.Fatalln("Failed to register GraphQL gateway:", err)
+	}
+	{{end}}
+}
+`
+
 func runCommand(name string, args ...string) error {
 	// Create the command
 	cmd := exec.Command(name, args...)
@@ -106,13 +130,36 @@ func runCommandInDir(dir string, name string, args ...string) error {
 	return cmd.Run()
 }
 
+func generateGraphQLRegisterFile(services []Service) {
+	tmpl, err := template.New("graphql_register").Parse(graphqlTemplateCode)
+	if err != nil {
+		log.Fatalf("Error parsing GraphQL template: %v", err)
+	}
+
+	file, err := os.Create("pkg/routes/generated_graphql_register.go")
+	if err != nil {
+		log.Fatalf("Error creating GraphQL register file: %v", err)
+	}
+	defer file.Close()
+
+	err = tmpl.Execute(file, services)
+	if err != nil {
+		log.Fatalf("Error executing GraphQL template: %v", err)
+	}
+	fmt.Println("Generated GraphQL register file: pkg/routes/generated_graphql_register.go")
+}
+
 // It generates proto files and builds from Prisma schema
 func main() {
 	proto := flag.String("proto", "", "Path to the .proto file")
 	prisma := flag.Bool("prisma", true, "Whether to run the Prisma db push command")
 	generate := flag.Bool("generate", true, "Whether to generate register functions")
+	graphql := flag.Bool("graphql", false, "Whether to generate GraphQL files")
 	flag.Parse()
-
+	services, err := loadServicesFromJSON("services.json")
+	if err != nil {
+		log.Fatalf("Error loading services from JSON: %v", err)
+	}
 	// First command: Run protoc to generate Go code from .proto file
 	if *proto != "" {
 		if err := runCommand("protoc",
@@ -122,7 +169,11 @@ func main() {
 			"--go-grpc_out=./pkg/services/generated",
 			"--go-grpc_opt=paths=source_relative",
 			"--grpc-gateway_out=./pkg/services/generated",
+			"--graphql_out=./pkg/services/generated",
+
+			"--graphql_opt=paths=source_relative",
 			"--grpc-gateway_opt=paths=source_relative",
+
 			"--rpc-impl_out=./pkg/services",
 			"--openapiv2_out=./pkg/services",
 			"--openapiv2_opt=logtostderr=true",
@@ -141,13 +192,12 @@ func main() {
 		}
 		fmt.Println("Prisma database changes pushed successfully!")
 	}
+	if *graphql {
+		generateGraphQLRegisterFile(services)
+	}
 
 	// Third step: Generate gRPC registration file
 	if *generate {
-		services, err := loadServicesFromJSON("services.json")
-		if err != nil {
-			log.Fatalf("Error loading services from JSON: %v", err)
-		}
 		generateRegisterFile(services)
 	}
 }
