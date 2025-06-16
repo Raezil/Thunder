@@ -5,7 +5,7 @@
 # **Thunder- A Minimalist Backend Framework in Go**
 
 
-*A scalable microservices framework powered by Go, gRPC-Gateway, Prisma, and Kubernetes.*
+*A scalable microservices framework powered by Go, gRPC-Gateway, Prisma, and Kubernetes. It exposes REST, gRPC and Graphql*
 
 [![libs.tech recommends](https://libs.tech/project/882664523/badge.svg)](https://libs.tech/project/882664523/thunder)
 [![Go Version](https://img.shields.io/badge/Go-1.23-blue)](https://golang.org)
@@ -21,6 +21,7 @@
 - ✔️ **Rate Limiting & Authentication** – Pre-configured middleware.
 - ✔️ **Modular & Extensible** – Easily extend Thunder for custom use cases.
 - ✔️ **Thunder CLI** - Generate, deploy, and create new projects effortlessly.
+- ✔️ **Graphql support** - Transform grpc services into graphql queries
 
 ## **🏗️ Architecture Overview**
 ![421386849-54a1cead-6886-400a-a41a-f5eb4f375dc7(1)](https://github.com/user-attachments/assets/5074e533-b023-415d-9092-e8f5270ec88f)
