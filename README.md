@@ -113,6 +113,8 @@ Add your service entry in `services.json`:
       "ServiceStruct": "ExampleServiceServer",
       "ServiceRegister": "RegisterExampleServer",
       "HandlerRegister": "RegisterExampleHandler"
+      "GraphqlHandlerRegister": "RegisterExampleGraphqlHandler"
+
     }
 ]
 ```
@@ -135,7 +137,7 @@ model User {
 
 Generate the service implementation:
 ```bash
-thunder generate --proto=example.proto
+thunder generate --proto=example.proto --graphql=true
 ```
 
 ## **🚀 Running the Server**
