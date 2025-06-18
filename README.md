@@ -87,17 +87,22 @@ syntax = "proto3";
 package example;
 
 import "google/api/annotations.proto";
+import "graphql.proto";
 
 service Example {
 	rpc SayHello(HelloRequest) returns (HelloResponse) {
 		option (google.api.http) = {
 			get: "/v1/example/sayhello"
 		};
+    option (graphql.schema) = {
+      type: QUERY   // declare as Query
+      name: "sayhello" // query name
+    };
 	};
 }
 
 message HelloRequest {
-	string name = 1;
+	string name = 1 [(graphql.field) = {required: true}];
 }
 
 message HelloResponse {
