@@ -94,10 +94,10 @@ service Example {
 		option (google.api.http) = {
 			get: "/v1/example/sayhello"
 		};
-    option (graphql.schema) = {
-      type: QUERY   // declare as Query
-      name: "sayhello" // query name
-    };
+    		option (graphql.schema) = {
+      			type: QUERY   // declare as Query
+      			name: "sayhello" // query name
+    		};
 	};
 }
 
