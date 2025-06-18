@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	pb "services"
+	"strings"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -25,8 +26,8 @@ func AuthUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 	if len(token) == 0 {
 		return nil, status.Errorf(codes.Unauthenticated, "missing token")
 	}
-
-	claims, err := pb.VerifyJWT(token[0])
+	rawToken := strings.TrimSpace(strings.TrimPrefix(token[0], "Bearer "))
+	claims, err := pb.VerifyJWT(rawToken)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthorized: %v", err)
 	}

@@ -5,7 +5,7 @@
 # **Thunder- A Minimalist Backend Framework in Go**
 
 
-*A scalable microservices framework powered by Go, gRPC-Gateway, Prisma, and Kubernetes.*
+*A scalable microservices framework powered by Go, gRPC-Gateway, Prisma, and Kubernetes. It exposes REST, gRPC and Graphql*
 
 [![libs.tech recommends](https://libs.tech/project/882664523/badge.svg)](https://libs.tech/project/882664523/thunder)
 [![Go Version](https://img.shields.io/badge/Go-1.23-blue)](https://golang.org)
@@ -21,6 +21,7 @@
 - ✔️ **Rate Limiting & Authentication** – Pre-configured middleware.
 - ✔️ **Modular & Extensible** – Easily extend Thunder for custom use cases.
 - ✔️ **Thunder CLI** - Generate, deploy, and create new projects effortlessly.
+- ✔️ **Graphql support** - Transform grpc services into graphql queries
 
 ## **🏗️ Architecture Overview**
 ![421386849-54a1cead-6886-400a-a41a-f5eb4f375dc7(1)](https://github.com/user-attachments/assets/5074e533-b023-415d-9092-e8f5270ec88f)
@@ -112,6 +113,8 @@ Add your service entry in `services.json`:
       "ServiceStruct": "ExampleServiceServer",
       "ServiceRegister": "RegisterExampleServer",
       "HandlerRegister": "RegisterExampleHandler"
+      "GraphqlHandlerRegister": "RegisterExampleGraphqlHandler"
+
     }
 ]
 ```
@@ -134,7 +137,7 @@ model User {
 
 Generate the service implementation:
 ```bash
-thunder generate --proto=example.proto
+thunder generate --proto=example.proto --graphql=true
 ```
 
 ## **🚀 Running the Server**
@@ -215,6 +218,7 @@ kubectl describe pod $NAME -n default
 ## **📡 API Testing**
 
 ### Register User
+#### REST
 ```bash
 curl -k --http2 -X POST https://localhost:8080/v1/auth/register \
      -H "Content-Type: application/json" \
@@ -226,8 +230,15 @@ curl -k --http2 -X POST https://localhost:8080/v1/auth/register \
            "age": 30
          }'
 ```
+#### Graphql
+```bash
+curl -k -X POST https://localhost:8080/graphql \
+     -H "Content-Type: application/json" \
+     -d '{"query":"mutation{register(email:\"newuser1211@example.com\",password:\"password123\",name:\"John\",surname:\"Doe\",age:30){reply}}"}'
+```
 
 ### User Login
+#### REST
 ```bash
 curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
      -H "Content-Type: application/json" \
@@ -236,14 +247,30 @@ curl -k --http2 -X POST https://localhost:8080/v1/auth/login \
            "password": "password123"
          }'
 ```
+#### Graphql
+```
+curl -k -X POST https://localhost:8080/graphql \
+     -H "Content-Type: application/json" \
+     -d '{"query":"query Login($email:String!,$password:String!){login(email:$email,password:$password){token}}","variables":{"email":"newuser@example.com","password":"password123"}}'
+```
 
 ### Sample protected
+#### REST
 ```bash
 curl -k -X GET "https://localhost:8080/v1/auth/protected?text=hello" \
-  -H "Authorization: $token"
+  -H "Authorization: Bearer $token"
 ```
 > $token is returned by login
-
+#### Graphql
+```bash
+curl -k -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $token" \
+  -d '{
+    "query": "query { protected(text: \"Hello World\") { result } }"
+  }' \
+  https://localhost:8080/graphql
+```
 
 ## **📜 Contributing**
 
