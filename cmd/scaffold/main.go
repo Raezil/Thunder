@@ -9,6 +9,14 @@ import (
 	"text/template"
 )
 
+// Field represents a proto field
+
+type Field struct {
+	Name string
+	Type string
+	Tag  int
+}
+
 func main() {
 	// Define command line flags
 	var (
@@ -111,48 +119,28 @@ func main() {
 	fmt.Printf("✓ Generated %s successfully!\n", filePath)
 }
 
-// Field represents a proto field
-type Field struct {
-	Name string
-	Type string
-	Tag  int
-}
-
-// parseFields parses field definitions like "name:string,email:string,age:int32"
-func parseFields(fieldsStr string) ([]Field, error) {
-	if fieldsStr == "" {
-		return nil, nil
-	}
-
-	fieldPairs := strings.Split(fieldsStr, ",")
-	fields := make([]Field, 0, len(fieldPairs))
-
-	for i, pair := range fieldPairs {
-		parts := strings.Split(strings.TrimSpace(pair), ":")
+// parseFields parses a comma-separated list of field definitions in the form "name:type" into a slice of Field.
+func parseFields(input string) ([]Field, error) {
+	pairs := strings.Split(input, ",")
+	fields := make([]Field, 0, len(pairs))
+	for i, pair := range pairs {
+		parts := strings.Split(pair, ":")
 		if len(parts) != 2 {
-			return nil, fmt.Errorf("invalid field format '%s', expected 'name:type'", pair)
+			return nil, fmt.Errorf("invalid field format '%s', expected name:type", pair)
 		}
-
 		name := strings.TrimSpace(parts[0])
-		fieldType := strings.TrimSpace(parts[1])
-
-		if name == "" || fieldType == "" {
-			return nil, fmt.Errorf("field name and type cannot be empty in '%s'", pair)
+		typeName := strings.TrimSpace(parts[1])
+		if name == "" || typeName == "" {
+			return nil, fmt.Errorf("invalid field name or type in '%s'", pair)
 		}
-
-		fields = append(fields, Field{
-			Name: name,
-			Type: fieldType,
-			Tag:  i + 2, // Start from 2 since id takes tag 1
-		})
+		fields = append(fields, Field{Name: name, Type: typeName, Tag: i + 1})
 	}
-
 	return fields, nil
 }
 
 const protoTemplate = `syntax = "proto3";
-package {{.Package}};
-option go_package = "{{.Module}}/{{.Package}};{{.Package}}";
+package {{.EntityLower}};
+option go_package = "{{.Module}}/pkg/services/generated";
 
 import "google/api/annotations.proto";
 import "graphql.proto";
@@ -166,7 +154,7 @@ service {{.ServiceName}} {
   // Read single
   rpc Get{{.Entity}} (Get{{.Entity}}Request) returns (Get{{.Entity}}Response) {
     option (google.api.http) = {
-      get: "/v1/{{.Package}}/{{.EntityLower}}/{id}"
+      get: "/v1/{{if .Package}}{{.Package}}/{{else}}{{.EntityPlural}}{{end}}/{{.EntityLower}}/{id}"
     };
     option (graphql.schema) = {
       type: QUERY
@@ -177,7 +165,7 @@ service {{.ServiceName}} {
   // Read list
   rpc List{{.Entity}}s (List{{.Entity}}Request) returns (List{{.Entity}}Response) {
     option (google.api.http) = {
-      get: "/v1/{{.EntityLower}}s/list"
+      get: "/v1/{{if .Package}}{{.Package}}/{{else}}{{.EntityPlural}}{{end}}/list"
     };
     option (graphql.schema) = {
       type: QUERY
@@ -188,7 +176,7 @@ service {{.ServiceName}} {
   // Create
   rpc Create{{.Entity}} (Create{{.Entity}}Request) returns (Create{{.Entity}}Response) {
     option (google.api.http) = {
-      post: "/v1/{{.Package}}"
+      post: "/v1/{{if .Package}}{{.Package}}{{else}}{{.EntityPlural}}{{end}}"
       body: "*"
     };
     option (graphql.schema) = {
@@ -200,7 +188,7 @@ service {{.ServiceName}} {
   // Update
   rpc Update{{.Entity}} (Update{{.Entity}}Request) returns (Update{{.Entity}}Response) {
     option (google.api.http) = {
-      put: "/v1/{{.Package}}/{{.EntityLower}}/{id}"
+      put: "/v1/{{if .Package}}{{.Package}}/{{else}}{{.EntityPlural}}{{end}}/{id}"
       body: "*"
     };
     option (graphql.schema) = {
@@ -212,7 +200,7 @@ service {{.ServiceName}} {
   // Delete
   rpc Delete{{.Entity}} (Delete{{.Entity}}Request) returns (Delete{{.Entity}}Response) {
     option (google.api.http) = {
-      delete: "/v1/{{.Package}}/{{.EntityLower}}/{id}"
+      delete: "/v1/{{if .Package}}{{.Package}}/{{else}}{{.EntityPlural}}{{end}}/{{.EntityLower}}/{id}"
     };
     option (graphql.schema) = {
       type: MUTATION
@@ -224,7 +212,6 @@ service {{.ServiceName}} {
 {{if .HasFields}}
 // Entity definition
 message {{.Entity}} {
-  string id = 1;
 {{- range .Fields}}
   {{.Type}} {{.Name}} = {{.Tag}};
 {{- end}}
@@ -254,7 +241,8 @@ message Create{{.Entity}}Response {
 }
 
 message Update{{.Entity}}Request {
-  {{.Entity}} {{.EntityLower}} = 1 [(graphql.field) = {required: true}];
+  string id = 1 [(graphql.field) = {required: true}];
+  {{.Entity}} {{.EntityLower}} = 2 [(graphql.field) = {required: true}];
 }
 
 message Update{{.Entity}}Response {
