@@ -110,6 +110,14 @@ message HelloResponse {
 }
 ```
 
+### 🔨 Generate a Service Scaffold
+
+Use the new `scaffold` command to spin up a full CRUD `.proto` file—complete with gRPC, REST (gRPC-Gateway) and GraphQL annotations. Pass your fields as a comma-separated list of `name:type` pairs:
+
+```bash
+thunder scaffold   -service UserService   -entity User   -fields "id:string,name:string,email:string,age:int32"
+```
+
 Add your service entry in `services.json`:
 ```go
 [
