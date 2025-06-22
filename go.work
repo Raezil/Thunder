@@ -1,15 +1,13 @@
-go 1.24.0
-
-toolchain go1.24.4
+go 1.24.4
 
 use (
 	./
 	./cmd/app/client
 	./cmd/app/server
 	./pkg/db
+	./pkg/helpers
 	./pkg/middlewares
 	./pkg/routes
 	./pkg/services
 	./pkg/services/generated
-	./pkg/helpers
 )

@@ -32,6 +32,12 @@ go build -o thunder-generate generator.go
 echo "🚀 Moving thunder-generate to /usr/local/bin/..."
 sudo mv thunder-generate /usr/local/bin/
 
+# Ensure thunder-generate is executable
+echo "🔧 Ensuring thunder-scaffold is executable..."
+go build -o thunder-scaffold ./cmd/scaffold/main.go
+sudo chmod +x thunder-scaffold
+sudo mv thunder-scaffold /usr/local/bin
+
 # Create the thunder command script
 echo "🛠️ Creating thunder command script..."
 cat << 'EOF' | sudo tee /usr/local/bin/thunder > /dev/null
@@ -53,6 +59,10 @@ case "$1" in
     generate)
         shift
         thunder-generate "$@"
+        ;;
+    scaffold)
+        shift
+        thunder-scaffold "$@"
         ;;
     build)
         DEPLOYMENT_FILE="./k8s/app-deployment.yaml"
