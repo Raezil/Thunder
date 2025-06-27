@@ -29,32 +29,39 @@
 ## **📌 Use Cases**
 
 Thunder is designed for **scalable microservices** and **high-performance API development**, particularly suited for:
+### 1. High-Performance API Development
+- **gRPC-first APIs** with RESTful interfaces via gRPC-Gateway  
+- **GraphQL interfaces** via grpc-graphql-gateway for strongly-typed, schema-driven queries  
+- Critical performance and low-latency applications  
+- Strongly-typed APIs defined in Protobuf  
 
-### **1. High-Performance API Development**
-- gRPC-first APIs with RESTful interfaces via gRPC-Gateway.
-- Critical performance and low latency applications.
-- Strongly-typed APIs with protobufs.
+### 2. Microservices Architecture
+- Efficient inter-service communication with gRPC  
+- Kubernetes deployments with built-in service discovery and scaling  
+- Sidecar-friendly design for Istio/Linkerd environments  
 
-### **2. Microservices Architecture**
-- Efficient inter-service communication.
-- Kubernetes deployments with built-in service discovery and scaling.
+### 3. Database Management with Prisma
+- Type-safe queries and zero-downtime migrations  
+- Multi-database support (PostgreSQL, MySQL, SQLite)  
+- Auto-generated client library for Go  
 
-### **3. Database Management with Prisma**
-- Type-safe queries and easy database migrations.
-- Support for multiple databases (PostgreSQL, MySQL, SQLite).
+### 4. Lightweight Backend Alternative
+- Minimalist, modular core—no unnecessary middleware  
+- Fast startup and small binary footprint  
+- Pluggable extensions (auth, metrics, tracing)  
 
-### **4. Lightweight Backend Alternative**
-- A minimalist and powerful alternative to traditional frameworks like Gin or Echo.
-- Fast, simple, and modular backend without unnecessary overhead.
+### 5. Kubernetes & Cloud-Native Applications
+- Containerized with Docker, optimized for multi-container pods  
+- Automatic horizontal scaling and load balancing  
+- Health checks, liveness/readiness probes built in  
 
-### **5. Kubernetes & Cloud-Native Applications**
-- Containerized environments using Docker.
-- Automatic service scaling and load balancing.
+---
 
-### **When Not to Use Thunder**
-- If you need a traditional REST-only API (use Gin, Fiber, or Echo instead).
-- If you require a feature-heavy web framework with extensive middleware.
-- If you're not deploying on Kubernetes or prefer a monolithic backend.
+## When **Not** to Use Thunder
+- If you need a traditional REST-only API (consider Gin, Fiber, or Echo)  
+- If you require a feature-heavy, middleware-rich framework  
+- If you’re deploying a monolithic service outside of Kubernetes  
+
 
 ## **📌 Getting Started**
 ### **Installation**
