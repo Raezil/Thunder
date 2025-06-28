@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/c98e19fd-ebf6-4dca-8a9c-ae3d82e3ee54" alt="centered image">
+  <img src="https://github.com/user-attachments/assets/15766a1d-3ec2-4750-bd89-969d031ef8fe" alt="centered image">
 </p>
 
 # **Thunder- A Minimalist Backend Framework in Go**
