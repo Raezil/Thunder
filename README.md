@@ -24,7 +24,7 @@
 - ✔️ **Graphql support** - Transform grpc services into graphql queries
 
 ## **🏗️ Architecture Overview**
-![421386849-54a1cead-6886-400a-a41a-f5eb4f375dc7(1)](https://github.com/user-attachments/assets/5074e533-b023-415d-9092-e8f5270ec88f)
+![Screenshot from 2025-06-28 17-32-47](https://github.com/user-attachments/assets/97c0c576-4026-4633-b2bc-ec57d81834fd)
 
 ## **📌 Use Cases**
 
