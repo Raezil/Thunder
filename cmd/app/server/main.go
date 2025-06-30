@@ -20,6 +20,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/viper"
+	"github.com/tmc/grpc-websocket-proxy/wsproxy"
 	"github.com/uber/jaeger-client-go"
 	"github.com/uber/jaeger-client-go/config"
 	"github.com/valyala/fasthttp"
@@ -119,7 +120,7 @@ func NewApp() (*App, error) {
 
 func (app *App) RegisterMux() fasthttp.RequestHandler {
 	// fasthttp handler
-	fasthttpHandler := fasthttpadaptor.NewFastHTTPHandler(app.gwmux)
+	fasthttpHandler := fasthttpadaptor.NewFastHTTPHandler(wsproxy.WebsocketProxy(app.gwmux))
 
 	// Define FastHTTP handlers.
 	healthCheckHandler := func(ctx *fasthttp.RequestCtx) {
@@ -143,6 +144,7 @@ func (app *App) RegisterMux() fasthttp.RequestHandler {
 			graphqlHandler := middlewares.HeaderForwarderMiddleware(fasthttpadaptor.NewFastHTTPHandler(app.graphqlmux))
 			graphqlHandler(ctx)
 		default:
+
 			fasthttpHandler(ctx) // Pass other requests to gRPC-Gateway
 		}
 	}))

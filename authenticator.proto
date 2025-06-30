@@ -46,6 +46,15 @@ service Auth {
             name: "protected" // query name
         };
     }
+    rpc StreamSampleProtected(ProtectedRequest) returns (stream ProtectedReply) {
+        option (google.api.http) = {
+            get: "/v1/auth/stream/protected"
+        };
+        option (graphql.schema) = {
+            type: SUBSCRIPTION
+            name: "protected"
+        };
+    }
 }
 
 message ProtectedRequest {

@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Auth_Login_FullMethodName           = "/authenticator.Auth/Login"
-	Auth_Register_FullMethodName        = "/authenticator.Auth/Register"
-	Auth_SampleProtected_FullMethodName = "/authenticator.Auth/SampleProtected"
+	Auth_Login_FullMethodName                 = "/authenticator.Auth/Login"
+	Auth_Register_FullMethodName              = "/authenticator.Auth/Register"
+	Auth_SampleProtected_FullMethodName       = "/authenticator.Auth/SampleProtected"
+	Auth_StreamSampleProtected_FullMethodName = "/authenticator.Auth/StreamSampleProtected"
 )
 
 // AuthClient is the client API for Auth service.
@@ -31,6 +32,7 @@ type AuthClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
 	SampleProtected(ctx context.Context, in *ProtectedRequest, opts ...grpc.CallOption) (*ProtectedReply, error)
+	StreamSampleProtected(ctx context.Context, in *ProtectedRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ProtectedReply], error)
 }
 
 type authClient struct {
@@ -71,6 +73,25 @@ func (c *authClient) SampleProtected(ctx context.Context, in *ProtectedRequest, 
 	return out, nil
 }
 
+func (c *authClient) StreamSampleProtected(ctx context.Context, in *ProtectedRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ProtectedReply], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &Auth_ServiceDesc.Streams[0], Auth_StreamSampleProtected_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[ProtectedRequest, ProtectedReply]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Auth_StreamSampleProtectedClient = grpc.ServerStreamingClient[ProtectedReply]
+
 // AuthServer is the server API for Auth service.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility.
@@ -78,6 +99,7 @@ type AuthServer interface {
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	SampleProtected(context.Context, *ProtectedRequest) (*ProtectedReply, error)
+	StreamSampleProtected(*ProtectedRequest, grpc.ServerStreamingServer[ProtectedReply]) error
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -96,6 +118,9 @@ func (UnimplementedAuthServer) Register(context.Context, *RegisterRequest) (*Reg
 }
 func (UnimplementedAuthServer) SampleProtected(context.Context, *ProtectedRequest) (*ProtectedReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SampleProtected not implemented")
+}
+func (UnimplementedAuthServer) StreamSampleProtected(*ProtectedRequest, grpc.ServerStreamingServer[ProtectedReply]) error {
+	return status.Errorf(codes.Unimplemented, "method StreamSampleProtected not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 func (UnimplementedAuthServer) testEmbeddedByValue()              {}
@@ -172,6 +197,17 @@ func _Auth_SampleProtected_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_StreamSampleProtected_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ProtectedRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(AuthServer).StreamSampleProtected(m, &grpc.GenericServerStream[ProtectedRequest, ProtectedReply]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Auth_StreamSampleProtectedServer = grpc.ServerStreamingServer[ProtectedReply]
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -192,6 +228,12 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Auth_SampleProtected_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamSampleProtected",
+			Handler:       _Auth_StreamSampleProtected_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "authenticator.proto",
 }
