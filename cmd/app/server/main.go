@@ -91,6 +91,7 @@ func NewApp() (*App, error) {
 				middlewares.AuthUnaryInterceptor,
 			),
 		),
+		grpc.StreamInterceptor(middlewares.AuthStreamInterceptor),
 	)
 
 	headerMatcher := func(key string) (string, bool) {
@@ -144,7 +145,6 @@ func (app *App) RegisterMux() fasthttp.RequestHandler {
 			graphqlHandler := middlewares.HeaderForwarderMiddleware(fasthttpadaptor.NewFastHTTPHandler(app.graphqlmux))
 			graphqlHandler(ctx)
 		default:
-
 			fasthttpHandler(ctx) // Pass other requests to gRPC-Gateway
 		}
 	}))
@@ -201,6 +201,7 @@ func (app *App) Run() error {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
+		Logger:       &SilentLogger{}, // Use a silent logger to suppress output
 	}
 	log.Println("\033[32m✓ Server is running!\033[0m")
 

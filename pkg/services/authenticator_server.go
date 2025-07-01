@@ -128,5 +128,3 @@ func (s *AuthServiceServer) StreamSampleProtected(
 	// if you had more data to stream, you’d loop Send() here
 	return nil
 }
-
-

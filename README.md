@@ -285,6 +285,21 @@ curl -k -X POST \
   https://localhost:8080/graphql
 ```
 
+### Stream Protected
+### REST
+```bash
+wscat --no-check   -c "wss://localhost:8080/v1/auth/stream/protected?method=GET&text=hello"   -s Bearer   -s "$TOKEN"
+```
+### Graphql
+```bash
+NODE_TLS_REJECT_UNAUTHORIZED=0 wscat -c wss://localhost:8080/graphql       -H "Authorization: Bearer $TOKEN"       -s graphql-ws
+```
+```bash
+{"id":"1","type":"start","payload":{"query":"subscription { protected(text: \"hello\") { result } }","variables":{}}}
+
+```
+
+### Graphql
 ## **📜 Contributing**
 
 1. Fork the repository.
