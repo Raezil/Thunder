@@ -52,7 +52,7 @@ service Auth {
         };
         option (graphql.schema) = {
             type: SUBSCRIPTION
-            name: "protected"
+            name: "stream"
         };
     }
 }

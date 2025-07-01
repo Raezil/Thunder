@@ -349,12 +349,13 @@ const file_authenticator_proto_rawDesc = "" +
 	"LoginReply\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\"%\n" +
 	"\rRegisterReply\x12\x14\n" +
-	"\x05reply\x18\x01 \x01(\tR\x05reply2\x87\x04\n" +
+	"\x05reply\x18\x01 \x01(\tR\x05reply2\x84\x04\n" +
 	"\x04Auth\x12d\n" +
 	"\x05Login\x12\x1b.authenticator.LoginRequest\x1a\x19.authenticator.LoginReply\"#\xbaC\a\x12\x05login\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/auth/login\x12u\n" +
 	"\bRegister\x12\x1e.authenticator.RegisterRequest\x1a\x1c.authenticator.RegisterReply\"+\xbaC\f\b\x01\x12\bregister\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/auth/register\x12{\n" +
-	"\x0fSampleProtected\x12\x1f.authenticator.ProtectedRequest\x1a\x1d.authenticator.ProtectedReply\"(\xbaC\v\x12\tprotected\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/auth/protected\x12\x8c\x01\n" +
-	"\x15StreamSampleProtected\x12\x1f.authenticator.ProtectedRequest\x1a\x1d.authenticator.ProtectedReply\"1\xbaC\r\b\x03\x12\tprotected\x82\xd3\xe4\x93\x02\x1b\x12\x19/v1/auth/stream/protected0\x01\x1a\x16\xbaC\x13\n" +
+	"\x0fSampleProtected\x12\x1f.authenticator.ProtectedRequest\x1a\x1d.authenticator.ProtectedReply\"(\xbaC\v\x12\tprotected\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/auth/protected\x12\x89\x01\n" +
+	"\x15StreamSampleProtected\x12\x1f.authenticator.ProtectedRequest\x1a\x1d.authenticator.ProtectedReply\".\xbaC\n" +
+	"\b\x03\x12\x06stream\x82\xd3\xe4\x93\x02\x1b\x12\x19/v1/auth/stream/protected0\x01\x1a\x16\xbaC\x13\n" +
 	"\x0flocalhost:50051\x10\x01B\x1aZ\x18./pkg/services/generatedb\x06proto3"
 
 var (

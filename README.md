@@ -302,7 +302,7 @@ wscat --no-check   -c "wss://localhost:8080/v1/auth/stream/protected?method=GET&
 NODE_TLS_REJECT_UNAUTHORIZED=0 wscat -c wss://localhost:8080/graphql       -H "Authorization: Bearer $TOKEN"       -s graphql-ws
 ```
 ```bash
-{"id":"1","type":"start","payload":{"query":"subscription { protected(text: \"hello\") { result } }","variables":{}}}
+{"id":"1","type":"start","payload":{"query":"subscription { stream(text: \"hello\") { result } }","variables":{}}}
 
 ```
 

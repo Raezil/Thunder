@@ -361,7 +361,7 @@ func (x *graphql__resolver_Auth) GetMutations(conn *grpc.ClientConn) graphql.Fie
 // GetSubscriptions returns graphql.Fields for Subscription.
 func (x *graphql__resolver_Auth) GetSubscriptions(conn *grpc.ClientConn) graphql.Fields {
 	return graphql.Fields{
-		"protected": &graphql.Field{
+		"stream": &graphql.Field{
 			Type: Gql__type_ProtectedReply(),
 			Args: graphql.FieldConfigArgument{
 				"text": &graphql.ArgumentConfig{
@@ -371,7 +371,7 @@ func (x *graphql__resolver_Auth) GetSubscriptions(conn *grpc.ClientConn) graphql
 			Subscribe: func(p graphql.ResolveParams) (interface{}, error) {
 				var req ProtectedRequest
 				if err := runtime.MarshalRequest(p.Args, &req, false); err != nil {
-					return nil, errors.Wrap(err, "Failed to marshal subscription request for protected")
+					return nil, errors.Wrap(err, "Failed to marshal subscription request for stream")
 				}
 				client := NewAuthClient(conn)
 				stream, err := client.StreamSampleProtected(p.Context, &req)
