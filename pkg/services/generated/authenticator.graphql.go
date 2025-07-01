@@ -360,7 +360,44 @@ func (x *graphql__resolver_Auth) GetMutations(conn *grpc.ClientConn) graphql.Fie
 
 // GetSubscriptions returns graphql.Fields for Subscription.
 func (x *graphql__resolver_Auth) GetSubscriptions(conn *grpc.ClientConn) graphql.Fields {
-	return graphql.Fields{}
+	return graphql.Fields{
+		"protected": &graphql.Field{
+			Type: Gql__type_ProtectedReply(),
+			Args: graphql.FieldConfigArgument{
+				"text": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+			},
+			Subscribe: func(p graphql.ResolveParams) (interface{}, error) {
+				var req ProtectedRequest
+				if err := runtime.MarshalRequest(p.Args, &req, false); err != nil {
+					return nil, errors.Wrap(err, "Failed to marshal subscription request for protected")
+				}
+				client := NewAuthClient(conn)
+				stream, err := client.StreamSampleProtected(p.Context, &req)
+				if err != nil {
+					return nil, errors.Wrap(err, "Failed to call streaming RPC StreamSampleProtected")
+				}
+				ch := make(chan interface{})
+				go func() {
+					defer close(ch)
+					for {
+						resp, err := stream.Recv()
+						if err != nil {
+							break
+						}
+						// push the entire message
+						ch <- resp
+					}
+				}()
+				return ch, nil
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				// raw message, no extra marshalling
+				return p.Source, nil
+			},
+		},
+	}
 }
 
 // Register package divided graphql handler "without" *grpc.ClientConn,

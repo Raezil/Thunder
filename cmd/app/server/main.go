@@ -20,6 +20,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/viper"
+	"github.com/tmc/grpc-websocket-proxy/wsproxy"
 	"github.com/uber/jaeger-client-go"
 	"github.com/uber/jaeger-client-go/config"
 	"github.com/valyala/fasthttp"
@@ -90,6 +91,7 @@ func NewApp() (*App, error) {
 				middlewares.AuthUnaryInterceptor,
 			),
 		),
+		grpc.StreamInterceptor(middlewares.AuthStreamInterceptor),
 	)
 
 	headerMatcher := func(key string) (string, bool) {
@@ -119,7 +121,7 @@ func NewApp() (*App, error) {
 
 func (app *App) RegisterMux() fasthttp.RequestHandler {
 	// fasthttp handler
-	fasthttpHandler := fasthttpadaptor.NewFastHTTPHandler(app.gwmux)
+	fasthttpHandler := fasthttpadaptor.NewFastHTTPHandler(wsproxy.WebsocketProxy(app.gwmux))
 
 	// Define FastHTTP handlers.
 	healthCheckHandler := func(ctx *fasthttp.RequestCtx) {
@@ -199,6 +201,7 @@ func (app *App) Run() error {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
+		Logger:       &SilentLogger{}, // Use a silent logger to suppress output
 	}
 	log.Println("\033[32m✓ Server is running!\033[0m")
 

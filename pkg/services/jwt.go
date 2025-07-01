@@ -86,7 +86,6 @@ func CurrentUser(ctx context.Context) (string, error) {
 	if !ok {
 		return "", fmt.Errorf("missing metadata")
 	}
-
 	currentUser, exists := md["current_user"]
 	if !exists || len(currentUser) == 0 {
 		return "", fmt.Errorf("current_user metadata is missing")

@@ -4,10 +4,12 @@ import (
 	"context"
 	"db"
 	"fmt"
+	"generated"
 	. "generated"
 
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -100,7 +102,29 @@ func (s *AuthServiceServer) Register(ctx context.Context, in *RegisterRequest) (
 		Reply: fmt.Sprintf("Congratulations, User email: %s got created!", obj.Email),
 	}, nil
 }
+func (s *AuthServiceServer) StreamSampleProtected(
+	req *generated.ProtectedRequest,
+	stream grpc.ServerStreamingServer[generated.ProtectedReply],
+) error {
+	// pull context from the stream
+	ctx := stream.Context()
+	currentUser, err := CurrentUser(ctx)
+	if err != nil {
+		s.Logger.Warnw("Failed to retrieve current user", "error", err)
+		return status.Errorf(codes.Unauthenticated, "failed to retrieve current user: %v", err)
+	}
+	// build your reply(s). You can call stream.Send multiple times.
+	reply := &generated.ProtectedReply{
+		Result: req.Text + " " + currentUser,
+	}
+	for i := 0; i < 5; i++ {
+		if err := stream.Send(reply); err != nil {
+			s.Logger.Errorw("Stream send failed", "error", err)
+			return status.Errorf(codes.Internal,
+				"failed to send protected reply: %v", err)
+		}
+	}
 
-
-
-
+	// if you had more data to stream, you’d loop Send() here
+	return nil
+}

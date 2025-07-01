@@ -109,6 +109,45 @@
           "Auth"
         ]
       }
+    },
+    "/v1/auth/stream/protected": {
+      "get": {
+        "operationId": "Auth_StreamSampleProtected",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/authenticatorProtectedReply"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of authenticatorProtectedReply"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "text",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
     }
   },
   "definitions": {
