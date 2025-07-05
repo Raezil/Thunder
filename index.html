@@ -3,590 +3,794 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thunder - A Minimalist Backend Framework in Go</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Thunder - Scalable Microservices Framework</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
-        body {
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .hero-gradient {
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-gradient: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-blue: #00f2fe;
+            --neon-purple: #764ba2;
+            --neon-pink: #f5576c;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark-gradient);
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, var(--neon-blue) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, var(--neon-purple) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, var(--neon-pink) 0%, transparent 50%);
+            animation: morphing 10s ease-in-out infinite;
+        }
+
+        @keyframes morphing {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(12, 12, 12, 0.8);
+            backdrop-filter: blur(30px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(12, 12, 12, 0.95);
+            backdrop-filter: blur(40px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.5));
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .nav-links a:hover {
+            color: var(--neon-blue);
+            background: var(--glass-bg);
+            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.2);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 80%;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 150px 0 100px;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
-        
-        .hero-grid {
+
+        .hero::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-                            linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background: 
+                radial-gradient(ellipse at center, rgba(0, 242, 254, 0.15) 0%, transparent 70%),
+                radial-gradient(ellipse at 80% 20%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .hero-content {
+            position: relative;
             z-index: 1;
         }
-        
-        .hero-container {
-            position: relative;
-            z-index: 2;
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #00f2fe, #764ba2, #f5576c, #4facfe);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease-in-out infinite, fadeInUp 1s ease-out;
+            text-shadow: 0 0 60px rgba(0, 242, 254, 0.3);
         }
-        
-        .feature-card {
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.2s both;
+            font-weight: 300;
+        }
+
+        .hero-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .hero-feature {
+            background: var(--glass-bg);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            font-weight: 500;
             transition: all 0.3s ease;
-            border-top: 4px solid transparent;
         }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border-top: 4px solid #3b82f6;
+
+        .hero-feature:hover {
+            background: rgba(0, 242, 254, 0.1);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.2);
+            transform: translateY(-3px);
         }
-        
-        .glow {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.6s both;
         }
-        
-        .code-block {
-            background-color: #1e293b;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            overflow-x: auto;
+
+        .btn {
+            padding: 16px 36px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
             position: relative;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            backdrop-filter: blur(20px);
         }
-        
-        .code-block::before {
-            content: "";
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 242, 254, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: #ffffff;
+            border: 2px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.2);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .features::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 30px;
-            background-color: #0f172a;
-            border-radius: 0.5rem 0.5rem 0 0;
-            border-bottom: 1px solid #2d3748;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
+            z-index: -1;
         }
-        
-        .code-block::after {
-            content: "•••";
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 4rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
             position: absolute;
-            top: 8px;
-            left: 15px;
-            color: #64748b;
-            font-size: 18px;
-            letter-spacing: 2px;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--accent-gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
         }
-        
-        .code-block code {
-            display: block;
-            margin-top: 20px;
-            padding-top: 10px;
-            color: #e2e8f0;
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--neon-blue);
+            box-shadow: 0 20px 60px rgba(0, 242, 254, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.3));
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            opacity: 0.8;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Code Section */
+        .code-section {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .code-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 60% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(79, 172, 254, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .code-example {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid var(--glass-border);
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(30px);
+        }
+
+        .code-example::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .code-example pre {
+            color: #ffffff;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 1rem;
             line-height: 1.8;
+            overflow-x: auto;
         }
-        
-        .section-spacing {
-            padding-top: 6rem;
-            padding-bottom: 6rem;
+
+        .code-example code {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
         }
-        
-        .navbar-fixed {
+
+        /* Use Cases */
+        .use-cases {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .use-cases::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 40% 40%, rgba(245, 87, 108, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .use-case {
+            background: var(--glass-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .use-case::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--accent-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .use-case:hover::before {
+            opacity: 0.1;
+        }
+
+        .use-case:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 242, 254, 0.2);
+            border-color: var(--neon-blue);
+        }
+
+        .use-case h3 {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .use-case p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 80px 0 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(245, 87, 108, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .footer-section a {
+            color: #ffffff;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a:hover {
+            opacity: 1;
+            color: var(--neon-blue);
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            opacity: 0.6;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Particle System */
+        .particles {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            background-color: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
-        
-        .navbar-scrolled {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        
-        .btn-primary {
-            background-color: #3b82f6;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-        }
-        
-        .btn-primary:hover {
-            background-color: #2563eb;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
-        }
-        
-        .btn-secondary {
-            background-color: transparent;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            border: 2px solid white;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-        }
-        
-        .btn-secondary:hover {
-            background-color: white;
-            color: #3b82f6;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.5);
-        }
-        
-        .section-title {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 2rem;
-        }
-        
-        .section-title::after {
-            content: "";
+
+        .particle {
             position: absolute;
-            bottom: -0.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
+            width: 3px;
+            height: 3px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            animation: particleFloat 10s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
             height: 4px;
-            background-color: #3b82f6;
-            border-radius: 2px;
+            background: var(--accent-gradient);
+            z-index: 1001;
+            transition: width 0.3s ease;
         }
-        
-        /* Floating animation */
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        /* Pulse animation */
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
-        
-        /* Terminal design */
-        .terminal {
-            background-color: #1a1d21;
-            border-radius: 0.75rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        
-        .terminal-header {
-            height: 2rem;
-            background-color: #2d333a;
-            display: flex;
-            align-items: center;
-            padding: 0 1rem;
-        }
-        
-        .terminal-button {
-            height: 0.75rem;
-            width: 0.75rem;
-            border-radius: 50%;
-            margin-right: 0.5rem;
-        }
-        
-        .terminal-button.red { background-color: #ff5f57; }
-        .terminal-button.yellow { background-color: #ffbd2e; }
-        .terminal-button.green { background-color: #28c840; }
-        
-        .terminal-body {
-            padding: 1rem;
-            color: #e2e8f0;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.875rem;
-            line-height: 1.7;
-        }
-        
-        .terminal-prompt {
-            color: #3b82f6;
-            font-weight: bold;
-        }
-        
-        .terminal-output {
-            color: #cbd5e1;
-        }
-        
-        .terminal-success {
-            color: #10b981;
-        }
-        
-        /* Rotating icons */
-        .rotating-icon {
-            animation: rotate 10s linear infinite;
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Card hover effects */
-        .doc-card {
-            transition: all 0.3s ease;
-        }
-        
-        .doc-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        /* Pulsing dots animation */
-        .pulsing-dots span {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin: 0 3px;
-            animation: pulsingDots 1.5s infinite ease-in-out;
-            background-color: #3b82f6;
-        }
-        
-        .pulsing-dots span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        
-        .pulsing-dots span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        
-        @keyframes pulsingDots {
-            0%, 100% { transform: scale(0.2); opacity: 0.2; }
-            50% { transform: scale(1); opacity: 1; }
-        }
-        
-        /* Badge style */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            background-color: #dbeafe;
-            color: #1e40af;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .badge i {
-            margin-right: 0.25rem;
-        }
-        
-        /* Custom gradient */
-        .custom-gradient {
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .hero-features {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50" id="top">
-    <!-- Navbar -->
-    <nav id="navbar" class="navbar-fixed">
-        <div class="container mx-auto px-6 py-3 flex justify-between items-center" id="top">
-            <div class="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
-                </svg>
-              <a href="#top">
-                <span class="ml-2 text-xl font-bold text-gray-800">Thunder</span>
-              </a>
-            </div>
-            <div class="hidden md:flex space-x-8">
-                <a href="#features" class="text-gray-700 hover:text-blue-600 transition font-medium">Features</a>
-                <a href="#use-cases" class="text-gray-700 hover:text-blue-600 transition font-medium">Use Cases</a>
-                <a href="#getting-started" class="text-gray-700 hover:text-blue-600 transition font-medium">Getting started</a>
-                <a href="#deploy" class="text-gray-700 hover:text-blue-600 transition font-medium">Deploy on Kubernetes</a>
-            </div>
-            <div>
-                <a href="https://github.com/Raezil/Thunder" class="btn-primary">
-                    <i class="fab fa-github mr-2"></i> GitHub
-                </a>
-            </div>
-        </div>
-    </nav>
+<body>
+    <div class="animated-bg"></div>
+    <div class="particles" id="particles"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
 
-    <!-- Hero Section -->
-    <section class="hero-gradient pt-32 pb-20 text-white">
-        <div class="hero-grid"></div>
-        <div class="container mx-auto px-6 hero-container">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0 animate__animated animate__fadeInLeft">
-                    <div class="badge mb-4">
-                        <i class="fas fa-bolt"></i> High Performance
-                    </div>
-                    <h1 class="text-4xl md:text-6xl font-bold mb-6">Thunder</h1>
-                    <h2 class="text-2xl md:text-3xl font-light mb-6">A Minimalist Backend Framework in Go</h2>
-                    <p class="text-lg mb-8 text-blue-100">A gRPC-Gateway-powered framework with Prisma, Kubernetes, and Go for building scalable microservices.</p>
-                    <div class="flex space-x-4">
-                        <a href="#getting-started" class="btn-primary">
-                            <i class="fas fa-rocket mr-2"></i> Get Started
-                        </a>
-                        <a href="https://github.com/Raezil/Thunder" class="btn-secondary">
-                            <i class="fab fa-github mr-2"></i> GitHub
-                        </a>
-                    </div>
-                </div>
-                <div class="md:w-1/2 flex justify-center animate__animated animate__fadeInRight">
-                    <div class="terminal floating">
-                        <div class="terminal-header">
-                            <div class="terminal-button red"></div>
-                            <div class="terminal-button yellow"></div>
-                            <div class="terminal-button green"></div>
-                        </div>
-                        <div class="terminal-body">
-                            <p><span class="terminal-prompt">$</span> ./install.sh</p>
-                            <p><span class="terminal-prompt">$</span> thunder init myproject</p>
-                            <p class="terminal-output">Creating new Thunder project: myproject</p>
-                            <p class="terminal-output">Setting up project structure...</p>
-                            <p class="terminal-success">✓ Project created successfully!</p>
-                            <p><span class="terminal-prompt">$</span> cd myproject</p>
-                            <p><span class="terminal-prompt">$</span> go mod tidy</p>
-                            <p><span class="terminal-prompt">$</span> thunder serve</p>
-                            <p class="terminal-output">Starting gRPC server on port 50051</p>
-                            <p class="terminal-output">Starting REST gateway on port 8080</p>
-                            <p class="terminal-success">✓ Server is running!</p>
-                            <div class="pulsing-dots mt-2">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <header id="header">
+        <nav class="container">
+            <a href="#" class="logo">⚡ Thunder</a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#quickstart">Quick Start</a></li>
+                <li><a href="#use-cases">Use Cases</a></li>
+                <li><a href="#github">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <!-- Badges Section -->
-    <section class="bg-white py-8 shadow-md">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-wrap justify-center gap-4 items-center">
-                <a href="https://golang.org" class="inline-block transform hover:scale-105 transition">
-                    <img src="https://img.shields.io/badge/Go-1.23-blue" alt="Go Version" />
-                </a>
-                <a href="LICENSE" class="inline-block transform hover:scale-105 transition">
-                    <img src="https://img.shields.io/github/license/Raezil/Thunder" alt="License" />
-                </a>
-                <a href="https://github.com/Raezil/Thunder/stargazers" class="inline-block transform hover:scale-105 transition">
-                    <img src="https://img.shields.io/github/stars/Raezil/Thunder" alt="Stars" />
-                </a>
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="floating">Thunder</h1>
+                    <p class="hero-subtitle">A scalable microservices framework powered by Go, gRPC-Gateway, grpc-graphql-gateway, Prisma, and Kubernetes. Build high-performance APIs with automatic REST and GraphQL exposure plus enterprise-grade security.</p>
+                    
+                    <div class="hero-features">
+                        <div class="hero-feature">⚡ Triple Protocol</div>
+                        <div class="hero-feature">🚀 Kubernetes Native</div>
+                        <div class="hero-feature">🔒 Enterprise Security</div>
+                        <div class="hero-feature">🎯 Type Safe</div>
+                    </div>
+                    
+                    <div class="cta-buttons">
+                        <a href="#quickstart" class="btn btn-primary">Get Started</a>
+                        <a href="https://github.com/Raezil/Thunder" class="btn btn-secondary">View on GitHub</a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Features Section -->
-    <section id="features" class="section-spacing">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center section-title">Key Features</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Feature Cards (existing content) -->
-                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-bolt text-2xl"></i>
+        <section class="features" id="features">
+            <div class="container">
+                <h2 class="section-title">Why Choose Thunder?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3>gRPC + REST + GraphQL</h3>
+                        <p>Automatically expose RESTful APIs and GraphQL endpoints from gRPC services with gRPC-Gateway and grpc-graphql-gateway. Triple protocol support with minimal configuration.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">gRPC + REST</h3>
-                    <p class="text-gray-600">Automatically expose RESTful APIs from gRPC services with gRPC-Gateway.</p>
-                </div>
-                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-database text-2xl"></i>
+                    <div class="feature-card">
+                        <div class="feature-icon">🗄️</div>
+                        <h3>Prisma Integration</h3>
+                        <p>Efficient database management and migrations with type-safe queries. Support for PostgreSQL, MySQL, and SQLite with automatic schema generation.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Prisma Integration</h3>
-                    <p class="text-gray-600">Efficient database management and migrations with Prisma ORM.</p>
-                </div>
-                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-cubes text-2xl"></i>
+                    <div class="feature-card">
+                        <div class="feature-icon">☸️</div>
+                        <h3>Kubernetes Ready</h3>
+                        <p>Deploy and scale effortlessly with built-in Kubernetes support, service discovery, and automatic load balancing for cloud-native applications.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Kubernetes Ready</h3>
-                    <p class="text-gray-600">Easily deploy and scale your services with Kubernetes.</p>
-                </div>
-                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-shield-alt text-2xl"></i>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>TLS Security</h3>
+                        <p>Secure gRPC communications with TLS encryption, JWT authentication, and rate limiting middleware out of the box for enterprise-grade security.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">TLS Security</h3>
-                    <p class="text-gray-600">Secure gRPC communications with TLS for enhanced security.</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
-                <!-- More Feature Cards -->
-                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-file-alt text-2xl"></i>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Structured Logging</h3>
+                        <p>Built-in Zap logging with structured output for better observability and debugging in production environments with real-time monitoring.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Structured Logging</h3>
-                    <p class="text-gray-600">Built-in zap logging for better insights into your application.</p>
-                </div>
-                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.5s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-tachometer-alt text-2xl"></i>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔗</div>
+                        <h3>GraphQL Gateway</h3>
+                        <p>Seamlessly expose your gRPC services as GraphQL endpoints with grpc-graphql-gateway. Enable modern frontend development with flexible queries and real-time subscriptions.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Rate Limiting & Auth</h3>
-                    <p class="text-gray-600">Pre-configured middleware for rate limiting and authentication.</p>
-                </div>
-                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.6s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-puzzle-piece text-2xl"></i>
+                    <div class="feature-card">
+                        <div class="feature-icon">🧩</div>
+                        <h3>Modular & Extensible</h3>
+                        <p>Easily extend Thunder for custom use cases with a clean, modular architecture that scales with your needs.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Modular & Extensible</h3>
-                    <p class="text-gray-600">Easily extend Thunder for custom use cases and requirements.</p>
-                </div>
-                <div class="feature-card bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInUp" style="animation-delay: 0.7s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-terminal text-2xl"></i>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Multi-Protocol Support</h3>
+                        <p>Serve your APIs through gRPC, REST, and GraphQL simultaneously. Perfect for teams with diverse client requirements and modern development workflows.</p>
                     </div>
-                    <h3 class="text-xl font-semibold mb-2">Thunder CLI</h3>
-                    <p class="text-gray-600">Generate, deploy, and create new projects effortlessly.</p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Use Cases Section -->
-    <section id="use-cases" class="section-spacing">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center section-title">Use Cases</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-                <!-- Existing Use Cases Cards -->
-                <div class="bg-white p-6 rounded-lg shadow-md feature-card animate__animated animate__fadeInUp">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-bolt text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">High-Performance API Development</h3>
-                    <ul class="space-y-2 text-gray-600">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>gRPC-first APIs with RESTful interfaces</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Critical performance and low latency applications</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Strongly-typed APIs with protobufs</span>
-                        </li>
-                    </ul>
+        <section class="code-section" id="quickstart">
+            <div class="container">
+                <h2 class="section-title">Quick Start</h2>
+                <div class="code-example">
+                    <pre><code># Install Thunder CLI
+git clone https://github.com/Raezil/Thunder.git
+cd Thunder
+chmod +x install.sh
+./install.sh
+
+# Create a new project
+thunder init myapp
+cd myapp
+go mod tidy</code></pre>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-network-wired text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Microservices Architecture</h3>
-                    <ul class="space-y-2 text-gray-600">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Efficient inter-service communication</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Kubernetes deployments with built-in service discovery</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Automatic scaling and load balancing</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-database text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Database Management with Prisma</h3>
-                    <ul class="space-y-2 text-gray-600">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Type-safe queries and easy migrations</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Support for multiple databases</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Efficient database management</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-feather-alt text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Lightweight Backend Alternative</h3>
-                    <ul class="space-y-2 text-gray-600">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Minimalist and powerful framework</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Alternative to Gin or Echo</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Fast, simple, and modular backend</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
-                    <div class="text-blue-600 mb-4 bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center">
-                        <i class="fas fa-feather-alt text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Kubernetes & Cloud-Native</h3>
-                    <ul class="space-y-2 text-gray-600">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Containerized environments using Docker.</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
-                            <span>Automatic service scaling and load balancing.</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-<!-- Getting Started Section -->
-<section id="getting-started" class="section-spacing bg-gray-50">
-    <div class="container mx-auto px-6">
-        <h2 class="text-3xl font-bold text-center section-title">Getting Started</h2>
-        <div class="mt-8">
-            <pre class="code-block"><code>
-# Create a Protobuf file (example.proto)
+
+                <div class="code-example">
+                    <pre><code># Define your service (example.proto)
 syntax = "proto3";
-
 package example;
-
 import "google/api/annotations.proto";
 
 service Example {
@@ -603,96 +807,74 @@ message HelloRequest {
 
 message HelloResponse {
   string message = 1;
-}
+}</code></pre>
+                </div>
 
-# Define the service in services.json
-[
-  {
-    "ServiceName": "Example",
-    "ServiceStruct": "ExampleServiceServer",
-    "ServiceRegister": "RegisterExampleServer",
-    "HandlerRegister": "RegisterExampleHandler"
-  }
-]
+                <div class="code-example">
+                    <pre><code># Generate REST and GraphQL endpoints
+thunder generate --proto=example.proto --enable-graphql
+go run ./cmd/app/server/main.go
 
-# Generate the service implementation
-thunder generate --proto=example.proto
-            </code></pre>
-        </div>
-    </div>
-</section>
+# Server accessible at:
+# gRPC: localhost:50051
+# REST: localhost:8080
+# GraphQL: localhost:8080/graphql</code></pre>
+                </div>
+            </div>
+        </section>
 
+        <section class="use-cases" id="use-cases">
+            <div class="container">
+                <h2 class="section-title">Perfect For</h2>
+                <div class="use-cases-grid">
+                    <div class="use-case">
+                        <h3>🎯 Triple Protocol APIs</h3>
+                        <p>gRPC, REST, and GraphQL from single definition</p>
+                    </div>
+                    <div class="use-case">
+                        <h3>⚡ High Performance</h3>
+                        <p>Critical performance and low latency applications</p>
+                    </div>
+                    <div class="use-case">
+                        <h3>🏗️ Microservices</h3>
+                        <p>Scalable microservices architecture</p>
+                    </div>
+                    <div class="use-case">
+                        <h3>🔧 Type Safety</h3>
+                        <p>Strongly-typed APIs with protobufs</p>
+                    </div>
+                    <div class="use-case">
+                        <h3>🐳 Containerized</h3>
+                        <p>Docker and Kubernetes deployments</p>
+                    </div>
+                    <div class="use-case">
+                        <h3>🌐 Modern Frontends</h3>
+                        <p>GraphQL support for React, Vue, Angular apps</p>
+                    </div>
+                    <div class="use-case">
+                        <h3>🔄 Auto Scaling</h3>
+                        <p>Automatic service scaling and load balancing</p>
+                    </div>
+                    <div class="use-case">
+                        <h3>📊 Flexible Queries</h3>
+                        <p>GraphQL's powerful query capabilities</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-<!-- Deploy on Kubernetes Section -->
-<section id="deploy" class="section-spacing bg-gray-50">
-    <div class="container mx-auto px-6">
-        <h2 class="text-3xl font-bold text-center section-title">Deploy on Kubernetes</h2>
-        <div class="mt-8">
-            <p class="text-gray-700 text-center mb-4">Follow these steps to deploy Thunder on Kubernetes:</p>
-            <pre class="code-block"><code>
-<span class="terminal-prompt">$</span> # PgBouncer Secret Configuration
-<span class="terminal-prompt">$</span> echo '"postgres" "postgres"' | base64
-<span class="terminal-output">InBvc3RncmVzIiAicG9zdGdyZXMiCg==</span>
-<span class="terminal-prompt">$</span> # Update the pgbouncer-all.yaml with the new base64 value
-
-<span class="terminal-prompt">$</span> # Generate TLS Certificates
-<span class="terminal-prompt">$</span> cd cmd
-<span class="terminal-prompt">$</span> mkdir certs
-<span class="terminal-prompt">$</span> openssl req -x509 -newkey rsa:4096 -keyout certs/server.key -out certs/server.crt -days 365 -nodes \
-  -subj "/CN=localhost" \
-  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
-<span class="terminal-output">Generating a RSA private key</span>
-<span class="terminal-output">...............+++++</span>
-<span class="terminal-output">...+++++</span>
-<span class="terminal-output">writing new private key to 'certs/server.key'</span>
-<span class="terminal-output">-----</span>
-
-<span class="terminal-prompt">$</span> # Create Kubernetes Secrets
-<span class="terminal-prompt">$</span> kubectl create secret generic app-secret \
-  --from-literal=DATABASE_URL="postgres://postgres:postgres@pgbouncer-service:6432/thunder?sslmode=disable" \
-  --from-literal=JWT_SECRET="secret"
-<span class="terminal-success">secret/app-secret created</span>
-
-<span class="terminal-prompt">$</span> kubectl create secret generic postgres-secret \
-  --from-literal=POSTGRES_USER=postgres \
-  --from-literal=POSTGRES_PASSWORD=postgres \
-  --from-literal=POSTGRES_DB=thunder
-<span class="terminal-success">secret/postgres-secret created</span>
-
-<span class="terminal-prompt">$</span> # Build & Deploy Docker Image
-<span class="terminal-prompt">$</span> thunder build
-<span class="terminal-output">Building Thunder container image...</span>
-<span class="terminal-success">✓ Successfully built thunder:latest</span>
-
-<span class="terminal-prompt">$</span> thunder deploy
-<span class="terminal-output">Deploying Thunder to Kubernetes...</span>
-<span class="terminal-success">✓ Deployment successful!</span>
-
-<span class="terminal-prompt">$</span> # Check pod status
-<span class="terminal-prompt">$</span> kubectl get pods -n default
-<span class="terminal-output">NAME                        READY   STATUS    RESTARTS   AGE</span>
-<span class="terminal-output">thunder-5f7b849d8d-x2jtl    1/1     Running   0          30s</span>
-<span class="terminal-output">postgres-0                  1/1     Running   0          30s</span>
-<span class="terminal-output">pgbouncer-7c8b6d5b4-rmvp9  1/1     Running   0          30s</span>
-
-<span class="terminal-prompt">$</span> kubectl describe pod thunder-5f7b849d8d-x2jtl -n default
-<span class="terminal-output">Name:         thunder-5f7b849d8d-x2jtl</span>
-<span class="terminal-output">Namespace:    default</span>
-<span class="terminal-output">Priority:     0</span>
-<span class="terminal-output">...</span>
-            </code></pre>
-        </div>
-    </div>
-</section>
-    <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white py-6">
-        <div class="container mx-auto px-6 text-center">
-            <p>&copy; 2025 Thunder. All rights reserved.</p>
-            <p>
-                <a href="https://github.com/Raezil/Thunder" class="text-blue-400 hover:underline">GitHub</a> |
-                <a href="LICENSE" class="text-blue-400 hover:underline">License</a>
-            </p>
-        </div>
-    </footer>
-</body>
-</html>
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <a href="https://github.com/Raezil/Thunder">GitHub Repository</a>
+                    <a href="https://github.com/Raezil/Thunder/issues">Issues & Support</a>
+                    <a href="#docs">Documentation</a>
+                    <a href="#examples">Examples</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Community</h3>
+                    <a href="https://github.com/Raezil/Thunder/discussions">Discussions</a>
+                    <a href="https://github.com/Raezil/Thunder/contributors">Contributors
