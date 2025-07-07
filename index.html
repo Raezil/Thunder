@@ -791,23 +791,25 @@ go mod tidy</code></pre>
                     <pre><code># Define your service (example.proto)
 syntax = "proto3";
 package example;
+
 import "google/api/annotations.proto";
+import "graphql.proto";
 
 service Example {
   rpc SayHello(HelloRequest) returns (HelloResponse) {
-    option (google.api.http) = {
-      get: "/v1/example/sayhello"
-    };
-  };
+    option (google.api.http).get = "/v1/example/sayhello";
+    option (graphql.schema) = { type: QUERY, name: "sayhello" };
+  }
 }
 
 message HelloRequest {
-  string name = 1;
+  string name = 1 [(graphql.field) = { required: true }];
 }
 
 message HelloResponse {
   string message = 1;
-}</code></pre>
+}
+</code></pre>
                 </div>
 
                 <div class="code-example">
